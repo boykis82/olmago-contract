@@ -2,6 +2,7 @@ package team.caltech.olmago.contract.contract;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import team.caltech.olmago.contract.plm.BillPeriod;
 
 import javax.persistence.Embeddable;
@@ -10,15 +11,16 @@ import javax.persistence.Enumerated;
 import java.time.LocalDate;
 
 @Getter
+@NoArgsConstructor
 @Embeddable
 public class BillCycle {
-  private final LocalDate theFirstBillStartDate;
-  private final int monthsPassed;
-  private final LocalDate currentBillStartDate;
-  private final LocalDate currentBillEndDate;
+  private LocalDate theFirstBillStartDate;
+  private Integer monthsPassed;
+  private LocalDate currentBillStartDate;
+  private LocalDate currentBillEndDate;
   
   @Enumerated(EnumType.STRING)
-  private final BillPeriod billPeriod;
+  private BillPeriod billPeriod;
   
   @Builder
   private BillCycle(LocalDate theFirstBillStartDate, BillPeriod billPeriod, int monthsPassed) {

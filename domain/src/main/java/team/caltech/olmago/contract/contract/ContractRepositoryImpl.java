@@ -14,11 +14,11 @@ import static team.caltech.olmago.contract.product.QProductSubscription.*;
 
 @RequiredArgsConstructor
 public class ContractRepositoryImpl implements ContractRepositoryCustom {
-  private final JPAQueryFactory qf;
+  private final JPAQueryFactory jpaQueryFactory;
   
   @Override
   public Long countAppliedDcTypeByCustomer(long customerId, DiscountType dcType) {
-    return qf
+    return jpaQueryFactory
         .select(contract.count())
         .from(contract)
         .join(contract.productSubscriptions, productSubscription).fetchJoin()
@@ -35,7 +35,7 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   
   @Override
   public Long countActiveContractByCustomerAndFeeProductCode(long customerId, String feeProductCode) {
-    return qf
+    return jpaQueryFactory
         .select(contract.count())
         .from(contract)
         .where(
@@ -49,7 +49,7 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   @Override
   public Optional<Contract> findOptionContractByPackageContract(Contract pkgContract) {
     return Optional.ofNullable(
-        qf
+        jpaQueryFactory
             .select(uzooPackage.optionContract)
             .from(uzooPackage)
             .where(

@@ -1,12 +1,14 @@
 package team.caltech.olmago.contract.common;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 @Embeddable
 public class LifeCycle {
   @Column(nullable = false)
