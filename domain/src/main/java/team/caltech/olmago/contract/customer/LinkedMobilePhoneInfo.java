@@ -1,10 +1,9 @@
-package team.caltech.olmago.contract.proxy.customer.dto;
+package team.caltech.olmago.contract.customer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team.caltech.olmago.contract.proxy.customer.MobilePhonePricePlan;
 
 @NoArgsConstructor
 @AllArgsConstructor

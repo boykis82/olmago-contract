@@ -7,7 +7,7 @@ import team.caltech.olmago.contract.discount.condition.detail.*;
 import team.caltech.olmago.contract.plm.Product;
 import team.caltech.olmago.contract.plm.ProductRepository;
 import team.caltech.olmago.contract.product.factory.ProductRelationRepository;
-import team.caltech.olmago.contract.proxy.customer.CustomerServiceProxy;
+import team.caltech.olmago.contract.customer.CustomerServiceProxy;
 import team.caltech.olmago.contract.product.factory.ProductFactory;
 import team.caltech.olmago.contract.product.factory.ProductFactoryMap;
 
@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import static team.caltech.olmago.contract.discount.condition.DiscountCondition.and;
 import static team.caltech.olmago.contract.discount.condition.DiscountCondition.neg;
 import static team.caltech.olmago.contract.product.factory.ProductRelation.ProductRelationType.*;
-import static team.caltech.olmago.contract.proxy.customer.MobilePhonePricePlan.*;
+import static team.caltech.olmago.contract.customer.MobilePhonePricePlan.*;
 
 @Configuration
 public class ProductFactoryConfiguration {

@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.proxy.customer;
+package team.caltech.olmago.contract.customer;
 
 public enum MobilePhonePricePlan {
   PLATINUM,

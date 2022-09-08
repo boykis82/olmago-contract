@@ -4,9 +4,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.discount.condition.DiscountCondition;
-import team.caltech.olmago.contract.proxy.customer.CustomerServiceProxy;
-import team.caltech.olmago.contract.proxy.customer.MobilePhonePricePlan;
-import team.caltech.olmago.contract.proxy.customer.dto.LinkedMobilePhoneInfo;
+import team.caltech.olmago.contract.customer.CustomerServiceProxy;
+import team.caltech.olmago.contract.customer.MobilePhonePricePlan;
+import team.caltech.olmago.contract.customer.LinkedMobilePhoneInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;

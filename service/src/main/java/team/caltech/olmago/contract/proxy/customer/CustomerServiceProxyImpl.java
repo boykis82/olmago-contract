@@ -1,7 +1,9 @@
 package team.caltech.olmago.contract.proxy.customer;
 
 import org.springframework.stereotype.Component;
-import team.caltech.olmago.contract.proxy.customer.dto.LinkedMobilePhoneInfo;
+import team.caltech.olmago.contract.customer.CustomerServiceProxy;
+import team.caltech.olmago.contract.customer.LinkedMobilePhoneInfo;
+import team.caltech.olmago.contract.customer.MobilePhonePricePlan;
 
 @Component
 public class CustomerServiceProxyImpl implements CustomerServiceProxy {

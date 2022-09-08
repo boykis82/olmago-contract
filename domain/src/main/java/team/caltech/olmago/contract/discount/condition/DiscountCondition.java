@@ -1,9 +1,7 @@
 package team.caltech.olmago.contract.discount.condition;
 
-import lombok.experimental.Accessors;
 import team.caltech.olmago.contract.contract.Contract;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

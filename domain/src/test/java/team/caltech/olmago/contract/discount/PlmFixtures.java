@@ -1,6 +1,7 @@
 package team.caltech.olmago.contract.discount;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import team.caltech.olmago.contract.plm.*;
 
 import java.util.List;
@@ -12,10 +13,12 @@ import static team.caltech.olmago.contract.plm.DiscountStartDateType.*;
 import static team.caltech.olmago.contract.plm.DiscountType.*;
 import static team.caltech.olmago.contract.plm.DiscountUnit.*;
 
-@RequiredArgsConstructor
 public class PlmFixtures {
-  private final DiscountPolicyRepository discountPolicyRepository;
-  private final ProductRepository productRepository;
+  @Autowired
+  private DiscountPolicyRepository discountPolicyRepository;
+  
+  @Autowired
+  private ProductRepository productRepository;
   
   public void setupDiscountPolicies() {
     discountPolicyRepository.saveAll(
