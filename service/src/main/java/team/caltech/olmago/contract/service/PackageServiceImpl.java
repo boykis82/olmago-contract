@@ -3,8 +3,8 @@ package team.caltech.olmago.contract.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team.caltech.olmago.contract.contract.Contract;
-import team.caltech.olmago.contract.contract.UzooPackage;
-import team.caltech.olmago.contract.contract.UzooPackageRepository;
+import team.caltech.olmago.contract.contract.uzoopackage.UzooPackage;
+import team.caltech.olmago.contract.contract.uzoopackage.UzooPackageRepository;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
 
 import java.time.LocalDateTime;

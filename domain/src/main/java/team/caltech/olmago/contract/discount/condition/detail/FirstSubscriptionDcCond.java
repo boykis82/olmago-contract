@@ -17,6 +17,6 @@ public class FirstSubscriptionDcCond extends DiscountCondition {
   
   @Override
   public boolean satisfied(Contract contract) {
-    return contractRepository.countAppliedDcType(contract.getCustomerId(), DiscountType.THE_FIRST_SUBSCRIPTION) == 0;
+    return contractRepository.countAppliedDcTypeByCustomer(contract.getCustomerId(), DiscountType.THE_FIRST_SUBSCRIPTION) == 0;
   }
 }

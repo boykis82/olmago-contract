@@ -10,9 +10,9 @@ import java.util.Optional;
 @Repository
 public interface DiscountPolicyRepository extends JpaRepository<DiscountPolicy, String> {
   @Query(
-      "SELECT dp" +
-      "FROM DiscountPolicy dp" +
-      "WHERE couponPolicyCode = :couponPolicyCode"
+      "SELECT dp " +
+      "FROM DiscountPolicy dp " +
+      "WHERE couponPolicyCode = :couponPolicyCode "
   )
   Optional<DiscountPolicy> findByCouponPolicyCode(@Param("couponPolicyCode") String couponPolicyCode);
 }

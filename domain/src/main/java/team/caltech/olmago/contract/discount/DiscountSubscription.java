@@ -3,7 +3,7 @@ package team.caltech.olmago.contract.discount;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team.caltech.olmago.contract.contract.LifeCycle;
+import team.caltech.olmago.contract.common.LifeCycle;
 import team.caltech.olmago.contract.plm.DiscountPeriodType;
 import team.caltech.olmago.contract.plm.DiscountPolicy;
 import team.caltech.olmago.contract.product.ProductSubscription;

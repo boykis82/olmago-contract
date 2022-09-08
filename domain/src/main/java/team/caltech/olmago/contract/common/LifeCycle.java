@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.contract;
+package team.caltech.olmago.contract.common;
 
 import lombok.Getter;
 

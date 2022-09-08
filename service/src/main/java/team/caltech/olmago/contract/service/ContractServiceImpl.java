@@ -316,7 +316,7 @@ public class ContractServiceImpl implements ContractService {
   }
 
   private void validateExistingProduct(ReceiveContractChangeDto dto, String afterProductCode) {
-    int sameProductExistedCount = contractRepository.countActiveContractByCustomerIdAndFeeProductCode(dto.getCustomerId(), afterProductCode);
+    Long sameProductExistedCount = contractRepository.countActiveContractByCustomerAndFeeProductCode(dto.getCustomerId(), afterProductCode);
     if (sameProductExistedCount > 0) {
       throw new InvalidArgumentException();
     }

@@ -1,8 +1,10 @@
-package team.caltech.olmago.contract.contract;
+package team.caltech.olmago.contract.contract.uzoopackage;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import team.caltech.olmago.contract.contract.Contract;
+import team.caltech.olmago.contract.common.LifeCycle;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

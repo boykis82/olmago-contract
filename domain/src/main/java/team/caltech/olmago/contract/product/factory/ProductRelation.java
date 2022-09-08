@@ -20,14 +20,14 @@ public class ProductRelation {
   private Long id;
   
   @Column(nullable = false)
-  private String mainProductId;
+  private String mainProductCode;
   
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  private ProductRelationType ProductRelationType;
+  private ProductRelationType productRelationType;
   
   @Column(nullable = false)
-  private String subProductId;
+  private String subProductCode;
   
   @Column(nullable = false)
   private LocalDate startDt;

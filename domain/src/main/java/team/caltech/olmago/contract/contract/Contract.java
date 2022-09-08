@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import team.caltech.olmago.contract.common.LifeCycle;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.AvailableProductType;
 import team.caltech.olmago.contract.plm.BillPeriod;

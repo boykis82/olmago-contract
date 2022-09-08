@@ -12,14 +12,14 @@ import java.util.List;
 @Repository
 public interface ProductRelationRepository extends JpaRepository<ProductRelation, Long> {
   @Query(
-      "SELECT pr.subProductId " +
+      "SELECT pr.subProductCode " +
       "FROM   ProductRelation pr " +
-      "WHERE  pr.mainProductId = :mainProductId " +
+      "WHERE  pr.mainProductCode = :mainProductCode " +
       "AND    pr.productRelationType = :productRelationType " +
       "AND    :strdDate BETWEEN pr.startDt AND pr.endDt "
   )
   List<String> findByMainProductAndProductRelationType(
-      @Param("mainProductId") String mainProductId,
+      @Param("mainProductCode") String mainProductCode,
       @Param("productRelationType") ProductRelationType productRelationType,
       @Param("strdDate") LocalDate strdDate
   );

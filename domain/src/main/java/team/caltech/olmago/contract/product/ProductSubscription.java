@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team.caltech.olmago.contract.contract.Contract;
-import team.caltech.olmago.contract.contract.LifeCycle;
+import team.caltech.olmago.contract.common.LifeCycle;
 import team.caltech.olmago.contract.discount.DiscountSubscription;
 import team.caltech.olmago.contract.plm.DiscountPolicy;
 import team.caltech.olmago.contract.plm.Product;
@@ -26,15 +26,13 @@ public class ProductSubscription {
   @Version
   private int version;
   
-  @Column(nullable = false)
   @ManyToOne
   @JoinColumn(name = "productCode")
   private Product product;
   
   @Embedded
   private LifeCycle lifeCycle;
-  
-  @Column(nullable = false)
+
   @ManyToOne
   @JoinColumn(name = "contract_id")
   private Contract contract;
@@ -43,7 +41,7 @@ public class ProductSubscription {
   
   private String associateSystemId;
   
-  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "product")
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productSubscription")
   private List<DiscountSubscription> discountSubscriptions = new ArrayList<>();
   
   @Builder
