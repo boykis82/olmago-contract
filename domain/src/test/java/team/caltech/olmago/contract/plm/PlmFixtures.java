@@ -1,8 +1,4 @@
-package team.caltech.olmago.contract.discount;
-
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import team.caltech.olmago.contract.plm.*;
+package team.caltech.olmago.contract.plm;
 
 import java.util.List;
 
@@ -14,14 +10,8 @@ import static team.caltech.olmago.contract.plm.DiscountType.*;
 import static team.caltech.olmago.contract.plm.DiscountUnit.*;
 
 public class PlmFixtures {
-  @Autowired
-  private DiscountPolicyRepository discountPolicyRepository;
-  
-  @Autowired
-  private ProductRepository productRepository;
-  
-  public void setupDiscountPolicies() {
-    discountPolicyRepository.saveAll(
+  public static List<DiscountPolicy> setupDiscountPolicies() {
+    return
         List.of(
             DiscountPolicy.builder().dcPolicyCode("DCP0000001").dcPolicyName("우주패스All_Life_Standard_최초가입할인").dcUnit(AMOUNT).dcAmountOrRate(8900).dcType(THE_FIRST_SUBSCRIPTION).dcStartDateType(IMMEDIATELY).dcPeriodType(ONE_MONTH).build(),
             DiscountPolicy.builder().dcPolicyCode("DCP0000002").dcPolicyName("우주패스Mini_최초가입할인").dcUnit(AMOUNT).dcAmountOrRate(4800).dcType(THE_FIRST_SUBSCRIPTION).dcStartDateType(IMMEDIATELY).dcPeriodType(ONE_MONTH).build(),
@@ -47,8 +37,7 @@ public class PlmFixtures {
             DiscountPolicy.builder().dcPolicyCode("DCM0000002").dcPolicyName("이동전화 요금제 연계(all/life) 5000원 할인(프라임)").dcUnit(AMOUNT).dcAmountOrRate(5000).dcType(MOBILE_PHONE_PRICE_PLAN_LINKED).dcStartDateType(IMMEDIATELY).dcPeriodType(INFINITE).build(),
             
             DiscountPolicy.builder().dcPolicyCode("DCS0000001").dcPolicyName("이동전화 요금제 연계(all/life) 4900원 추가할인(프라임)_프로모션(20220901~20221231)").dcUnit(AMOUNT).dcAmountOrRate(4900).dcType(MOBILE_PHONE_PRICE_PLAN_LINKED).dcStartDateType(IMMEDIATELY).dcPeriodType(THREE_MONTHS).build()
-        )
-    );
+        );
   }
   
 /*
@@ -99,9 +88,8 @@ public class PlmFixtures {
       그 뒤로 5000원
  */
   
-  public void setupProducts() {
-    productRepository.saveAll(
-        List.of(
+  public static List<Product> setupProducts() {
+    return List.of(
             Product.builder().productCode("NMP0000001").productName("우주패스All").availableProductType(PACKAGE).billPeriod(MONTHLY).feeVatIncluded(9900).isTheFirstSubscriptionDcTarget(true).build(),
             Product.builder().productCode("NMP0000002").productName("우주패스Life").availableProductType(PACKAGE).billPeriod(MONTHLY).feeVatIncluded(9900).isTheFirstSubscriptionDcTarget(true).build(),
             Product.builder().productCode("NMP0000003").productName("우주패스Mini").availableProductType(PACKAGE).billPeriod(MONTHLY).feeVatIncluded(4900).isTheFirstSubscriptionDcTarget(true).build(),
@@ -122,7 +110,6 @@ public class PlmFixtures {
             Product.builder().productCode("NMO0000008").productName("flo and data plus").availableProductType(AvailableProductType.OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(9000).build(),
             Product.builder().productCode("NMO0000009").productName("wavve and data premium").availableProductType(AvailableProductType.OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(15900).build(),
             Product.builder().productCode("NMO0000010").productName("야놀자").availableProductType(AvailableProductType.OPTION).billPeriod(MONTHLY).feeVatIncluded(5000).isTheFirstSubscriptionDcTarget(false).build()
-        )
     );
   }
 }

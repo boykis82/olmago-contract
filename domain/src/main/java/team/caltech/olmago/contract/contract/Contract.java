@@ -55,7 +55,7 @@ public class Contract {
   private final List<ProductSubscription> productSubscriptions = new ArrayList<>();
   
   @Setter
-  private long packageId;
+  private Long packageId;
   
   @Builder
   public Contract(long customerId,
@@ -79,7 +79,6 @@ public class Contract {
     productSubscriptions.forEach(
         productSubscription -> productSubscription.completeSubscription(subCmplDtm)
     );
-    //-- TODO (연다위 공부하고 고치자)
     billCycle = BillCycle.of(subCmplDtm.toLocalDate(), BillPeriod.MONTHLY);
   }
   
@@ -143,6 +142,9 @@ public class Contract {
   }
 
   public void changeToUnit(long orderId, LocalDateTime unitContractConvertedDateTime) {
+    if (contractType != ContractType.OPTION) {
+      throw new InvalidArgumentException();
+    }
     this.lastOrderId = orderId;
     this.contractType = ContractType.UNIT;
     this.unitContractConvertedDateTime = unitContractConvertedDateTime;
