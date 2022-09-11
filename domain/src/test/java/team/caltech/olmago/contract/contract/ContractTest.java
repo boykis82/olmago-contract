@@ -1,7 +1,5 @@
 package team.caltech.olmago.contract.contract;
 
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,13 +13,9 @@ import team.caltech.olmago.contract.discount.DiscountSubscription;
 import team.caltech.olmago.contract.plm.*;
 import team.caltech.olmago.contract.product.ProductSubscription;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,7 +59,7 @@ public class ContractTest {
   }
   
   @Test
-  public void givenPackage_whenCreateContract_thenShouldBeGetId() {
+  public void 최초에_계약정보를접수하면_ID가채번되고접수일시로값이생성되어야함() {
     Contract contract = createUzoopassAllContract();
 
     assertThat(contract.getCustomerId()).isEqualTo(1L);
@@ -93,7 +87,7 @@ public class ContractTest {
   }
   
   @Test
-  public void givenSubRcvContract_whenSubCompleted_thenSubscriptionShouldBeCompleted() {
+  public void 계약접수된상태에서_접수완료되면_가입완료돼야함() {
     Contract contract = createUzoopassAllContract();
     contract.completeSubscription(subCmplDtm);
   
@@ -117,11 +111,12 @@ public class ContractTest {
   }
   
   @Test
-  public void givenSubCmplContract_whenTermRcv_thenSubscriptionShouldBeTerminationReceived() {
+  public void 계약완료된상태에서_해지접수되면_해지접수돼야함() {
     Contract contract = createUzoopassAllContract();
     contract.completeSubscription(subCmplDtm);
-    contract.receiveTermination(2L, termRcvDtm);
-  
+    contract.receiveTermination(3L, termRcvDtm);
+
+    assertThat(contract.getLastOrderId()).isEqualTo(3L);
     assertThat(contract.getLifeCycle().getSubscriptionReceivedDateTime()).isEqualTo(subRcvDtm);
     assertThat(contract.getLifeCycle().getSubscriptionCompletedDateTime()).isEqualTo(subCmplDtm);
     assertThat(contract.getLifeCycle().getTerminationReceivedDateTime()).isEqualTo(termRcvDtm);
@@ -139,11 +134,11 @@ public class ContractTest {
   }
   
   @Test
-  public void givenTermRcvContract_whenCancelTermRcv_thenSubscriptionShouldBeActive() {
+  public void 계약해지접수된상테에서_해지접수취소하면_계약이살아나야함() {
     Contract contract = createUzoopassAllContract();
     contract.completeSubscription(subCmplDtm);
     contract.receiveTermination(2L, termRcvDtm);
-    contract.cancelTerminationReceipt(2L, termRcvCnclDtm);
+    contract.cancelTerminationReceipt(3L, termRcvCnclDtm);
     
     assertThat(contract.getLifeCycle().getSubscriptionReceivedDateTime()).isEqualTo(subRcvDtm);
     assertThat(contract.getLifeCycle().getSubscriptionCompletedDateTime()).isEqualTo(subCmplDtm);
@@ -164,7 +159,7 @@ public class ContractTest {
   
   
   @Test
-  public void givenTermRcvContract_whenTermCompleted_thenSubscriptionShouldBeTerminated() {
+  public void 해지접수된상태에서_해지완료되면_계약은끝나야함() {
     Contract contract = createUzoopassAllContract();
     contract.completeSubscription(subCmplDtm);
     contract.receiveTermination(2L, termRcvDtm);
@@ -196,43 +191,32 @@ public class ContractTest {
         .subRcvDtm(subRcvDtm)
         .build();
     
-    ProductSubscription ps1 = ProductSubscription.builder()
-        .product(products.get("NMP0000001"))
+    contract.addProductSubscriptions(List.of(
+        createProductSubscription(contract, "NMP0000001", "DCP0000001", "DCM0000001"),
+        createProductSubscription(contract, "NMB0000001", "DCB0000001"),
+        createProductSubscription(contract, "NMB0000002", "DCB0000001")
+    ));
+    return contract;
+  }
+
+  private ProductSubscription createProductSubscription(Contract contract, String productCode, String ... dcCodes) {
+    ProductSubscription ps = ProductSubscription.builder()
+        .product(products.get(productCode))
         .contract(contract)
         .subscriptionReceivedDateTime(subRcvDtm)
         .build();
-    ps1.discountSubscriptions(
-        List.of(
-            DiscountSubscription.builder().discountPolicy(discountPolicies.get("DCP0000001")).productSubscription(ps1).subRcvDtm(subRcvDtm).build(),
-            DiscountSubscription.builder().discountPolicy(discountPolicies.get("DCM0000001")).productSubscription(ps1).subRcvDtm(subRcvDtm).build()
-        )
+
+    ps.discountSubscriptions(
+        Arrays.stream(dcCodes)
+            .map(dcCode -> DiscountSubscription.builder()
+                .discountPolicy(discountPolicies.get(dcCode))
+                .productSubscription(ps)
+                .subRcvDtm(subRcvDtm)
+                .build()
+            )
+            .collect(Collectors.toList())
     );
-    
-    ProductSubscription ps2 = ProductSubscription.builder()
-        .product(products.get("NMB0000001"))
-        .contract(contract)
-        .subscriptionReceivedDateTime(contract.getLifeCycle().getSubscriptionReceivedDateTime())
-        .build();
-    ps2.discountSubscriptions(
-        List.of(
-            DiscountSubscription.builder().discountPolicy(discountPolicies.get("DCB0000001")).productSubscription(ps2).subRcvDtm(subRcvDtm).build()
-        )
-    );
-    
-    ProductSubscription ps3 = ProductSubscription.builder()
-        .product(products.get("NMB0000002"))
-        .contract(contract)
-        .subscriptionReceivedDateTime(contract.getLifeCycle().getSubscriptionReceivedDateTime())
-        .build();
-    ps3.discountSubscriptions(
-        List.of(
-            DiscountSubscription.builder().discountPolicy(discountPolicies.get("DCB0000001")).productSubscription(ps3).subRcvDtm(subRcvDtm).build()
-        )
-    );
-    
-    contract.addProductSubscriptions(List.of(ps1, ps2, ps3));
-    return contract;
+    return ps;
   }
-  
 }
 
