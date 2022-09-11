@@ -65,28 +65,32 @@ public class ProductSubscription {
   
   public void completeSubscription(LocalDateTime subscriptionCompletedDateTime) {
     lifeCycle.completeSubscription(subscriptionCompletedDateTime);
-    discountSubscriptions.forEach(ds -> ds.completeSubscription(subscriptionCompletedDateTime));
+    discountSubscriptions
+        .stream().filter(ds -> ds.getLifeCycle().isSubscriptionReceived())
+        .forEach(ds -> ds.completeSubscription(subscriptionCompletedDateTime));
   }
   
   public void receiveTermination(LocalDateTime terminationReceivedDateTime) {
     lifeCycle.receiveTermination(terminationReceivedDateTime);
-    discountSubscriptions.forEach(ds -> ds.receiveTermination(terminationReceivedDateTime));
+    discountSubscriptions
+        .stream().filter(ds -> ds.getLifeCycle().isSubscriptionCompleted())
+        .forEach(ds -> ds.receiveTermination(terminationReceivedDateTime));
   }
   
   public void cancelTerminationReceipt(LocalDateTime cancelTerminationReceiptDateTime) {
     lifeCycle.cancelTerminationReceipt(cancelTerminationReceiptDateTime);
-    discountSubscriptions.forEach(ds -> ds.cancelTerminationReceipt(cancelTerminationReceiptDateTime));
+    discountSubscriptions
+        .stream().filter(ds -> ds.getLifeCycle().isTerminationReceived())
+        .forEach(ds -> ds.cancelTerminationReceipt(cancelTerminationReceiptDateTime));
   }
   
   public void completeTermination(LocalDateTime terminationCompletedDateTime) {
     lifeCycle.completeTermination(terminationCompletedDateTime);
-    discountSubscriptions.forEach(ds -> ds.completeTermination(terminationCompletedDateTime));
+    discountSubscriptions
+        .stream().filter(ds -> ds.getLifeCycle().isTerminationReceived())
+        .forEach(ds -> ds.completeTermination(terminationCompletedDateTime));
   }
 
-  public boolean isActive() {
-    return lifeCycle.isActive();
-  }
-  
   public String getProductCode() {
     return product.getProductCode();
   }

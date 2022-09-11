@@ -44,7 +44,31 @@ public class LifeCycle {
     this.cancelTerminationReceiptDateTime = cancelTerminationReceiptDateTime;
   }
 
-  public boolean isActive() {
-    return terminationReceivedDateTime == null && terminationCompletedDateTime == null;
+  public boolean isSubscriptionReceived() {
+    return subscriptionReceivedDateTime != null &&
+        subscriptionCompletedDateTime == null &&
+        terminationReceivedDateTime == null &&
+        terminationCompletedDateTime == null;
+  }
+
+  public boolean isSubscriptionCompleted() {
+    return subscriptionReceivedDateTime != null &&
+        subscriptionCompletedDateTime != null &&
+        terminationReceivedDateTime == null &&
+        terminationCompletedDateTime == null;
+  }
+
+  public boolean isTerminationReceived() {
+    return subscriptionReceivedDateTime != null &&
+        subscriptionCompletedDateTime != null &&
+        terminationReceivedDateTime != null &&
+        terminationCompletedDateTime == null;
+  }
+
+  public boolean isTerminationCompleted() {
+    return subscriptionReceivedDateTime != null &&
+        subscriptionCompletedDateTime != null &&
+        terminationReceivedDateTime != null &&
+        terminationCompletedDateTime != null;
   }
 }

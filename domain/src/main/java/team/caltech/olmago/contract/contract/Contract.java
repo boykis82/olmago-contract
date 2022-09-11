@@ -76,33 +76,32 @@ public class Contract {
   
   public void completeSubscription(LocalDateTime subCmplDtm) {
     lifeCycle.completeSubscription(subCmplDtm);
-    productSubscriptions.forEach(
-        productSubscription -> productSubscription.completeSubscription(subCmplDtm)
-    );
+    productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
+        .forEach(ps -> ps.completeSubscription(subCmplDtm));
     billCycle = BillCycle.of(subCmplDtm.toLocalDate(), BillPeriod.MONTHLY);
   }
   
   public void receiveTermination(Long orderId, LocalDateTime termRcvDtm) {
     lifeCycle.receiveTermination(termRcvDtm);
     this.lastOrderId = orderId;
-    productSubscriptions.forEach(
-        productSubscription -> productSubscription.receiveTermination(termRcvDtm)
-    );
+    productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isSubscriptionCompleted())
+        .forEach(ps -> ps.receiveTermination(termRcvDtm));
   }
   
   public void cancelTerminationReceipt(Long orderId, LocalDateTime cnclTermRcvDtm) {
     lifeCycle.cancelTerminationReceipt(cnclTermRcvDtm);
-    this.lastOrderId = null;
-    productSubscriptions.forEach(
-        productSubscription -> productSubscription.cancelTerminationReceipt(cnclTermRcvDtm)
-    );
+    productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isTerminationReceived())
+        .forEach(ps -> ps.cancelTerminationReceipt(cnclTermRcvDtm));
   }
   
   public void completeTermination(LocalDateTime termCmplDtm) {
     lifeCycle.completeTermination(termCmplDtm);
-    productSubscriptions.forEach(
-        productSubscription -> productSubscription.completeTermination(termCmplDtm)
-    );
+    productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isTerminationReceived())
+        .forEach(ps -> ps.completeTermination(termCmplDtm));
   }
   
   public void completeRegularPayment(LocalDateTime regPayCmplDtm) {
@@ -114,6 +113,9 @@ public class Contract {
                              List<String> termProdCodes,
                              List<ProductSubscription> newBasicBenefitProductSubscriptions,
                              LocalDateTime changeDateTime) {
+    if (contractType != ContractType.PACKAGE)
+      throw new InvalidArgumentException();
+
     receiveTerminationOfUnavailableBasicBenefitProduct(termProdCodes, changeDateTime);
     addProductSubscriptions(newBasicBenefitProductSubscriptions);
     this.feeProductCode = feeProductCode;
@@ -122,7 +124,7 @@ public class Contract {
   private void receiveTerminationOfUnavailableBasicBenefitProduct(List<String> shouldBeTerminatedProductCodes,
                                                                   LocalDateTime chgDtm) {
     productSubscriptions.stream()
-        .filter(ps -> ps.isActive()
+        .filter(ps -> ps.getLifeCycle().isSubscriptionCompleted()
             &&
             shouldBeTerminatedProductCodes.stream()
                 .anyMatch(pc -> pc.equals(ps.getProductCode()))
