@@ -124,7 +124,12 @@ public class DiscountSubscription {
           discountPolicy.getDcPeriodType().getMonths()
       ).minusDays(1);
     }
+  
   }
+  public void cancelSubscriptionReceipt(LocalDateTime cnclSubRcvDtm) {
+    lifeCycle.cancelSubscriptionReceipt(cnclSubRcvDtm);
+  }
+  
   
   public void completeSubscription(LocalDateTime subCmplDtm) {
     lifeCycle.completeSubscription(subCmplDtm);
@@ -136,8 +141,8 @@ public class DiscountSubscription {
     discountEndRegisterDate = termRcvDtm.toLocalDate();
   }
   
-  public void cancelTerminationReceipt(LocalDateTime cnclTermRvDtm) {
-    lifeCycle.cancelTerminationReceipt(cnclTermRvDtm);
+  public void cancelTerminationReceipt(LocalDateTime cnclTermRcvDtm) {
+    lifeCycle.cancelTerminationReceipt(cnclTermRcvDtm);
   }
   
   public void completeTermination(LocalDateTime termCmplDtm) {

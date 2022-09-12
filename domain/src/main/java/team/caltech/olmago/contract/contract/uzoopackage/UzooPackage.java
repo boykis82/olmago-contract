@@ -38,6 +38,10 @@ public class UzooPackage {
     this.optionContract = optionContract;
     this.lifeCycle = new LifeCycle(subscriptionReceivedDateTime);
   }
+  
+  public void cancelSubscriptionReceipt(LocalDateTime cancelSubscriptionReceiptDateTime) {
+    lifeCycle.cancelSubscriptionReceipt(cancelSubscriptionReceiptDateTime);
+  }
 
   public void completeSubscription(LocalDateTime subscriptionCompletedDateTime) {
     lifeCycle.completeSubscription(subscriptionCompletedDateTime);

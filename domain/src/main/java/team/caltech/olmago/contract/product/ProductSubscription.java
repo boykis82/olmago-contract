@@ -63,6 +63,13 @@ public class ProductSubscription {
     return this;
   }
   
+  public void cancelSubscriptionReceipt(LocalDateTime cancelSubscriptionReceiptDateTime) {
+    lifeCycle.cancelSubscriptionReceipt(cancelSubscriptionReceiptDateTime);
+    discountSubscriptions
+        .stream().filter(ds -> ds.getLifeCycle().isSubscriptionReceived())
+        .forEach(ds -> ds.cancelSubscriptionReceipt(cancelSubscriptionReceiptDateTime));
+  }
+  
   public void completeSubscription(LocalDateTime subscriptionCompletedDateTime) {
     lifeCycle.completeSubscription(subscriptionCompletedDateTime);
     discountSubscriptions

@@ -74,6 +74,13 @@ public class Contract {
     this.productSubscriptions.addAll(productSubscriptions);
   }
   
+  public void cancelSubscriptionReceipt(LocalDateTime cnclSubRcvDtm) {
+    lifeCycle.cancelSubscriptionReceipt(cnclSubRcvDtm);
+    productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
+        .forEach(ps -> ps.cancelSubscriptionReceipt(cnclSubRcvDtm));
+  }
+  
   public void completeSubscription(LocalDateTime subCmplDtm) {
     lifeCycle.completeSubscription(subCmplDtm);
     productSubscriptions.stream()

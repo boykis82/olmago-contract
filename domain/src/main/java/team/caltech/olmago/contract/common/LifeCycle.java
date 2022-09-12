@@ -11,8 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Embeddable
 public class LifeCycle {
-  @Column(nullable = false)
   private LocalDateTime subscriptionReceivedDateTime;
+  private LocalDateTime cancelSubscriptionReceiptDateTime;
   private LocalDateTime subscriptionCompletedDateTime;
   private LocalDateTime terminationReceivedDateTime;
   private LocalDateTime cancelTerminationReceiptDateTime;
@@ -23,23 +23,50 @@ public class LifeCycle {
   }
   
   public void receiveSubscription(LocalDateTime subscriptionReceivedDateTime) {
+    if (this.subscriptionReceivedDateTime != null ||
+        subscriptionCompletedDateTime != null ||
+        terminationReceivedDateTime != null ||
+        terminationCompletedDateTime != null
+    ) {
+      throw new IllegalStateException();
+    }
     this.subscriptionReceivedDateTime = subscriptionReceivedDateTime;
   }
   
+  public void cancelSubscriptionReceipt(LocalDateTime cancelSubscriptionReceiptDateTime) {
+    if (!isSubscriptionReceived()) {
+      throw new IllegalStateException();
+    }
+    this.subscriptionReceivedDateTime = null;
+    this.cancelSubscriptionReceiptDateTime = cancelSubscriptionReceiptDateTime;
+  }
+  
   public void completeSubscription(LocalDateTime subscriptionCompletedDateTime) {
+    if (!isSubscriptionReceived()) {
+      throw new IllegalStateException();
+    }
     this.subscriptionCompletedDateTime = subscriptionCompletedDateTime;
   }
   
   public void receiveTermination(LocalDateTime terminationReceivedDateTime) {
+    if (!isSubscriptionCompleted()) {
+      throw new IllegalStateException();
+    }
     this.terminationReceivedDateTime = terminationReceivedDateTime;
     this.cancelTerminationReceiptDateTime = null;
   }
   
   public void completeTermination(LocalDateTime terminationCompletedDateTime) {
+    if (!isTerminationReceived()) {
+      throw new IllegalStateException();
+    }
     this.terminationCompletedDateTime = terminationCompletedDateTime;
   }
   
   public void cancelTerminationReceipt(LocalDateTime cancelTerminationReceiptDateTime) {
+    if (!isTerminationReceived()) {
+      throw new IllegalStateException();
+    }
     this.terminationReceivedDateTime = null;
     this.cancelTerminationReceiptDateTime = cancelTerminationReceiptDateTime;
   }
