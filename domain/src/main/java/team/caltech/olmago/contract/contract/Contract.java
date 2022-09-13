@@ -60,11 +60,13 @@ public class Contract {
   private Long packageId;
   
   @Builder
-  public Contract(long customerId,
+  public Contract(long id,
+                  long customerId,
                   long orderId,
                   LocalDateTime subRcvDtm,
                   ContractType contractType,
                   String feeProductCode) {
+    this.id = id;
     this.customerId = customerId;
     this.lastOrderId = orderId;
     this.lifeCycle = new LifeCycle(subRcvDtm);
@@ -80,11 +82,12 @@ public class Contract {
     return new ContractSubscriptionReceived(id, lastOrderId, lifeCycle.getSubscriptionReceivedDateTime());
   }
   
-  public void cancelSubscriptionReceipt(LocalDateTime cnclSubRcvDtm) {
+  public ContractSubscriptionReceiptCanceled cancelSubscriptionReceipt(LocalDateTime cnclSubRcvDtm) {
     lifeCycle.cancelSubscriptionReceipt(cnclSubRcvDtm);
     productSubscriptions.stream()
         .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
         .forEach(ps -> ps.cancelSubscriptionReceipt(cnclSubRcvDtm));
+    return new ContractSubscriptionReceiptCanceled(id, lastOrderId, cnclSubRcvDtm);
   }
   
   public ContractSubscriptionCompleted completeSubscription(LocalDateTime subCmplDtm) {
@@ -130,10 +133,14 @@ public class Contract {
     billCycle = billCycle.next();
     
     // 해지접수 -> 해지완료
-    completeTermination(regPayCmplDtm);
+    productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isTerminationReceived())
+        .forEach(ps -> ps.completeTermination(regPayCmplDtm));
     
     // 가입접수 -> 가입완료
-    completeSubscription(regPayCmplDtm);
+    productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
+        .forEach(ps -> ps.completeSubscription(regPayCmplDtm));
   
     // 요금제코드 현행화
     setFeeProductCode();

@@ -52,6 +52,7 @@ public class ContractTest {
   public void 최초에_계약정보를접수하면_ID가채번되고접수일시로값이생성되어야함() {
     // given & when
     Contract contract = createUzoopassAllContract();
+    contract.receiveSubscription();
 
     // then
     assertThat(contract.getCustomerId()).isEqualTo(1L);
@@ -338,8 +339,9 @@ public class ContractTest {
 
   private Contract createUzoopassAllContract() {
     Contract contract = Contract.builder()
+        .id(1L)
         .customerId(1L)
-        .lastOrderId(2L)
+        .orderId(2L)
         .contractType(ContractType.PACKAGE)
         .feeProductCode("NMP0000001")
         .subRcvDtm(subRcvDtm)
