@@ -57,7 +57,7 @@ public class ContractTest {
     assertThat(contract.getCustomerId()).isEqualTo(1L);
     assertThat(contract.getLastOrderId()).isEqualTo(2L);
     assertThat(contract.getContractType()).isEqualTo(ContractType.PACKAGE);
-    assertThat(contract.getFeeProductCode()).isEqualTo("NM00000001");
+    assertThat(contract.getFeeProductCode()).isEqualTo("NMP0000001");
     assertThat(contract.getLifeCycle().isSubscriptionReceived()).isTrue();
     assertThat(contract.getLifeCycle().getSubscriptionReceivedDateTime()).isEqualTo(subRcvDtm);
     assertThat(contract.getBillCycle()).isNull();
@@ -73,6 +73,28 @@ public class ContractTest {
             .map(ProductSubscription::getDiscountSubscriptions)
             .flatMap(List::stream)
             .allMatch(ds -> ds.getLifeCycle().getSubscriptionReceivedDateTime().equals(subRcvDtm))
+    ).isTrue();
+  }
+  
+  @Test
+  public void 계약접수된상태에서_접수취소되면_클리어돼야함() {
+    // given & when
+    Contract contract = createUzoopassAllContract();
+    LocalDateTime cnclDtm = LocalDateTime.of(2022,9,2,0,0,1);
+    contract.cancelSubscriptionReceipt(cnclDtm);
+    
+    // then
+    assertThat(contract.getLifeCycle().isSubscriptionReceived()).isFalse();
+    
+    assertThat(
+        contract.getProductSubscriptions().stream()
+            .allMatch(ps -> ps.getLifeCycle().getCancelSubscriptionReceiptDateTime().equals(cnclDtm))
+    ).isTrue();
+    assertThat(
+        contract.getProductSubscriptions().stream()
+            .map(ProductSubscription::getDiscountSubscriptions)
+            .flatMap(List::stream)
+            .allMatch(ds -> ds.getLifeCycle().getCancelSubscriptionReceiptDateTime().equals(cnclDtm))
     ).isTrue();
   }
   
@@ -193,7 +215,7 @@ public class ContractTest {
     Contract contract = createUzoopassAllContract();
     contract.completeSubscription(subCmplDtm);
 
-    // when
+    // when - 첫 정기결제 완료
     contract.completeRegularPayment(LocalDateTime.of(2022,10,1,13,0,3));
 
     // then
@@ -202,7 +224,7 @@ public class ContractTest {
     assertThat(contract.getBillCycle().getCurrentBillEndDate()).isEqualTo(LocalDate.of(2022,10,31));
     assertThat(contract.getBillCycle().getMonthsPassed()).isEqualTo(1);
 
-    // when
+    // when - 두번쨰 정기결제 완료
     contract.completeRegularPayment(LocalDateTime.of(2022,11,1,13,1,13));
 
     // then
@@ -234,6 +256,7 @@ public class ContractTest {
         .collect(Collectors.toList());
 
     contract.changeContract(
+        3L,
         "NMP0000002",
         termProductCodes,
         List.of(
@@ -245,12 +268,14 @@ public class ContractTest {
     );
 
     // then
+    // 해지접수상품 검증
     assertThat(
         contract.getProductSubscriptions().stream()
             .filter(ps -> changeRcvDtm.equals(ps.getLifeCycle().getTerminationReceivedDateTime()))
             .map(ProductSubscription::getProductCode)
             .collect(Collectors.toList())
     ).contains("NMP0000001", "NMB0000001", "NMB0000002");
+    // 가입접수상품 검증
     assertThat(
         contract.getProductSubscriptions().stream()
             .filter(ps -> changeRcvDtm.equals(ps.getLifeCycle().getSubscriptionReceivedDateTime()))
@@ -279,6 +304,7 @@ public class ContractTest {
     List<String> termProductCodes = List.of("NMP0000001");
 
     contract.changeContract(
+        3L,
         "NMP0000003",
         termProductCodes,
         List.of(
@@ -287,18 +313,21 @@ public class ContractTest {
         changeRcvDtm
     );
     // then
+    // 해지접수상품 검증
     assertThat(
         contract.getProductSubscriptions().stream()
             .filter(ps -> changeRcvDtm.equals(ps.getLifeCycle().getTerminationReceivedDateTime()))
             .map(ProductSubscription::getProductCode)
             .collect(Collectors.toList())
     ).contains("NMP0000001");
+    // 가입접수상품 검증
     assertThat(
         contract.getProductSubscriptions().stream()
             .filter(ps -> changeRcvDtm.equals(ps.getLifeCycle().getSubscriptionReceivedDateTime()))
             .map(ProductSubscription::getProductCode)
             .collect(Collectors.toList())
     ).contains("NMP0000003");
+    // 유지상품 검증
     assertThat(
         contract.getProductSubscriptions().stream()
             .filter(ps -> ps.getLifeCycle().isSubscriptionCompleted())

@@ -2,6 +2,7 @@ package team.caltech.olmago.contract.discount.condition.detail;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.discount.condition.DiscountCondition;
 import team.caltech.olmago.contract.customer.CustomerServiceProxy;
@@ -11,6 +12,7 @@ import team.caltech.olmago.contract.customer.LinkedMobilePhoneInfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class MobilePhonePricePlanDcCond extends DiscountCondition {
@@ -29,12 +31,12 @@ public class MobilePhonePricePlanDcCond extends DiscountCondition {
   
   @Override
   public boolean satisfied(Contract contract) {
-   LinkedMobilePhoneInfo linkedMobilePhoneInfo = customerServiceProxy.findByCustomerId(contract.getCustomerId());
-
-    return mobilePhonePricePlans.stream()
-        .anyMatch(mppp -> mppp == linkedMobilePhoneInfo.getMobilePhonePricePlan()
-            &&
-            linkedMobilePhoneInfo.getDcTargetUzooPassProductCode().equals(contract.getFeeProductCode())
-        );
+    Optional<LinkedMobilePhoneInfo> linkedMobilePhoneInfo =
+        customerServiceProxy.findByCustomerId(contract.getCustomerId()).blockOptional();
+    
+    return linkedMobilePhoneInfo.filter(
+        mobilePhoneInfo -> mobilePhonePricePlans.stream()
+            .anyMatch(mppp -> mobilePhoneInfo.matchMobilePhonePricePlanAndUzooPassProductCode(mppp, contract.getFeeProductCode()))
+    ).isPresent();
   }
 }

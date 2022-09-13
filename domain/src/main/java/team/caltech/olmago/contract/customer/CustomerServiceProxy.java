@@ -1,5 +1,7 @@
 package team.caltech.olmago.contract.customer;
 
+import reactor.core.publisher.Mono;
+
 public interface CustomerServiceProxy {
-  LinkedMobilePhoneInfo findByCustomerId(long customerId);
+  Mono<LinkedMobilePhoneInfo> findByCustomerId(long customerId);
 }

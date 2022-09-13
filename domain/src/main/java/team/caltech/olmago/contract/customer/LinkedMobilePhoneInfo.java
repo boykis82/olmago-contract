@@ -15,4 +15,9 @@ public class LinkedMobilePhoneInfo {
   private String mobilePhoneNumber;
   private MobilePhonePricePlan mobilePhonePricePlan;
   private String dcTargetUzooPassProductCode;
+  
+  public boolean matchMobilePhonePricePlanAndUzooPassProductCode(MobilePhonePricePlan mobilePhonePricePlan, String uzooPassProductCode) {
+    return this.mobilePhonePricePlan.equals(mobilePhonePricePlan) &&
+        this.dcTargetUzooPassProductCode.equals(uzooPassProductCode);
+  }
 }
