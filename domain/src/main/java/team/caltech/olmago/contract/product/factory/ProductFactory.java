@@ -57,7 +57,14 @@ public class ProductFactory {
         .map(ProductFactory::productCode)
         .collect(Collectors.toList());
   }
-
+  
+  public List<ProductSubscription> receiveSubscription(
+      Contract contract,
+      LocalDateTime subRcvDtm
+  ) {
+    return receiveSubscription(contract, subRcvDtm, Collections.emptyList());
+  }
+  
   public List<ProductSubscription> receiveSubscription(
       Contract contract,
       LocalDateTime subRcvDtm,
@@ -89,14 +96,7 @@ public class ProductFactory {
         subRcvDtm
     ).discountSubscriptions(subscribeDiscounts(contract, satisfiedDiscountPolicyIds(contract)));
   }
-  
-  public List<ProductSubscription> receiveSubscription(
-      Contract contract,
-      LocalDateTime subRcvDtm
-  ) {
-    return receiveSubscription(contract, subRcvDtm, Collections.emptyList());
-  }
-  
+
   private List<String> satisfiedDiscountPolicyIds(Contract contract) {
     return availableDiscountConditions.stream()
         .filter(discountCondition -> discountCondition.satisfied(contract))

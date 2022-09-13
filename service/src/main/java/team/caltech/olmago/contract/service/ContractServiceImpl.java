@@ -3,7 +3,11 @@ package team.caltech.olmago.contract.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team.caltech.olmago.contract.contract.*;
+import team.caltech.olmago.contract.contract.event.ContractChangeCanceled;
+import team.caltech.olmago.contract.contract.event.ContractChanged;
+import team.caltech.olmago.contract.contract.event.Event;
 import team.caltech.olmago.contract.dto.*;
+import team.caltech.olmago.contract.event.EventPublisher;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.DiscountPolicy;
 import team.caltech.olmago.contract.plm.DiscountPolicyRepository;
@@ -30,10 +34,15 @@ public class ContractServiceImpl implements ContractService {
   private final PackageService packageService;
   private final AssociatedCompanyServiceProxy associatedCompanyServiceProxy;
   
+  private final EventPublisher eventPublisher;
+  
+  public static final String CONTRACT_EVENT_CHANNEL = "contract-event";
+  
   @Override
   @Transactional
   public List<ContractDto> receiveContractSubscription(ReceiveContractSubscriptionDto dto) {
     List<ContractDto> contractDtos = new ArrayList<>();
+    List<Event> events = new ArrayList<>();
     // package 할인 조건 중 option에 의존하는게 있으므로 option 먼저 생성
     if (isPackageSubscribing(dto)) {
       Contract optContract = contractRepository.save(
@@ -42,20 +51,28 @@ public class ContractServiceImpl implements ContractService {
       Contract pkgContract = contractRepository.save(
           createContract(dto.getCustomerId(), dto.getOrderId(), dto.getSubRcvDtm(), dto.getPkgProdCd(), ContractType.PACKAGE)
       );
+      events.add(optContract.receiveSubscription());
+      events.add(pkgContract.receiveSubscription());
+      
       packageService.createPackage(pkgContract, optContract, dto.getSubRcvDtm());
       
       contractDtos.add(ContractDto.of(optContract));
       contractDtos.add(ContractDto.of(pkgContract));
     }
-    contractDtos.addAll(contractRepository.saveAll(
+    //-- unit 계약 생성
+    List<Contract> unitContracts = contractRepository.saveAll(
         dto.getUnitProdCds().stream()
             .map(prodCd -> createContract(dto.getCustomerId(), dto.getOrderId(), dto.getSubRcvDtm(), prodCd, ContractType.UNIT))
             .collect(Collectors.toList())
-        )
-        .stream()
+    );
+    contractDtos.addAll(unitContracts.stream()
         .map(ContractDto::of)
         .collect(Collectors.toList())
     );
+    events.addAll(unitContracts.stream().map(Contract::receiveSubscription).collect(Collectors.toList()));
+    
+    eventPublisher.fire(CONTRACT_EVENT_CHANNEL, events);
+    
     return contractDtos;
   }
 
@@ -71,7 +88,7 @@ public class ContractServiceImpl implements ContractService {
   ) {
     Contract contract = Contract.builder()
         .customerId(customerId)
-        .lastOrderId(orderId)
+        .orderId(orderId)
         .subRcvDtm(subRcvDtm)
         .contractType(contractType)
         .feeProductCode(productCode)
@@ -87,7 +104,10 @@ public class ContractServiceImpl implements ContractService {
   @Transactional
   public ContractDto completeContractSubscription(CompleteContractSubscriptionDto dto) {
     Contract contract = contractRepository.findById(dto.getContractId()).orElseThrow(InvalidArgumentException::new);
-    contract.completeSubscription(dto.getSubscriptionCompletedDateTime());
+    eventPublisher.fire(
+        CONTRACT_EVENT_CHANNEL,
+        contract.completeSubscription(dto.getSubscriptionCompletedDateTime())
+    );
 
     if (contract.getContractType() != ContractType.UNIT) {
       packageService.completePackageSubscription(contract, dto.getSubscriptionCompletedDateTime());
@@ -102,7 +122,7 @@ public class ContractServiceImpl implements ContractService {
         contract.getId(),
         contract.getProductSubscriptions()
             .stream()
-            .filter(ProductSubscription::isActive)
+            .filter(ps -> ps.getLifeCycle().isSubscriptionCompleted())
             .map(ProductSubscription::getProductCode)
             .collect(Collectors.toList()),
         dtm
@@ -125,14 +145,16 @@ public class ContractServiceImpl implements ContractService {
   @Transactional
   public List<ContractDto> receiveContractTermination(ReceiveContractTerminationDto dto) {
     List<ContractDto> contractDtos = new ArrayList<>();
+    List<Event> events = new ArrayList<>();
+    
     if (dto.includePackage()) {
       Contract pkgContract = contractRepository.findById(dto.getPackageContractId())
           .orElseThrow(InvalidArgumentException::new);
-      pkgContract.receiveTermination(dto.getOrderId(), dto.getTerminationReceivedDateTime());
+      events.add(pkgContract.receiveTermination(dto.getOrderId(), dto.getTerminationReceivedDateTime()));
 
       Contract optContract = contractRepository.findById(dto.getOptionContractId())
           .orElseThrow(InvalidArgumentException::new);
-      optContract.receiveTermination(dto.getOrderId(), dto.getTerminationReceivedDateTime());
+      events.add(optContract.receiveTermination(dto.getOrderId(), dto.getTerminationReceivedDateTime()));
 
       packageService.receiveTermination(pkgContract, optContract, dto.getTerminationReceivedDateTime());
       
@@ -140,26 +162,31 @@ public class ContractServiceImpl implements ContractService {
       contractDtos.add(ContractDto.of(optContract));
     }
     List<Contract> contracts = contractRepository.findAllById(dto.getUnitContractIds());
-    contracts.forEach(c -> c.receiveTermination(dto.getOrderId(), dto.getTerminationReceivedDateTime()));
+    contracts.forEach(c -> events.add(c.receiveTermination(dto.getOrderId(), dto.getTerminationReceivedDateTime())));
     
     contractDtos.addAll(contracts.stream()
         .map(ContractDto::of)
         .collect(Collectors.toList())
     );
+  
+    eventPublisher.fire(CONTRACT_EVENT_CHANNEL, events);
+    
     return contractDtos;
   }
   
   @Override
   public List<ContractDto> cancelContractTerminationReceipt(CancelContractTerminationDto dto) {
     List<ContractDto> contractDtos = new ArrayList<>();
+    List<Event> events = new ArrayList<>();
+    
     if (dto.includePackage()) {
       Contract pkgContract = contractRepository.findById(dto.getPackageContractId())
           .orElseThrow(InvalidArgumentException::new);
-      pkgContract.cancelTerminationReceipt(dto.getOrderId(), dto.getCancelTerminationReceiptDateTime());
+      events.add(pkgContract.cancelTerminationReceipt(dto.getOrderId(), dto.getCancelTerminationReceiptDateTime()));
 
       Contract optContract = contractRepository.findById(dto.getOptionContractId())
           .orElseThrow(InvalidArgumentException::new);
-      optContract.cancelTerminationReceipt(dto.getOrderId(), dto.getCancelTerminationReceiptDateTime());
+      events.add(optContract.cancelTerminationReceipt(dto.getOrderId(), dto.getCancelTerminationReceiptDateTime()));
 
       packageService.cancelTerminationReceipt(pkgContract, optContract, dto.getCancelTerminationReceiptDateTime());
   
@@ -167,12 +194,15 @@ public class ContractServiceImpl implements ContractService {
       contractDtos.add(ContractDto.of(optContract));
     }
     List<Contract> contracts = contractRepository.findAllById(dto.getUnitContractIds());
-    contracts.forEach(c -> c.cancelTerminationReceipt(dto.getOrderId(), dto.getCancelTerminationReceiptDateTime()));
+    contracts.forEach(c -> events.add(c.cancelTerminationReceipt(dto.getOrderId(), dto.getCancelTerminationReceiptDateTime())));
   
     contractDtos.addAll(contracts.stream()
         .map(ContractDto::of)
         .collect(Collectors.toList())
     );
+  
+    eventPublisher.fire(CONTRACT_EVENT_CHANNEL, events);
+    
     return contractDtos;
   }
   
@@ -181,8 +211,11 @@ public class ContractServiceImpl implements ContractService {
   public ContractDto completeContractTermination(CompleteContractTerminationDto dto) {
     Contract contract = contractRepository.findById(dto.getContractId())
         .orElseThrow(InvalidArgumentException::new);
-    contract.completeTermination(dto.getTerminationCompletedDateTime());
-
+    eventPublisher.fire(
+        CONTRACT_EVENT_CHANNEL,
+        contract.completeTermination(dto.getTerminationCompletedDateTime())
+    );
+    
     if (contract.getContractType() != ContractType.UNIT) {
       packageService.completePackageTermination(contract, dto.getTerminationCompletedDateTime());
     }
@@ -230,6 +263,12 @@ public class ContractServiceImpl implements ContractService {
         throw new InvalidArgumentException();
       }
     }
+    eventPublisher.fire(
+        CONTRACT_EVENT_CHANNEL,
+        contractDtos.stream()
+            .map(c -> new ContractChanged(c.getContractId(), dto.getOrderId(), dto.getChangeReceivedDateTime()))
+            .collect(Collectors.toList())
+    );
     return contractDtos;
   }
 
@@ -267,7 +306,7 @@ public class ContractServiceImpl implements ContractService {
     List<ProductSubscription> newBasicBenefitProductSubscriptions
         = afPkgProdFactory.receiveSubscription(pkgContract, dto.getChangeReceivedDateTime(), bfPkgProdFactory.getBasicBenefitProductCodes());
 
-    pkgContract.changeContract(dto.getAfterPackageProductCode(), termProdCodes, newBasicBenefitProductSubscriptions, dto.getChangeReceivedDateTime());
+    pkgContract.changeContract(dto.getOrderId(), dto.getAfterPackageProductCode(), termProdCodes, newBasicBenefitProductSubscriptions, dto.getChangeReceivedDateTime());
     return pkgContract;
   }
 
@@ -327,6 +366,20 @@ public class ContractServiceImpl implements ContractService {
     if (!pkgProdFactory.isAvailableOptionProduct(optionProductCode)) {
       throw new InvalidArgumentException();
     }
+  }
+  
+  @Override
+  @Transactional
+  public List<ContractDto> cancelContractChangeReceipt(CancelContractChangeDto dto) {
+    List<Contract> contracts = contractRepository.findByCustomerAndOrderId(dto.getCustomerId(), dto.getOrderId());
+    contracts.forEach(c -> c.cancelContractChange(dto.getOrderId(), dto.getCanceledChangeReceiptDateTime()));
+    eventPublisher.fire(
+        CONTRACT_EVENT_CHANNEL,
+        contracts.stream()
+            .map(c -> new ContractChangeCanceled(c.getId(), dto.getOrderId(), dto.getCanceledChangeReceiptDateTime()))
+            .collect(Collectors.toList())
+    );
+    return contracts.stream().map(ContractDto::of).collect(Collectors.toList());
   }
   
   @Override

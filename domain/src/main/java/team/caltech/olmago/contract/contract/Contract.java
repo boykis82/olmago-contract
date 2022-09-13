@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import team.caltech.olmago.contract.common.LifeCycle;
+import team.caltech.olmago.contract.contract.event.*;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.AvailableProductType;
 import team.caltech.olmago.contract.plm.BillPeriod;
@@ -41,6 +42,7 @@ public class Contract {
   @Embedded
   private LifeCycle lifeCycle;
   
+  @Setter
   @Embedded
   private BillCycle billCycle;
   
@@ -59,19 +61,23 @@ public class Contract {
   
   @Builder
   public Contract(long customerId,
-                  long lastOrderId,
-                  ContractType contractType,
+                  long orderId,
                   LocalDateTime subRcvDtm,
+                  ContractType contractType,
                   String feeProductCode) {
     this.customerId = customerId;
-    this.lastOrderId = lastOrderId;
-    this.contractType = contractType;
+    this.lastOrderId = orderId;
     this.lifeCycle = new LifeCycle(subRcvDtm);
+    this.contractType = contractType;
     this.feeProductCode = feeProductCode;
   }
   
   public void addProductSubscriptions(List<ProductSubscription> productSubscriptions) {
     this.productSubscriptions.addAll(productSubscriptions);
+  }
+  
+  public ContractSubscriptionReceived receiveSubscription() {
+    return new ContractSubscriptionReceived(id, lastOrderId, lifeCycle.getSubscriptionReceivedDateTime());
   }
   
   public void cancelSubscriptionReceipt(LocalDateTime cnclSubRcvDtm) {
@@ -81,34 +87,42 @@ public class Contract {
         .forEach(ps -> ps.cancelSubscriptionReceipt(cnclSubRcvDtm));
   }
   
-  public void completeSubscription(LocalDateTime subCmplDtm) {
+  public ContractSubscriptionCompleted completeSubscription(LocalDateTime subCmplDtm) {
     lifeCycle.completeSubscription(subCmplDtm);
     productSubscriptions.stream()
         .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
         .forEach(ps -> ps.completeSubscription(subCmplDtm));
     billCycle = BillCycle.of(subCmplDtm.toLocalDate(), BillPeriod.MONTHLY);
+  
+    return new ContractSubscriptionCompleted(id, subCmplDtm);
   }
   
-  public void receiveTermination(Long orderId, LocalDateTime termRcvDtm) {
+  public ContractTerminationReceived receiveTermination(Long orderId, LocalDateTime termRcvDtm) {
     lifeCycle.receiveTermination(termRcvDtm);
     this.lastOrderId = orderId;
     productSubscriptions.stream()
         .filter(ps -> ps.getLifeCycle().isSubscriptionCompleted())
         .forEach(ps -> ps.receiveTermination(termRcvDtm));
+    
+    return new ContractTerminationReceived(id, orderId, termRcvDtm);
   }
   
-  public void cancelTerminationReceipt(Long orderId, LocalDateTime cnclTermRcvDtm) {
+  public ContractTerminationReceiptCanceled cancelTerminationReceipt(Long orderId, LocalDateTime cnclTermRcvDtm) {
     lifeCycle.cancelTerminationReceipt(cnclTermRcvDtm);
     productSubscriptions.stream()
         .filter(ps -> ps.getLifeCycle().isTerminationReceived())
         .forEach(ps -> ps.cancelTerminationReceipt(cnclTermRcvDtm));
+  
+    return new ContractTerminationReceiptCanceled(id, orderId, cnclTermRcvDtm);
   }
   
-  public void completeTermination(LocalDateTime termCmplDtm) {
+  public ContractTerminationCompleted completeTermination(LocalDateTime termCmplDtm) {
     lifeCycle.completeTermination(termCmplDtm);
     productSubscriptions.stream()
         .filter(ps -> ps.getLifeCycle().isTerminationReceived())
         .forEach(ps -> ps.completeTermination(termCmplDtm));
+  
+    return new ContractTerminationCompleted(id, termCmplDtm);
   }
   
   public void completeRegularPayment(LocalDateTime regPayCmplDtm) {
@@ -136,7 +150,7 @@ public class Contract {
         .orElseThrow(IllegalStateException::new);
   }
   
-  public void changeContract(long orderId,
+  public ContractChanged changeContract(long orderId,
                              String feeProductCode,
                              List<String> termProdCodes,
                              List<ProductSubscription> newBasicBenefitProductSubscriptions,
@@ -149,23 +163,31 @@ public class Contract {
     
     this.feeProductCode = feeProductCode;
     this.lastOrderId = orderId;
+    
+    return new ContractChanged(id, orderId, changeDateTime);
   }
   
-  public void cancelContractChange(LocalDateTime cnclChangeDateTime) {
-    if (contractType != ContractType.PACKAGE)
-      throw new InvalidArgumentException();
-
+  public ContractChangeCanceled cancelContractChange(long orderId, LocalDateTime cnclChangeDateTime) {
     LocalDateTime changeDtm = getChangeDtm();
-    // 가입예약 취소
-    productSubscriptions.stream()
-        .filter(ps -> ps.getLifeCycle().getSubscriptionReceivedDateTime().equals(changeDtm))
-        .forEach(ps -> ps.cancelSubscriptionReceipt(cnclChangeDateTime));
-    // 해지예약 취소
-    productSubscriptions.stream()
-        .filter(ps -> ps.getLifeCycle().getTerminationReceivedDateTime().equals(changeDtm))
-        .forEach(ps -> ps.cancelTerminationReceipt(cnclChangeDateTime));
+    // pkg 상품 변경 취소 또는 option 상품 변경 취소
+    if (contractType == ContractType.PACKAGE ||
+        contractType == ContractType.OPTION) {
+      // 가입예약 취소
+      productSubscriptions.stream()
+          .filter(ps -> ps.getLifeCycle().getSubscriptionReceivedDateTime().equals(changeDtm))
+          .forEach(ps -> ps.cancelSubscriptionReceipt(cnclChangeDateTime));
+      // 해지예약 취소
+      productSubscriptions.stream()
+          .filter(ps -> ps.getLifeCycle().getTerminationReceivedDateTime().equals(changeDtm))
+          .forEach(ps -> ps.cancelTerminationReceipt(cnclChangeDateTime));
+      setFeeProductCode();
+    }
+    // option이었다가 unit으로 변경한 경우 (기존 계약 활용)
+    else if (contractType == ContractType.UNIT) {
+      backToOption(changeDtm);
+    }
   
-    setFeeProductCode();
+    return new ContractChangeCanceled(id, lastOrderId, cnclChangeDateTime);
   }
   
   private LocalDateTime getChangeDtm() {
@@ -194,34 +216,30 @@ public class Contract {
         .build();
   }
 
-  public void setBillCycle(BillCycle billCycle) {
-    this.billCycle = billCycle;
-  }
-
   /*
     계약 변경 & 옵션 유지 시 단품으로 변경
    */
-  public void changeToUnit(long orderId, LocalDateTime unitContractConvertedDateTime) {
+  public ContractChanged changeToUnit(long orderId, LocalDateTime unitContractConvertedDateTime) {
     if (contractType != ContractType.OPTION) {
       throw new InvalidArgumentException();
     }
     this.lastOrderId = orderId;
     this.contractType = ContractType.UNIT;
     this.unitContractConvertedDateTime = unitContractConvertedDateTime;
+  
+    return new ContractChanged(id, orderId, unitContractConvertedDateTime);
   }
   
   /*
   계약 변경 & 옵션 유지 시 단품으로 변경했던거 취소하면 다시 옵션으로 원복
   */
-  public void backToOption(long orderId, LocalDateTime unitContractConvertedDateTime) {
+  private void backToOption(LocalDateTime unitContractConvertedDateTime) {
     if (contractType != ContractType.UNIT) {
       throw new InvalidArgumentException();
     }
-    
-    if (lastOrderId != orderId || !unitContractConvertedDateTime.equals(this.unitContractConvertedDateTime)) {
+    if (!unitContractConvertedDateTime.equals(this.unitContractConvertedDateTime)) {
       throw new IllegalStateException();
     }
-
     this.contractType = ContractType.OPTION;
     this.unitContractConvertedDateTime = null;
   }

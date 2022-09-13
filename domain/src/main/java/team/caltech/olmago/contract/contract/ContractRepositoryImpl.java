@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import team.caltech.olmago.contract.plm.DiscountType;
 
+import java.util.List;
 import java.util.Optional;
 
 import static team.caltech.olmago.contract.contract.QContract.contract;
@@ -59,5 +60,16 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
             )
             .fetchOne()
     );
+  }
+  
+  @Override
+  public List<Contract> findByCustomerAndOrderId(long customerId, long orderId) {
+    return jpaQueryFactory
+        .select(contract)
+        .where(
+          contract.customerId.eq(customerId)
+              .and(contract.lastOrderId.eq(orderId))
+        )
+        .fetch();
   }
 }

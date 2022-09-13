@@ -15,6 +15,7 @@ public interface ContractService {
   ContractDto completeContractTermination(CompleteContractTerminationDto dto);
   
   List<ContractDto> receiveContractChange(ReceiveContractChangeDto dto);
+  List<ContractDto> cancelContractChangeReceipt(CancelContractChangeDto dto);
   
   ContractDto receiveCouponDiscount(ReceiveCouponDiscountDto dto);
 }
