@@ -3,7 +3,6 @@ package team.caltech.olmago.contract.product.factory;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.*;
@@ -91,11 +90,13 @@ public class ProductFactory {
     
     contract.validateAvailableProductType(product);
     
+    List<DiscountSubscription> dcSubs = subscribeDiscounts(satisfiedDiscountPolicyIds(contract), subRcvDtm);
+    
     return new ProductSubscription(
         contract,
         product,
         subRcvDtm
-    ).discountSubscriptions(subscribeDiscounts(contract, satisfiedDiscountPolicyIds(contract), subRcvDtm));
+    ).discountSubscriptions(dcSubs);
   }
 
   private List<String> satisfiedDiscountPolicyIds(Contract contract) {
@@ -107,17 +108,15 @@ public class ProductFactory {
   }
   
   private List<DiscountSubscription> subscribeDiscounts(
-      Contract contract,
       List<String> discountPolicyIds,
       LocalDateTime subRcvDtm
   ) {
     return discountPolicyRepository.findAllById(discountPolicyIds).stream()
-        .map(discountPolicy -> subscribeDiscount(contract, discountPolicy, subRcvDtm))
+        .map(discountPolicy -> subscribeDiscount(discountPolicy, subRcvDtm))
         .collect(Collectors.toList());
   }
   
   private DiscountSubscription subscribeDiscount(
-      Contract contract,
       DiscountPolicy discountPolicy,
       LocalDateTime subRcvDtm
   ) {

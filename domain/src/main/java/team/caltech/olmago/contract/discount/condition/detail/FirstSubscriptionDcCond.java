@@ -2,12 +2,14 @@ package team.caltech.olmago.contract.discount.condition.detail;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.contract.ContractRepository;
 import team.caltech.olmago.contract.discount.condition.DiscountCondition;
 import team.caltech.olmago.contract.plm.DiscountType;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Slf4j
 public class FirstSubscriptionDcCond extends DiscountCondition {
   private final ContractRepository contractRepository;
   

@@ -156,10 +156,13 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  public ProductFactory baeminProductFactory() {
+  public ProductFactory baeminProductFactory(ContractRepository contractRepository) {
     return new ProductFactory("NMO0000001")
         .availableDiscountConditions(
-            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000003")
+            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000003"),
+            and(ContractTypeDcCond.asUnit(),
+                FirstSubscriptionDcCond.with(contractRepository)
+            ).discountPolicyIds("DCU0000009")
         );
   }
   
@@ -274,7 +277,7 @@ public class ProductFactoryConfiguration {
     productFactoryMap.put(twosomePlaceProductFactory());
     
     // 옵션 or 단품
-    productFactoryMap.put(baeminProductFactory());
+    productFactoryMap.put(baeminProductFactory(contractRepository));
     productFactoryMap.put(goobneProductFactory());
     productFactoryMap.put(floAndDataProductFactory(contractRepository, customerServiceProxy));
     productFactoryMap.put(floAndDataPlusProductFactory(contractRepository, customerServiceProxy));

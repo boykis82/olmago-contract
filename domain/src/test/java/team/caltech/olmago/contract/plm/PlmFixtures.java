@@ -31,6 +31,7 @@ public class PlmFixtures {
             DiscountPolicy.builder().dcPolicyCode("DCU0000006").dcPolicyName("Flo and Data 플러스 단품_이동전화요금제할인(플래티넘)").dcUnit(AMOUNT).dcAmountOrRate(9000).dcType(MOBILE_PHONE_PRICE_PLAN_LINKED).dcStartDateType(IMMEDIATELY).dcPeriodType(INFINITE).build(),
             DiscountPolicy.builder().dcPolicyCode("DCU0000007").dcPolicyName("Flo and Data 플러스 단품_이동전화요금제할인(프라임플러스,맥스)").dcUnit(AMOUNT).dcAmountOrRate(7900).dcType(MOBILE_PHONE_PRICE_PLAN_LINKED).dcStartDateType(IMMEDIATELY).dcPeriodType(INFINITE).build(),
             DiscountPolicy.builder().dcPolicyCode("DCU0000008").dcPolicyName("Flo and Data 플러스 단품_이동전화요금제할인(프라임,스페셜)").dcUnit(AMOUNT).dcAmountOrRate(5530).dcType(MOBILE_PHONE_PRICE_PLAN_LINKED).dcStartDateType(IMMEDIATELY).dcPeriodType(INFINITE).build(),
+            DiscountPolicy.builder().dcPolicyCode("DCU0000009").dcPolicyName("배달의민족 단품_최초가입할인").dcUnit(AMOUNT).dcAmountOrRate(4900).dcType(THE_FIRST_SUBSCRIPTION).dcStartDateType(IMMEDIATELY).dcPeriodType(ONE_MONTH).build(),
     
             DiscountPolicy.builder().dcPolicyCode("DCC0000001").dcPolicyName("쿠폰할인1").dcUnit(RATE).dcAmountOrRate(100).dcType(COUPON).dcStartDateType(IMMEDIATELY).dcPeriodType(ONE_MONTH).couponPolicyCode("CP00000001").build(),
     
