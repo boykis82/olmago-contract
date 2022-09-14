@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,8 +51,10 @@ public class ContractTest {
   
   @Test
   public void 최초에_계약정보를접수하면_ID가채번되고접수일시로값이생성되어야함() {
-    // given & when
+    // given
     Contract contract = createUzoopassAllContract();
+
+    // when
     contract.receiveSubscription();
 
     // then
@@ -65,38 +68,24 @@ public class ContractTest {
     assertThat(contract.getLastRegularPaymentCompletedDateTime()).isNull();
     assertThat(contract.getUnitContractConvertedDateTime()).isNull();
     
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .allMatch(ps -> ps.getLifeCycle().getSubscriptionReceivedDateTime().equals(subRcvDtm))
-    ).isTrue();
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .map(ProductSubscription::getDiscountSubscriptions)
-            .flatMap(List::stream)
-            .allMatch(ds -> ds.getLifeCycle().getSubscriptionReceivedDateTime().equals(subRcvDtm))
-    ).isTrue();
+    assertThat(areAllProductSubscriptions(contract, ps -> ps.getLifeCycle().getSubscriptionReceivedDateTime().equals(subRcvDtm))).isTrue();
+    assertThat(areAllDiscountSubscriptions(contract, ds -> ds.getLifeCycle().getSubscriptionReceivedDateTime().equals(subRcvDtm))).isTrue();
   }
-  
+
   @Test
   public void 계약접수된상태에서_접수취소되면_클리어돼야함() {
-    // given & when
+    // given
     Contract contract = createUzoopassAllContract();
+
+    // when
     LocalDateTime cnclDtm = LocalDateTime.of(2022,9,2,0,0,1);
     contract.cancelSubscriptionReceipt(cnclDtm);
     
     // then
     assertThat(contract.getLifeCycle().isSubscriptionReceived()).isFalse();
-    
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .allMatch(ps -> ps.getLifeCycle().getCancelSubscriptionReceiptDateTime().equals(cnclDtm))
-    ).isTrue();
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .map(ProductSubscription::getDiscountSubscriptions)
-            .flatMap(List::stream)
-            .allMatch(ds -> ds.getLifeCycle().getCancelSubscriptionReceiptDateTime().equals(cnclDtm))
-    ).isTrue();
+
+    assertThat(areAllProductSubscriptions(contract, ps -> ps.getLifeCycle().getCancelSubscriptionReceiptDateTime().equals(cnclDtm))).isTrue();
+    assertThat(areAllDiscountSubscriptions(contract, ds -> ds.getLifeCycle().getCancelSubscriptionReceiptDateTime().equals(cnclDtm))).isTrue();
   }
   
   @Test
@@ -114,17 +103,9 @@ public class ContractTest {
     assertThat(contract.getBillCycle().getCurrentBillStartDate()).isEqualTo(subCmplDtm.toLocalDate());
     assertThat(contract.getBillCycle().getMonthsPassed()).isEqualTo(0);
     assertThat(contract.getBillCycle().getCurrentBillEndDate()).isEqualTo(LocalDate.of(2022,9,30));
-    
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .allMatch(ps -> ps.getLifeCycle().getSubscriptionCompletedDateTime().equals(subCmplDtm))
-    ).isTrue();
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .map(ProductSubscription::getDiscountSubscriptions)
-            .flatMap(List::stream)
-            .allMatch(ds -> ds.getLifeCycle().getSubscriptionCompletedDateTime().equals(subCmplDtm))
-    ).isTrue();
+
+    assertThat(areAllProductSubscriptions(contract, ps -> ps.getLifeCycle().getSubscriptionCompletedDateTime().equals(subCmplDtm))).isTrue();
+    assertThat(areAllDiscountSubscriptions(contract, ds -> ds.getLifeCycle().getSubscriptionCompletedDateTime().equals(subCmplDtm))).isTrue();
   }
   
   @Test
@@ -135,22 +116,15 @@ public class ContractTest {
 
     // when
     contract.receiveTermination(3L, termRcvDtm);
+
+    // then
     assertThat(contract.getLastOrderId()).isEqualTo(3L);
     assertThat(contract.getLifeCycle().getSubscriptionReceivedDateTime()).isEqualTo(subRcvDtm);
     assertThat(contract.getLifeCycle().getSubscriptionCompletedDateTime()).isEqualTo(subCmplDtm);
     assertThat(contract.getLifeCycle().getTerminationReceivedDateTime()).isEqualTo(termRcvDtm);
 
-    // then
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .allMatch(ps -> ps.getLifeCycle().getTerminationReceivedDateTime().equals(termRcvDtm))
-    ).isTrue();
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .map(ProductSubscription::getDiscountSubscriptions)
-            .flatMap(List::stream)
-            .allMatch(ds -> ds.getLifeCycle().getTerminationReceivedDateTime().equals(termRcvDtm))
-    ).isTrue();
+    assertThat(areAllProductSubscriptions(contract, ps -> ps.getLifeCycle().getTerminationReceivedDateTime().equals(termRcvDtm))).isTrue();
+    assertThat(areAllDiscountSubscriptions(contract, ds -> ds.getLifeCycle().getTerminationReceivedDateTime().equals(termRcvDtm))).isTrue();
   }
   
   @Test
@@ -168,17 +142,9 @@ public class ContractTest {
     assertThat(contract.getLifeCycle().getSubscriptionCompletedDateTime()).isEqualTo(subCmplDtm);
     assertThat(contract.getLifeCycle().getTerminationReceivedDateTime()).isNull();
     assertThat(contract.getLifeCycle().getCancelTerminationReceiptDateTime()).isEqualTo(termRcvCnclDtm);
-    
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .allMatch(ps -> ps.getLifeCycle().getCancelTerminationReceiptDateTime().equals(termRcvCnclDtm))
-    ).isTrue();
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .map(ProductSubscription::getDiscountSubscriptions)
-            .flatMap(List::stream)
-            .allMatch(ds -> ds.getLifeCycle().getCancelTerminationReceiptDateTime().equals(termRcvCnclDtm))
-    ).isTrue();
+
+    assertThat(areAllProductSubscriptions(contract, ps -> ps.getLifeCycle().getCancelTerminationReceiptDateTime().equals(termRcvCnclDtm))).isTrue();
+    assertThat(areAllDiscountSubscriptions(contract, ds -> ds.getLifeCycle().getCancelTerminationReceiptDateTime().equals(termRcvCnclDtm))).isTrue();
   }
   
   
@@ -197,17 +163,9 @@ public class ContractTest {
     assertThat(contract.getLifeCycle().getSubscriptionCompletedDateTime()).isEqualTo(subCmplDtm);
     assertThat(contract.getLifeCycle().getTerminationReceivedDateTime()).isEqualTo(termRcvDtm);
     assertThat(contract.getLifeCycle().getTerminationCompletedDateTime()).isEqualTo(termCmplDtm);
-    
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .allMatch(ps -> ps.getLifeCycle().getTerminationCompletedDateTime().equals(termCmplDtm))
-    ).isTrue();
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .map(ProductSubscription::getDiscountSubscriptions)
-            .flatMap(List::stream)
-            .allMatch(ds -> ds.getLifeCycle().getTerminationCompletedDateTime().equals(termCmplDtm))
-    ).isTrue();
+
+    assertThat(areAllProductSubscriptions(contract, ps -> ps.getLifeCycle().getTerminationCompletedDateTime().equals(termCmplDtm))).isTrue();
+    assertThat(areAllDiscountSubscriptions(contract, ds -> ds.getLifeCycle().getTerminationCompletedDateTime().equals(termCmplDtm))).isTrue();
   }
 
   @Test
@@ -270,19 +228,17 @@ public class ContractTest {
 
     // then
     // 해지접수상품 검증
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .filter(ps -> changeRcvDtm.equals(ps.getLifeCycle().getTerminationReceivedDateTime()))
-            .map(ProductSubscription::getProductCode)
-            .collect(Collectors.toList())
-    ).contains("NMP0000001", "NMB0000001", "NMB0000002");
+    assertThatProductsAreContainedGivenPredicate(
+        contract,
+        ps -> changeRcvDtm.equals(ps.getLifeCycle().getTerminationReceivedDateTime()),
+        "NMP0000001", "NMB0000001", "NMB0000002"
+    );
     // 가입접수상품 검증
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .filter(ps -> changeRcvDtm.equals(ps.getLifeCycle().getSubscriptionReceivedDateTime()))
-            .map(ProductSubscription::getProductCode)
-            .collect(Collectors.toList())
-    ).contains("NMP0000002", "NMB0000003", "NMB0000004");
+    assertThatProductsAreContainedGivenPredicate(
+        contract,
+        ps -> changeRcvDtm.equals(ps.getLifeCycle().getSubscriptionReceivedDateTime()),
+        "NMP0000002", "NMB0000003", "NMB0000004"
+    );
   }
 
   /*
@@ -315,26 +271,23 @@ public class ContractTest {
     );
     // then
     // 해지접수상품 검증
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .filter(ps -> changeRcvDtm.equals(ps.getLifeCycle().getTerminationReceivedDateTime()))
-            .map(ProductSubscription::getProductCode)
-            .collect(Collectors.toList())
-    ).contains("NMP0000001");
+    assertThatProductsAreContainedGivenPredicate(
+        contract,
+        ps -> changeRcvDtm.equals(ps.getLifeCycle().getTerminationReceivedDateTime()),
+        "NMP0000001"
+    );
     // 가입접수상품 검증
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .filter(ps -> changeRcvDtm.equals(ps.getLifeCycle().getSubscriptionReceivedDateTime()))
-            .map(ProductSubscription::getProductCode)
-            .collect(Collectors.toList())
-    ).contains("NMP0000003");
+    assertThatProductsAreContainedGivenPredicate(
+        contract,
+        ps -> changeRcvDtm.equals(ps.getLifeCycle().getSubscriptionReceivedDateTime()),
+        "NMP0000003"
+    );
     // 유지상품 검증
-    assertThat(
-        contract.getProductSubscriptions().stream()
-            .filter(ps -> ps.getLifeCycle().isSubscriptionCompleted())
-            .map(ProductSubscription::getProductCode)
-            .collect(Collectors.toList())
-    ).contains("NMB0000001", "NMB0000002");
+    assertThatProductsAreContainedGivenPredicate(
+        contract,
+        ps -> ps.getLifeCycle().isSubscriptionCompleted(),
+        "NMB0000001", "NMB0000002"
+    );
   }
 
   private Contract createUzoopassAllContract() {
@@ -377,6 +330,27 @@ public class ContractTest {
             .collect(Collectors.toList())
     );
     return ps;
+  }
+
+  private boolean areAllProductSubscriptions(Contract contract, Predicate<ProductSubscription> pred) {
+    return contract.getProductSubscriptions().stream()
+        .allMatch(pred);
+  }
+
+  private boolean areAllDiscountSubscriptions(Contract contract, Predicate<DiscountSubscription> pred) {
+    return contract.getProductSubscriptions().stream()
+        .map(ProductSubscription::getDiscountSubscriptions)
+        .flatMap(List::stream)
+        .allMatch(pred);
+  }
+
+  private void assertThatProductsAreContainedGivenPredicate(Contract contract, Predicate<ProductSubscription> pred, String ... productCodes) {
+    assertThat(
+        contract.getProductSubscriptions().stream()
+            .filter(pred)
+            .map(ProductSubscription::getProductCode)
+            .collect(Collectors.toList())
+    ).contains(productCodes);
   }
 }
 
