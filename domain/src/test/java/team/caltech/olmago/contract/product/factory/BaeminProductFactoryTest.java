@@ -10,7 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.contract.ContractFixtures;
 import team.caltech.olmago.contract.contract.ContractType;
-import team.caltech.olmago.contract.plm.*;
 import team.caltech.olmago.contract.product.ProductSubscription;
 
 import java.time.LocalDateTime;
@@ -56,20 +55,23 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     // given
     Contract baeminOptContract = ContractFixtures.createBaeminContract(subRcvDtm, ContractType.OPTION);
   
-    when(contractRepository.countAppliedDcTypeByCustomer(baeminOptContract.getCustomerId(), DiscountType.THE_FIRST_SUBSCRIPTION))
-        .thenReturn(0L);
+    // 최초가입
+    mockFirstSubscription(baeminOptContract);
     
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminOptContract, subRcvDtm);
+    baeminOptContract.addProductSubscriptions(prodSubs);
+    List<String> allProductCodes = baeminOptContract.getAllProductCodes();
+    List<String> allDiscountCodes = baeminOptContract.getAllDiscountCodes();
   
     // then
     assertThat(baeminProductFactory.productCode()).isEqualTo(baeminProductCode);
     // 상품가입 1건
-    assertThat(prodSubs).hasSize(1);
-    assertThat(prodSubs.get(0).getProductCode()).isEqualTo(baeminProductCode);
+    assertThat(allProductCodes).hasSize(1);
+    assertThat(allProductCodes).contains(baeminProductCode);
     // 할인가입 1건
-    assertThat(prodSubs.stream().map(ProductSubscription::getDiscountSubscriptions).mapToLong(List::size).sum()).isEqualTo(1);
-    assertThat(prodSubs.get(0).getDiscountSubscriptions().get(0).getDiscountPolicy().getDcPolicyCode()).isEqualTo(optDcCode);
+    assertThat(allDiscountCodes).hasSize(1);
+    assertThat(allDiscountCodes).contains(optDcCode);
   }
   
   @Test
@@ -77,20 +79,23 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     // given
     Contract baeminUnitContract = ContractFixtures.createBaeminContract(subRcvDtm, ContractType.UNIT);
   
-    when(contractRepository.countAppliedDcTypeByCustomer(baeminUnitContract.getCustomerId(), DiscountType.THE_FIRST_SUBSCRIPTION))
-        .thenReturn(0L);
-  
+    // 최초가입
+    mockFirstSubscription(baeminUnitContract);
+
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminUnitContract, subRcvDtm);
+    baeminUnitContract.addProductSubscriptions(prodSubs);
+    List<String> allProductCodes = baeminUnitContract.getAllProductCodes();
+    List<String> allDiscountCodes = baeminUnitContract.getAllDiscountCodes();
   
     // then
     assertThat(baeminProductFactory.productCode()).isEqualTo(baeminProductCode);
     // 상품가입 1건
-    assertThat(prodSubs).hasSize(1);
-    assertThat(prodSubs.get(0).getProductCode()).isEqualTo(baeminProductCode);
+    assertThat(allProductCodes).hasSize(1);
+    assertThat(allProductCodes).contains(baeminProductCode);
     // 할인가입 1건
-    assertThat(prodSubs.stream().map(ProductSubscription::getDiscountSubscriptions).mapToLong(List::size).sum()).isEqualTo(1);
-    assertThat(prodSubs.get(0).getDiscountSubscriptions().get(0).getDiscountPolicy().getDcPolicyCode()).isEqualTo(firstSubDcCode);
+    assertThat(allDiscountCodes).hasSize(1);
+    assertThat(allDiscountCodes).contains(firstSubDcCode);
   }
   
   @Test
@@ -98,18 +103,21 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     // given
     Contract baeminUnitContract = ContractFixtures.createBaeminContract(subRcvDtm, ContractType.UNIT);
   
-    when(contractRepository.countAppliedDcTypeByCustomer(baeminUnitContract.getCustomerId(), DiscountType.THE_FIRST_SUBSCRIPTION))
-        .thenReturn(1L);
+    // 최초가입아님
+    mockNotFirstSubscription(baeminUnitContract);
   
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminUnitContract, subRcvDtm);
+    baeminUnitContract.addProductSubscriptions(prodSubs);
+    List<String> allProductCodes = baeminUnitContract.getAllProductCodes();
+    List<String> allDiscountCodes = baeminUnitContract.getAllDiscountCodes();
   
     // then
     assertThat(baeminProductFactory.productCode()).isEqualTo(baeminProductCode);
     // 상품가입 1건
-    assertThat(prodSubs).hasSize(1);
-    assertThat(prodSubs.get(0).getProductCode()).isEqualTo(baeminProductCode);
+    assertThat(allProductCodes).hasSize(1);
+    assertThat(allProductCodes).contains(baeminProductCode);
     // 할인가입 0건
-    assertThat(prodSubs.stream().map(ProductSubscription::getDiscountSubscriptions).mapToLong(List::size).sum()).isEqualTo(0);
+    assertThat(allDiscountCodes).isEmpty();
   }
 }

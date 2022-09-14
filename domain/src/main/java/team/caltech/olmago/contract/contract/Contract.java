@@ -17,6 +17,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -75,6 +76,7 @@ public class Contract {
   }
   
   public void addProductSubscriptions(List<ProductSubscription> productSubscriptions) {
+    this.productSubscriptions.clear();
     this.productSubscriptions.addAll(productSubscriptions);
   }
   
@@ -272,5 +274,19 @@ public class Contract {
         .findFirst()
         .orElseThrow(InvalidArgumentException::new)
         .receiveCouponDiscount(discountPolicy, couponId, couponReservedDateTime);
+  }
+  
+  public List<String> getAllProductCodes() {
+    return productSubscriptions.stream()
+        .map(ProductSubscription::getProductCode)
+        .collect(Collectors.toList());
+  }
+  
+  public List<String> getAllDiscountCodes() {
+    return productSubscriptions.stream()
+        .map(ProductSubscription::getDiscountSubscriptions)
+        .flatMap(List::stream)
+        .map(ds -> ds.getDiscountPolicy().getDcPolicyCode())
+        .collect(Collectors.toList());
   }
 }
