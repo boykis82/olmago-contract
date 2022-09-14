@@ -95,7 +95,7 @@ public class ProductFactory {
         contract,
         product,
         subRcvDtm
-    ).discountSubscriptions(subscribeDiscounts(contract, satisfiedDiscountPolicyIds(contract)));
+    ).discountSubscriptions(subscribeDiscounts(contract, satisfiedDiscountPolicyIds(contract), subRcvDtm));
   }
 
   private List<String> satisfiedDiscountPolicyIds(Contract contract) {
@@ -108,19 +108,22 @@ public class ProductFactory {
   
   private List<DiscountSubscription> subscribeDiscounts(
       Contract contract,
-      List<String> discountPolicyIds
+      List<String> discountPolicyIds,
+      LocalDateTime subRcvDtm
   ) {
     return discountPolicyRepository.findAllById(discountPolicyIds).stream()
-        .map(discountPolicy -> subscribeDiscount(contract, discountPolicy))
+        .map(discountPolicy -> subscribeDiscount(contract, discountPolicy, subRcvDtm))
         .collect(Collectors.toList());
   }
   
   private DiscountSubscription subscribeDiscount(
       Contract contract,
-      DiscountPolicy discountPolicy
+      DiscountPolicy discountPolicy,
+      LocalDateTime subRcvDtm
   ) {
     return DiscountSubscription.builder()
         .discountPolicy(discountPolicy)
+        .subRcvDtm(subRcvDtm)
         .build();
   }
 

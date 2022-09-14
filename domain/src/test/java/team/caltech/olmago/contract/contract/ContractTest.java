@@ -16,13 +16,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static team.caltech.olmago.contract.contract.ContractFixtures.createProductSubscription;
+import static team.caltech.olmago.contract.contract.ContractFixtures.createUzoopassAllContract;
 
 //@RunWith(SpringRunner.class)
 //@DataJpaTest
 //@Import(TestConfig.class)
 public class ContractTest {
-  private Map<String, Product> products;
-  private Map<String, DiscountPolicy> discountPolicies;
 
   private LocalDateTime subRcvDtm;
   private LocalDateTime subCmplDtm;
@@ -32,11 +32,6 @@ public class ContractTest {
   
   @Before
   public void setUp() {
-    products = PlmFixtures.setupProducts().stream()
-        .collect(Collectors.toMap(Product::getProductCode, p -> p));
-    discountPolicies = PlmFixtures.setupDiscountPolicies().stream()
-        .collect(Collectors.toMap(DiscountPolicy::getDcPolicyCode, d -> d));
-  
     subRcvDtm = LocalDateTime.of(2022,9,1,10,23,12);
     subCmplDtm = LocalDateTime.of(2022,9,1,11,12,23);
     termRcvDtm = LocalDateTime.of(2022,9,12,11,12,23);
@@ -52,7 +47,7 @@ public class ContractTest {
   @Test
   public void 최초에_계약정보를접수하면_ID가채번되고접수일시로값이생성되어야함() {
     // given
-    Contract contract = createUzoopassAllContract();
+    Contract contract = createUzoopassAllContract(subRcvDtm);
 
     // when
     contract.receiveSubscription();
@@ -75,7 +70,7 @@ public class ContractTest {
   @Test
   public void 계약접수된상태에서_접수취소되면_클리어돼야함() {
     // given
-    Contract contract = createUzoopassAllContract();
+    Contract contract = createUzoopassAllContract(subRcvDtm);
 
     // when
     LocalDateTime cnclDtm = LocalDateTime.of(2022,9,2,0,0,1);
@@ -91,7 +86,7 @@ public class ContractTest {
   @Test
   public void 계약접수된상태에서_접수완료되면_가입완료돼야함() {
     // given
-    Contract contract = createUzoopassAllContract();
+    Contract contract = createUzoopassAllContract(subRcvDtm);
 
     // when
     contract.completeSubscription(subCmplDtm);
@@ -111,7 +106,7 @@ public class ContractTest {
   @Test
   public void 계약완료된상태에서_해지접수되면_해지접수돼야함() {
     // given
-    Contract contract = createUzoopassAllContract();
+    Contract contract = createUzoopassAllContract(subRcvDtm);
     contract.completeSubscription(subCmplDtm);
 
     // when
@@ -130,7 +125,7 @@ public class ContractTest {
   @Test
   public void 계약해지접수된상테에서_해지접수취소하면_계약이살아나야함() {
     // given
-    Contract contract = createUzoopassAllContract();
+    Contract contract = createUzoopassAllContract(subRcvDtm);
     contract.completeSubscription(subCmplDtm);
     contract.receiveTermination(2L, termRcvDtm);
 
@@ -151,7 +146,7 @@ public class ContractTest {
   @Test
   public void 해지접수된상태에서_해지완료되면_계약은끝나야함() {
     // given
-    Contract contract = createUzoopassAllContract();
+    Contract contract = createUzoopassAllContract(subRcvDtm);
     contract.completeSubscription(subCmplDtm);
     contract.receiveTermination(2L, termRcvDtm);
 
@@ -171,7 +166,7 @@ public class ContractTest {
   @Test
   public void 정기결제완료되면_과금주기갱신됨() {
     // given
-    Contract contract = createUzoopassAllContract();
+    Contract contract = createUzoopassAllContract(subRcvDtm);
     contract.completeSubscription(subCmplDtm);
 
     // when - 첫 정기결제 완료
@@ -205,7 +200,7 @@ public class ContractTest {
   @Test
   public void 패키지계약유지중_구성품이겹치지않는상품으로변경하면_기존기본혜택은모두해지접수되고신규기본혜택은가입접수됨() {
     // given
-    Contract contract = createUzoopassAllContract();
+    Contract contract = createUzoopassAllContract(subRcvDtm);
     contract.completeSubscription(subCmplDtm);
 
     // when
@@ -253,7 +248,7 @@ public class ContractTest {
   @Test
   public void 패키지계약유지중_구성품이일부겹치는상품으로변경하면_기존기본혜택중겹치는건해지접수되고_겹치지않는건유지되고_겹치치않는신규기본혜택은가입접수됨() {
     // given
-    Contract contract = createUzoopassAllContract();
+    Contract contract = createUzoopassAllContract(subRcvDtm);
     contract.completeSubscription(subCmplDtm);
 
     // when
@@ -289,49 +284,7 @@ public class ContractTest {
         "NMB0000001", "NMB0000002"
     );
   }
-
-  private Contract createUzoopassAllContract() {
-    Contract contract = Contract.builder()
-        .id(1L)
-        .customerId(1L)
-        .orderId(2L)
-        .contractType(ContractType.PACKAGE)
-        .feeProductCode("NMP0000001")
-        .subRcvDtm(subRcvDtm)
-        .build();
-    
-    contract.addProductSubscriptions(List.of(
-        createProductSubscription(contract, "NMP0000001", "DCP0000001", "DCM0000001"),
-        createProductSubscription(contract, "NMB0000001", "DCB0000001"),
-        createProductSubscription(contract, "NMB0000002", "DCB0000001")
-    ));
-    return contract;
-  }
-
-  private ProductSubscription createProductSubscription(Contract contract, String productCode, String ... dcCodes) {
-    return createProductSubscription(contract, productCode, contract.getLifeCycle().getSubscriptionReceivedDateTime(), dcCodes);
-  }
-
-  private ProductSubscription createProductSubscription(Contract contract, String productCode, LocalDateTime subRcvDtm, String ... dcCodes) {
-    ProductSubscription ps = ProductSubscription.builder()
-        .product(products.get(productCode))
-        .contract(contract)
-        .subscriptionReceivedDateTime(subRcvDtm)
-        .build();
-
-    ps.discountSubscriptions(
-        Arrays.stream(dcCodes)
-            .map(dcCode -> DiscountSubscription.builder()
-                .discountPolicy(discountPolicies.get(dcCode))
-                .productSubscription(ps)
-                .subRcvDtm(subRcvDtm)
-                .build()
-            )
-            .collect(Collectors.toList())
-    );
-    return ps;
-  }
-
+  
   private boolean areAllProductSubscriptions(Contract contract, Predicate<ProductSubscription> pred) {
     return contract.getProductSubscriptions().stream()
         .allMatch(pred);

@@ -21,6 +21,7 @@ public class PlmFixtures {
     
             DiscountPolicy.builder().dcPolicyCode("DCO0000001").dcPolicyName("Flo 옵션 7900원 할인").dcUnit(AMOUNT).dcAmountOrRate(7900).dcType(DiscountType.OPTION).dcStartDateType(IMMEDIATELY).dcPeriodType(INFINITE).build(),
             DiscountPolicy.builder().dcPolicyCode("DCO0000002").dcPolicyName("게임패스 옵션 6000원 할인").dcUnit(AMOUNT).dcAmountOrRate(6000).dcType(DiscountType.OPTION).dcStartDateType(IMMEDIATELY).dcPeriodType(INFINITE).build(),
+            DiscountPolicy.builder().dcPolicyCode("DCO0000003").dcPolicyName("배민 옵션 5000원 할인").dcUnit(AMOUNT).dcAmountOrRate(5000).dcType(DiscountType.OPTION).dcStartDateType(IMMEDIATELY).dcPeriodType(INFINITE).build(),
             
             DiscountPolicy.builder().dcPolicyCode("DCU0000001").dcPolicyName("게임패스 얼티밋 단품_최초가입할인").dcUnit(AMOUNT).dcAmountOrRate(11800).dcType(THE_FIRST_SUBSCRIPTION).dcStartDateType(IMMEDIATELY).dcPeriodType(ONE_MONTH).build(),
             DiscountPolicy.builder().dcPolicyCode("DCU0000002").dcPolicyName("Flo and Data 단품_최초가입할인").dcUnit(AMOUNT).dcAmountOrRate(7800).dcType(THE_FIRST_SUBSCRIPTION).dcStartDateType(IMMEDIATELY).dcPeriodType(ONE_MONTH).build(),

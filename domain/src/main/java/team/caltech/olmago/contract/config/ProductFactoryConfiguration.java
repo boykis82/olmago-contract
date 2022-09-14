@@ -159,7 +159,7 @@ public class ProductFactoryConfiguration {
   public ProductFactory baeminProductFactory() {
     return new ProductFactory("NMO0000001")
         .availableDiscountConditions(
-            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001")
+            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000003")
         );
   }
   
