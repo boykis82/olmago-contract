@@ -2,6 +2,7 @@ package team.caltech.olmago.contract.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import team.caltech.olmago.contract.contract.ContractRepository;
 import team.caltech.olmago.contract.discount.condition.detail.*;
 import team.caltech.olmago.contract.plm.Product;
@@ -21,12 +22,14 @@ import static team.caltech.olmago.contract.product.factory.ProductRelation.Produ
 import static team.caltech.olmago.contract.customer.MobilePhonePricePlan.*;
 
 @Configuration
+@Lazy
 public class ProductFactoryConfiguration {
   @Bean
   public ProductFactory uzooPassAllProductFactory(ContractRepository contractRepository,
-                                           CustomerServiceProxy customerServiceProxy,
-                                           ProductRepository productRepository,
-                                           ProductRelationRepository productRelationRepository) {
+                                                  CustomerServiceProxy customerServiceProxy,
+                                                  ProductRepository productRepository,
+                                                  ProductRelationRepository productRelationRepository
+  ) {
     String productId = "NMP0000001";
     List<String> optionProducts = findOptionProducts(productRelationRepository, productId);
     List<String> theFirstSubscriptionDcExceptProducts = findProductsExceptTheFirstSubscriptionDc(productRepository, optionProducts);

@@ -76,7 +76,6 @@ public class Contract {
   }
   
   public void addProductSubscriptions(List<ProductSubscription> productSubscriptions) {
-    this.productSubscriptions.clear();
     this.productSubscriptions.addAll(productSubscriptions);
   }
   

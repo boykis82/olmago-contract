@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.test.context.junit4.SpringRunner;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.contract.ContractFixtures;
@@ -14,35 +15,29 @@ import team.caltech.olmago.contract.product.ProductSubscription;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   @Autowired
+  @Lazy
   ProductFactory baeminProductFactory;
-  
-  String baeminProductCode = "NMO0000001";
-  String optDcCode = "DCO0000003";
-  String firstSubDcCode = "DCU0000009";
-  
-  LocalDateTime subRcvDtm = LocalDateTime.of(2022,9,2,12,13,23);
+
+  static final String baeminProductCode = "NMO0000001";
+  static final String optDcCode = "DCO0000003";
+  static final String firstSubDcCode = "DCU0000009";
+
+  static final LocalDateTime subRcvDtm = LocalDateTime.of(2022,9,2,12,13,23);
 
   @Before
   public void setup() {
     // mocking
-    when(productRepository.findById(baeminProductCode))
-        .thenReturn(Optional.of(products.get(baeminProductCode)));
-  
-    when(discountPolicyRepository.findAllById(List.of(optDcCode)))
-        .thenReturn(List.of(discountPolicies.get(optDcCode)));
-    when(discountPolicyRepository.findAllById(List.of(firstSubDcCode)))
-        .thenReturn(List.of(discountPolicies.get(firstSubDcCode)));
-    when(discountPolicyRepository.findAllById(List.of(optDcCode, firstSubDcCode)))
-        .thenReturn(List.of(discountPolicies.get(optDcCode), discountPolicies.get(firstSubDcCode)));
+    mockFindProduct(baeminProductCode);
+    mockFindAllDiscountPolicy(optDcCode);
+    mockFindAllDiscountPolicy(firstSubDcCode);
+    mockFindAllDiscountPolicy(optDcCode, firstSubDcCode);
   }
   
   @After
@@ -61,10 +56,11 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminOptContract, subRcvDtm);
     baeminOptContract.addProductSubscriptions(prodSubs);
+
+    // then
     List<String> allProductCodes = baeminOptContract.getAllProductCodes();
     List<String> allDiscountCodes = baeminOptContract.getAllDiscountCodes();
-  
-    // then
+
     assertThat(baeminProductFactory.productCode()).isEqualTo(baeminProductCode);
     // 상품가입 1건
     assertThat(allProductCodes).hasSize(1);
@@ -85,10 +81,11 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminUnitContract, subRcvDtm);
     baeminUnitContract.addProductSubscriptions(prodSubs);
+
+    // then
     List<String> allProductCodes = baeminUnitContract.getAllProductCodes();
     List<String> allDiscountCodes = baeminUnitContract.getAllDiscountCodes();
-  
-    // then
+
     assertThat(baeminProductFactory.productCode()).isEqualTo(baeminProductCode);
     // 상품가입 1건
     assertThat(allProductCodes).hasSize(1);
@@ -109,10 +106,11 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminUnitContract, subRcvDtm);
     baeminUnitContract.addProductSubscriptions(prodSubs);
+
+    // then
     List<String> allProductCodes = baeminUnitContract.getAllProductCodes();
     List<String> allDiscountCodes = baeminUnitContract.getAllDiscountCodes();
-  
-    // then
+
     assertThat(baeminProductFactory.productCode()).isEqualTo(baeminProductCode);
     // 상품가입 1건
     assertThat(allProductCodes).hasSize(1);
