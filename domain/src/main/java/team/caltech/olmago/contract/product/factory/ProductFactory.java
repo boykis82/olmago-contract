@@ -3,6 +3,7 @@ package team.caltech.olmago.contract.product.factory;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.*;

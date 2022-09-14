@@ -1,5 +1,7 @@
 package team.caltech.olmago.contract.product.factory;
 
+import org.springframework.stereotype.Component;
+
 import java.util.HashMap;
 import java.util.Map;
 

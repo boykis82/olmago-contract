@@ -23,7 +23,7 @@ import static team.caltech.olmago.contract.customer.MobilePhonePricePlan.*;
 @Configuration
 public class ProductFactoryConfiguration {
   @Bean
-  ProductFactory uzooPassAllProductFactory(ContractRepository contractRepository,
+  public ProductFactory uzooPassAllProductFactory(ContractRepository contractRepository,
                                            CustomerServiceProxy customerServiceProxy,
                                            ProductRepository productRepository,
                                            ProductRelationRepository productRelationRepository) {
@@ -55,7 +55,7 @@ public class ProductFactoryConfiguration {
   }
 
   @Bean
-  ProductFactory uzooPassLifeProductFactory(ContractRepository contractRepository,
+  public ProductFactory uzooPassLifeProductFactory(ContractRepository contractRepository,
                                             CustomerServiceProxy customerServiceProxy,
                                             ProductRepository productRepository,
                                             ProductRelationRepository productRelationRepository) {
@@ -89,7 +89,7 @@ public class ProductFactoryConfiguration {
   }
  
   @Bean
-  ProductFactory uzooPassMiniProductFactory(ContractRepository contractRepository, ProductRelationRepository productRelationRepository) {
+  public ProductFactory uzooPassMiniProductFactory(ContractRepository contractRepository, ProductRelationRepository productRelationRepository) {
     String productId = "NMP0000003";
   
     return new ProductFactory(productId)
@@ -116,7 +116,7 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  ProductFactory uzooPassSlimProductFactory(ContractRepository contractRepository) {
+  public ProductFactory uzooPassSlimProductFactory(ContractRepository contractRepository) {
     String productId = "NMP0000004";
     
     return new ProductFactory(productId)
@@ -129,7 +129,7 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  ProductFactory googleOneAllProductFactory() {
+  public ProductFactory googleOneAllProductFactory() {
     return new ProductFactory("NMB0000001")
         .availableDiscountConditions(
             ContractTypeDcCond.asPackage().discountPolicyIds("DCB0000001")
@@ -138,7 +138,7 @@ public class ProductFactoryConfiguration {
   
   
   @Bean
-  ProductFactory amazonFreeDeliveryProductFactory() {
+  public ProductFactory amazonFreeDeliveryProductFactory() {
     return new ProductFactory("NMB0000002")
         .availableDiscountConditions(
             ContractTypeDcCond.asPackage().discountPolicyIds("DCB0000001")
@@ -146,17 +146,17 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  ProductFactory sevenElevenProductFactory() {
+  public ProductFactory sevenElevenProductFactory() {
     return new ProductFactory("NMB0000003");
   }
   
   @Bean
-  ProductFactory twosomePlaceProductFactory() {
+  public ProductFactory twosomePlaceProductFactory() {
     return new ProductFactory("NMB0000004");
   }
   
   @Bean
-  ProductFactory baeminProductFactory() {
+  public ProductFactory baeminProductFactory() {
     return new ProductFactory("NMO0000001")
         .availableDiscountConditions(
             ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001")
@@ -164,7 +164,7 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  ProductFactory goobneProductFactory() {
+  public ProductFactory goobneProductFactory() {
     return new ProductFactory("NMO0000002")
         .availableDiscountConditions(
             ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001")
@@ -172,7 +172,7 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  ProductFactory floAndDataProductFactory(ContractRepository contractRepository, CustomerServiceProxy customerServiceProxy) {
+  public ProductFactory floAndDataProductFactory(ContractRepository contractRepository, CustomerServiceProxy customerServiceProxy) {
     return new ProductFactory("NMO0000004")
         .availableDiscountConditions(
             // 옵션
@@ -196,7 +196,7 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  ProductFactory floAndDataPlusProductFactory(ContractRepository contractRepository, CustomerServiceProxy customerServiceProxy) {
+  public ProductFactory floAndDataPlusProductFactory(ContractRepository contractRepository, CustomerServiceProxy customerServiceProxy) {
     return new ProductFactory("NMO0000008")
         .availableDiscountConditions(
             // 옵션
@@ -225,7 +225,7 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  ProductFactory gamepassUltimateProductFactory(ContractRepository contractRepository) {
+  public ProductFactory gamepassUltimateProductFactory(ContractRepository contractRepository) {
     return new ProductFactory("NMO0000005")
         .availableDiscountConditions(
             // 옵션
@@ -240,7 +240,7 @@ public class ProductFactoryConfiguration {
   
   
   @Bean
-  ProductFactory googleOneMiniProductFactory() {
+  public ProductFactory googleOneMiniProductFactory() {
     return new ProductFactory("NMO0000006")
         .availableDiscountConditions(
             ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001")
@@ -248,7 +248,7 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  ProductFactory yanoljaProductFactory() {
+  public ProductFactory yanoljaProductFactory() {
     return new ProductFactory("NMO0000010")
         .availableDiscountConditions(
             ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001")
@@ -256,7 +256,7 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  ProductFactoryMap productFactoryMap(ContractRepository contractRepository,
+  public ProductFactoryMap productFactoryMap(ContractRepository contractRepository,
                                       CustomerServiceProxy customerServiceProxy,
                                       ProductRepository productRepository,
                                       ProductRelationRepository productRelationRepository) {

@@ -4,18 +4,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Getter
 @NoArgsConstructor
 @Entity
 public class Product {
   @Id
+  @Column(length = 10)
   private String productCode;
   
+  @Column(length = 80)
   private String productName;
   
   @Enumerated(EnumType.STRING)
