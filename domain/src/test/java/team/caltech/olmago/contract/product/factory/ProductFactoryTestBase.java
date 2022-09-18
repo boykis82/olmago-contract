@@ -7,6 +7,7 @@ import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.contract.ContractRepository;
 import team.caltech.olmago.contract.customer.CustomerServiceProxy;
 import team.caltech.olmago.contract.plm.*;
+import team.caltech.olmago.contract.product.ProductSubscription;
 
 import java.util.Arrays;
 import java.util.List;
@@ -91,4 +92,18 @@ public abstract class ProductFactoryTestBase {
         .thenReturn(Arrays.asList(optionProductCodes));   // 각각 최초가입할인 가능한 배민, 최초가입할인 불가능한 야놀자
   }
 
+
+  protected List<String> getAllProductCodes(Contract contract) {
+    return contract.getProductSubscriptions().stream()
+        .map(ProductSubscription::getProductCode)
+        .collect(Collectors.toList());
+  }
+
+  protected List<String> getAllDiscountCodes(Contract contract) {
+    return contract.getProductSubscriptions().stream()
+        .map(ProductSubscription::getDiscountSubscriptions)
+        .flatMap(List::stream)
+        .map(ds -> ds.getDiscountPolicy().getDcPolicyCode())
+        .collect(Collectors.toList());
+  }
 }

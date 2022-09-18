@@ -6,11 +6,13 @@ import lombok.NoArgsConstructor;
 import team.caltech.olmago.contract.common.LifeCycle;
 import team.caltech.olmago.contract.plm.DiscountPeriodType;
 import team.caltech.olmago.contract.plm.DiscountPolicy;
+import team.caltech.olmago.contract.plm.DiscountType;
 import team.caltech.olmago.contract.product.ProductSubscription;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -24,11 +26,11 @@ public class DiscountSubscription {
   private int version;
   
   @ManyToOne
-  @JoinColumn(name = "discount_policy_id")
+  @JoinColumn(name = "dc_policy_id")
   private DiscountPolicy discountPolicy;
   
   @ManyToOne
-  @JoinColumn(name = "product_subscription_id")
+  @JoinColumn(name = "prod_sub_id")
   private ProductSubscription productSubscription;
   
   @Embedded
@@ -116,7 +118,8 @@ public class DiscountSubscription {
    */
   private void calculateDiscountDate(LocalDateTime dtm) {
     discountStartDate = dtm.toLocalDate();
-    
+
+    // 무제한 할인이면 99991231. 아니면 기간만큼 + month - 하룬
     if (discountPolicy.getDcPeriodType() == DiscountPeriodType.INFINITE) {
       discountEndDate = LocalDate.of(9999,12,31);
     } else {
@@ -147,5 +150,13 @@ public class DiscountSubscription {
   
   public void completeTermination(LocalDateTime termCmplDtm) {
     lifeCycle.completeTermination(termCmplDtm);
+  }
+
+  public void terminateMobilePhoneLinkedDiscount(LocalDateTime changeDateTime) {
+    if (lifeCycle.isSubscriptionCompleted() &&
+        discountPolicy.getDcType().equals(DiscountType.MOBILE_PHONE_PRICE_PLAN_LINKED)) {
+      receiveTermination(changeDateTime);
+      completeTermination(changeDateTime);
+    }
   }
 }

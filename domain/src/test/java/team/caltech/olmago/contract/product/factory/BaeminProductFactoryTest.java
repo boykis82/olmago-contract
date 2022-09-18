@@ -58,8 +58,8 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     baeminOptContract.addProductSubscriptions(prodSubs);
 
     // then
-    List<String> allProductCodes = baeminOptContract.getAllProductCodes();
-    List<String> allDiscountCodes = baeminOptContract.getAllDiscountCodes();
+    List<String> allProductCodes = getAllProductCodes(baeminOptContract);
+    List<String> allDiscountCodes = getAllDiscountCodes(baeminOptContract);
 
     assertThat(baeminProductFactory.productCode()).isEqualTo(baeminProductCode);
     // 상품가입 1건
@@ -83,8 +83,8 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     baeminUnitContract.addProductSubscriptions(prodSubs);
 
     // then
-    List<String> allProductCodes = baeminUnitContract.getAllProductCodes();
-    List<String> allDiscountCodes = baeminUnitContract.getAllDiscountCodes();
+    List<String> allProductCodes = getAllProductCodes(baeminUnitContract);
+    List<String> allDiscountCodes = getAllDiscountCodes(baeminUnitContract);
 
     assertThat(baeminProductFactory.productCode()).isEqualTo(baeminProductCode);
     // 상품가입 1건
@@ -108,8 +108,8 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     baeminUnitContract.addProductSubscriptions(prodSubs);
 
     // then
-    List<String> allProductCodes = baeminUnitContract.getAllProductCodes();
-    List<String> allDiscountCodes = baeminUnitContract.getAllDiscountCodes();
+    List<String> allProductCodes = getAllProductCodes(baeminUnitContract);
+    List<String> allDiscountCodes = getAllDiscountCodes(baeminUnitContract);
 
     assertThat(baeminProductFactory.productCode()).isEqualTo(baeminProductCode);
     // 상품가입 1건

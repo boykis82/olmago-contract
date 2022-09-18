@@ -2,15 +2,19 @@ package team.caltech.olmago.contract.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import reactor.core.scheduler.Scheduler;
 import team.caltech.olmago.contract.contract.*;
 import team.caltech.olmago.contract.contract.event.ContractChangeCanceled;
 import team.caltech.olmago.contract.contract.event.ContractChanged;
+import team.caltech.olmago.contract.contract.event.DiscountChanged;
 import team.caltech.olmago.contract.contract.event.Event;
 import team.caltech.olmago.contract.dto.*;
 import team.caltech.olmago.contract.event.EventPublisher;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.DiscountPolicy;
 import team.caltech.olmago.contract.plm.DiscountPolicyRepository;
+import team.caltech.olmago.contract.plm.DiscountType;
+import team.caltech.olmago.contract.plm.Product;
 import team.caltech.olmago.contract.product.ProductSubscription;
 import team.caltech.olmago.contract.product.factory.ProductFactory;
 import team.caltech.olmago.contract.product.factory.ProductFactoryMap;
@@ -22,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static team.caltech.olmago.contract.plm.DiscountType.MOBILE_PHONE_PRICE_PLAN_LINKED;
 
 @RequiredArgsConstructor
 @Service
@@ -35,6 +41,8 @@ public class ContractServiceImpl implements ContractService {
   private final AssociatedCompanyServiceProxy associatedCompanyServiceProxy;
   
   private final EventPublisher eventPublisher;
+
+  private final Scheduler otherServiceCommScheduler;
   
   public static final String CONTRACT_EVENT_CHANNEL = "contract-event";
   
@@ -126,7 +134,7 @@ public class ContractServiceImpl implements ContractService {
             .map(ProductSubscription::getProductCode)
             .collect(Collectors.toList()),
         dtm
-    );
+    ).subscribeOn(otherServiceCommScheduler);
   }
   
   @Override
@@ -232,7 +240,7 @@ public class ContractServiceImpl implements ContractService {
             .map(ProductSubscription::getProductCode)
             .collect(Collectors.toList()),
         dtm
-    );
+    ).subscribeOn(otherServiceCommScheduler);
   }
   
   @Override
@@ -394,5 +402,27 @@ public class ContractServiceImpl implements ContractService {
     
     return ContractDto.of(contract);
   }
-  
+
+  @Override
+  @Transactional
+  public ContractDto releaseCouponDiscount(ReceiveCouponDiscountDto dto) {
+    return null;
+  }
+
+  @Override
+  @Transactional
+  public List<ContractDto> changeMobilePhoneRelatedDiscount(ChangeMobilePhoneRelatedDiscountDto dto) {
+    List<Contract> contracts = contractRepository.findByCustomerId(dto.getCustomerId());
+    contracts.forEach(c -> changeMobilePhoneRelatedDiscount(c, dto.getChangeDateTime()));
+    // tood : event
+    return contracts.stream().map(ContractDto::of).collect(Collectors.toList());
+  }
+
+  private DiscountChanged changeMobilePhoneRelatedDiscount(Contract contract, LocalDateTime changeDateTime) {
+    ProductFactory pf = productFactoryMap.get(contract.getFeeProductCode());
+    List<DiscountPolicy> satisfiedMblPhoneLinkedDiscountPolicies =
+        pf.satisfiedDiscountPolicies(contract, MOBILE_PHONE_PRICE_PLAN_LINKED);
+
+    return contract.changeMobilePhoneLinkedDiscount(satisfiedMblPhoneLinkedDiscountPolicies, changeDateTime);
+  }
 }

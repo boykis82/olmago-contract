@@ -10,4 +10,5 @@ public interface ContractRepositoryCustom {
   Long countActiveContractByCustomerAndFeeProductCode(long customerId, String feeProductCode);
   Optional<Contract> findOptionContractByPackageContract(Contract pkgContract);
   List<Contract> findByCustomerAndOrderId(long customerId, long orderId);
+  List<Contract> findByCustomerId(long customerId);
 }

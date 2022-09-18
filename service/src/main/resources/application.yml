@@ -31,3 +31,25 @@ spring:
     url: jdbc:h2:~/test
     username: usr
     password: pwd
+
+spring.cloud.function:
+  definition: functionRouter
+  routing-expression: headers['type']
+
+spring.cloud.stream:
+  defaultBinder: rabbit
+  default.contentType: application/json
+  bindings:
+    contract-out-0:
+      destination: contract-event-topic
+      producer:
+        required-groups: auditGroup
+
+    functionRouter-in-0:
+      destination: billing-event-topic,coupon-event-topic,customer-event-topic
+      group: mygroup
+      consumer:
+        maxAttempts: 3
+        backOffInitialInterval: 500
+        backOffMaxInterval: 1000
+        backOffMultiplier: 2.0

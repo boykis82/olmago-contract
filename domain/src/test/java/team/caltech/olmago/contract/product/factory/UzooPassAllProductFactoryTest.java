@@ -1,5 +1,6 @@
 package team.caltech.olmago.contract.product.factory;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,6 +48,11 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
     mockFindAllProduct(baeminProductCode, yanoljaProductCode);
   }
 
+  @After
+  public void tearDown() {
+
+  }
+
   @Test
   public void 이동전화연계없이_배민과_비최초가입이면_상품가입3건_기본혜택할인2건생성된다() {
     // given
@@ -67,8 +73,8 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
     allContract.addProductSubscriptions(prodSubs);
 
     // then
-    List<String> allProductCodes = allContract.getAllProductCodes();
-    List<String> allDiscountCodes = allContract.getAllDiscountCodes();
+    List<String> allProductCodes = getAllProductCodes(allContract);
+    List<String> allDiscountCodes = getAllDiscountCodes(allContract);
 
     assertThat(uzooPassAllProductFactory.productCode()).isEqualTo(uzooPassAllProductCode);
     // 상품가입 3건
@@ -101,8 +107,8 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
     allContract.addProductSubscriptions(prodSubs);
 
     // then
-    List<String> allProductCodes = allContract.getAllProductCodes();
-    List<String> allDiscountCodes = allContract.getAllDiscountCodes();
+    List<String> allProductCodes = getAllProductCodes(allContract);
+    List<String> allDiscountCodes = getAllDiscountCodes(allContract);
 
     assertThat(uzooPassAllProductFactory.productCode()).isEqualTo(uzooPassAllProductCode);
     // 상품가입 3건
@@ -135,8 +141,8 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
     allContract.addProductSubscriptions(prodSubs);
 
     // then
-    List<String> allProductCodes = allContract.getAllProductCodes();
-    List<String> allDiscountCodes = allContract.getAllDiscountCodes();
+    List<String> allProductCodes = getAllProductCodes(allContract);
+    List<String> allDiscountCodes = getAllDiscountCodes(allContract);
 
     assertThat(uzooPassAllProductFactory.productCode()).isEqualTo(uzooPassAllProductCode);
     // 상품가입 3건
@@ -146,7 +152,6 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
     assertThat(allDiscountCodes).hasSize(2);
     assertThat(allDiscountCodes).contains(basicBenefitDcCode, basicBenefitDcCode);
   }
-
 
   // 기본혜택할인
   private void mockBasicBenefitDc() {

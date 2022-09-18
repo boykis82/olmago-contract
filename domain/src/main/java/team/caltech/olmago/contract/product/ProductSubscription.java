@@ -7,6 +7,7 @@ import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.common.LifeCycle;
 import team.caltech.olmago.contract.discount.DiscountSubscription;
 import team.caltech.olmago.contract.plm.DiscountPolicy;
+import team.caltech.olmago.contract.plm.DiscountType;
 import team.caltech.olmago.contract.plm.Product;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Entity
@@ -117,4 +119,27 @@ public class ProductSubscription {
             .build()
     );
   }
+
+  public void changeMobilePhoneLinkedDiscount(List<DiscountPolicy> satisfiedMblPhoneLinkedDiscountPolicies, LocalDateTime changeDateTime) {
+    terminateNotSatisfiedMobilePhoneLinkedDiscount(changeDateTime);
+    subscribeSatisfiedMobilePhoneLinkedDiscount(satisfiedMblPhoneLinkedDiscountPolicies, changeDateTime);
+  }
+
+  private void terminateNotSatisfiedMobilePhoneLinkedDiscount(LocalDateTime changeDateTime) {
+    discountSubscriptions.forEach(ds -> ds.terminateMobilePhoneLinkedDiscount(changeDateTime));
+  }
+
+  private void subscribeSatisfiedMobilePhoneLinkedDiscount(List<DiscountPolicy> satisfiedMblPhoneLinkedDiscountPolicies, LocalDateTime changeDateTime) {
+    List<DiscountSubscription> newSubDcs =
+        satisfiedMblPhoneLinkedDiscountPolicies.stream()
+            .map(dp -> DiscountSubscription.builder()
+                .discountPolicy(dp)
+                .productSubscription(this)
+                .subRcvDtm(changeDateTime)
+                .build())
+            .collect(Collectors.toList());
+    newSubDcs.forEach(ds -> ds.completeSubscription(changeDateTime));
+    discountSubscriptions.addAll(newSubDcs);
+  }
+
 }

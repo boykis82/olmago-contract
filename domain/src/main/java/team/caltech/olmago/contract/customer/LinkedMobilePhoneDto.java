@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Getter
 @Builder
-public class LinkedMobilePhoneInfo {
+public class LinkedMobilePhoneDto {
   private long customerId;
   private long mobilePhoneSvcMgmtNum;
   private String mobilePhoneNumber;

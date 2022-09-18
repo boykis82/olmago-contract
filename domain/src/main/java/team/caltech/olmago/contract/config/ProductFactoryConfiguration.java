@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import team.caltech.olmago.contract.contract.ContractRepository;
 import team.caltech.olmago.contract.discount.condition.detail.*;
+import team.caltech.olmago.contract.plm.DiscountPolicyRepository;
 import team.caltech.olmago.contract.plm.Product;
 import team.caltech.olmago.contract.plm.ProductRepository;
 import team.caltech.olmago.contract.product.factory.ProductRelationRepository;
@@ -28,16 +29,17 @@ public class ProductFactoryConfiguration {
   public ProductFactory uzooPassAllProductFactory(ContractRepository contractRepository,
                                                   CustomerServiceProxy customerServiceProxy,
                                                   ProductRepository productRepository,
+                                                  DiscountPolicyRepository discountPolicyRepository,
                                                   ProductRelationRepository productRelationRepository
   ) {
     String productId = "NMP0000001";
     List<String> optionProducts = findOptionProducts(productRelationRepository, productId);
     List<String> theFirstSubscriptionDcExceptProducts = findProductsExceptTheFirstSubscriptionDc(productRepository, optionProducts);
-    
+
     return new ProductFactory(productId)
         .basicBenefitProductFactories(
-            googleOneAllProductFactory(),
-            amazonFreeDeliveryProductFactory()
+            googleOneAllProductFactory(discountPolicyRepository),
+            amazonFreeDeliveryProductFactory(discountPolicyRepository)
         )
         .availableOptionProducts(optionProducts)
         .availableDiscountConditions(
@@ -45,23 +47,26 @@ public class ProductFactoryConfiguration {
             and(
                 FirstSubscriptionDcCond.with(contractRepository),
                 neg(RelatedOptionProductDcCond.with(contractRepository).in(theFirstSubscriptionDcExceptProducts))
-            ).discountPolicyIds("DCP0000001"),
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCP0000001"))),
             // 플래티넘, 프라임플러스
-            MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PLATINUM, PRIME_PLUS).discountPolicyIds("DCM0000001"),
+            MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PLATINUM, PRIME_PLUS)
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCM0000001"))),
             // 프라임
-            MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PRIME).discountPolicyIds("DCM0000002"),
+            MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PRIME)
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCM0000002"))),
             // 프라임 and 프로모션기간 내 가입
             and(MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PRIME),
                 SubscribedDateRangeDcCond.between(LocalDate.of(2022,9,1), LocalDate.of(2022,12,31))
-            ).discountPolicyIds("DCM0000003")
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCM0000003")))
         );
   }
 
   @Bean
   public ProductFactory uzooPassLifeProductFactory(ContractRepository contractRepository,
-                                            CustomerServiceProxy customerServiceProxy,
-                                            ProductRepository productRepository,
-                                            ProductRelationRepository productRelationRepository) {
+                                                   CustomerServiceProxy customerServiceProxy,
+                                                   ProductRepository productRepository,
+                                                   DiscountPolicyRepository discountPolicyRepository,
+                                                   ProductRelationRepository productRelationRepository) {
     String productId = "NMP0000002";
     List<String> optionProducts = findOptionProducts(productRelationRepository, productId);
     List<String> theFirstSubscriptionDcExceptProducts = findProductsExceptTheFirstSubscriptionDc(productRepository, optionProducts);
@@ -79,31 +84,36 @@ public class ProductFactoryConfiguration {
             and(
                 FirstSubscriptionDcCond.with(contractRepository),
                 neg(RelatedOptionProductDcCond.with(contractRepository).in(theFirstSubscriptionDcExceptProducts))
-            ).discountPolicyIds("DCP0000001"),
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCP0000001"))),
             // 플래티넘, 프라임플러스
-            MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PLATINUM, PRIME_PLUS).discountPolicyIds("DCM0000001"),
+            MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PLATINUM, PRIME_PLUS)
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCM0000001"))),
             // 프라임
-            MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PRIME).discountPolicyIds("DCM0000002"),
+            MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PRIME)
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCM0000002"))),
             // 프라임 and 프로모션기간 내 가입
             and(MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PRIME),
                 SubscribedDateRangeDcCond.between(LocalDate.of(2022,9,1), LocalDate.of(2022,12,31))
-            ).discountPolicyIds("DCM0000003")
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCM0000003")))
         );
   }
  
   @Bean
-  public ProductFactory uzooPassMiniProductFactory(ContractRepository contractRepository, ProductRelationRepository productRelationRepository) {
+  public ProductFactory uzooPassMiniProductFactory(ContractRepository contractRepository,
+                                                   DiscountPolicyRepository discountPolicyRepository,
+                                                   ProductRelationRepository productRelationRepository) {
     String productId = "NMP0000003";
   
     return new ProductFactory(productId)
         .basicBenefitProductFactories(
-            amazonFreeDeliveryProductFactory()
+            amazonFreeDeliveryProductFactory(discountPolicyRepository)
         )
         .availableOptionProducts(
             findOptionProducts(productRelationRepository, productId)
         )
         .availableDiscountConditions(
-            FirstSubscriptionDcCond.with(contractRepository).discountPolicyIds("DCP0000002")
+            FirstSubscriptionDcCond.with(contractRepository)
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCP0000002")))
         );
   }
   
@@ -119,32 +129,36 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  public ProductFactory uzooPassSlimProductFactory(ContractRepository contractRepository) {
+  public ProductFactory uzooPassSlimProductFactory(ContractRepository contractRepository,
+                                                   DiscountPolicyRepository discountPolicyRepository) {
     String productId = "NMP0000004";
     
     return new ProductFactory(productId)
         .basicBenefitProductFactories(
-            amazonFreeDeliveryProductFactory()
+            amazonFreeDeliveryProductFactory(discountPolicyRepository)
         )
         .availableDiscountConditions(
-            FirstSubscriptionDcCond.with(contractRepository).discountPolicyIds("DCP0000003")
+            FirstSubscriptionDcCond.with(contractRepository)
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCP0000003")))
         );
   }
   
   @Bean
-  public ProductFactory googleOneAllProductFactory() {
+  public ProductFactory googleOneAllProductFactory(DiscountPolicyRepository discountPolicyRepository) {
     return new ProductFactory("NMB0000001")
         .availableDiscountConditions(
-            ContractTypeDcCond.asPackage().discountPolicyIds("DCB0000001")
+            ContractTypeDcCond.asPackage()
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCB0000001")))
         );
   }
   
   
   @Bean
-  public ProductFactory amazonFreeDeliveryProductFactory() {
+  public ProductFactory amazonFreeDeliveryProductFactory(DiscountPolicyRepository discountPolicyRepository) {
     return new ProductFactory("NMB0000002")
         .availableDiscountConditions(
-            ContractTypeDcCond.asPackage().discountPolicyIds("DCB0000001")
+            ContractTypeDcCond.asPackage()
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCB0000001")))
         );
   }
   
@@ -159,134 +173,152 @@ public class ProductFactoryConfiguration {
   }
   
   @Bean
-  public ProductFactory baeminProductFactory(ContractRepository contractRepository) {
+  public ProductFactory baeminProductFactory(ContractRepository contractRepository,
+                                             DiscountPolicyRepository discountPolicyRepository) {
     return new ProductFactory("NMO0000001")
         .availableDiscountConditions(
-            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000003"),
+            ContractTypeDcCond.asOption()
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCO0000003"))),
             and(ContractTypeDcCond.asUnit(),
                 FirstSubscriptionDcCond.with(contractRepository)
-            ).discountPolicyIds("DCU0000009")
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCU0000009")))
         );
   }
   
   @Bean
-  public ProductFactory goobneProductFactory() {
+  public ProductFactory goobneProductFactory(DiscountPolicyRepository discountPolicyRepository) {
     return new ProductFactory("NMO0000002")
         .availableDiscountConditions(
-            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001")
+            ContractTypeDcCond.asOption()
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCO0000001")))
         );
   }
   
   @Bean
-  public ProductFactory floAndDataProductFactory(ContractRepository contractRepository, CustomerServiceProxy customerServiceProxy) {
+  public ProductFactory floAndDataProductFactory(ContractRepository contractRepository,
+                                                 CustomerServiceProxy customerServiceProxy,
+                                                 DiscountPolicyRepository discountPolicyRepository) {
     return new ProductFactory("NMO0000004")
         .availableDiscountConditions(
             // 옵션
-            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001"),
+            ContractTypeDcCond.asOption()
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCO0000001"))),
             // 단품 & 최초가입
             and(
                 ContractTypeDcCond.asUnit(),
                 FirstSubscriptionDcCond.with(contractRepository)
-            ).discountPolicyIds("DCU0000002"),
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCU0000002"))),
             // 단품 & 플래티넘, 프라임플러스, 맥스 요금제
             and(
                 ContractTypeDcCond.asUnit(),
                 MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PLATINUM, MAX, PRIME_PLUS)
-            ).discountPolicyIds("DCU0000004"),
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCU0000004"))),
             // 프라임, 스페셜 요금제
             and(
                 ContractTypeDcCond.asUnit(),
                 MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PRIME, SPECIAL)
-            ).discountPolicyIds("DCU0000005")
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCU0000005")))
         );
   }
   
   @Bean
-  public ProductFactory floAndDataPlusProductFactory(ContractRepository contractRepository, CustomerServiceProxy customerServiceProxy) {
+  public ProductFactory floAndDataPlusProductFactory(ContractRepository contractRepository,
+                                                     CustomerServiceProxy customerServiceProxy,
+                                                     DiscountPolicyRepository discountPolicyRepository) {
     return new ProductFactory("NMO0000008")
         .availableDiscountConditions(
             // 옵션
-            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001"),
+            ContractTypeDcCond.asOption()
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCO0000001"))),
             // 단품 & 최초가입
             and(
                 ContractTypeDcCond.asUnit(),
                 FirstSubscriptionDcCond.with(contractRepository)
-            ).discountPolicyIds("DCU0000003"),
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCU0000003"))),
             // 단품 & 플래티넘, 프라임플러스, 맥스 요금제
             and(
                 ContractTypeDcCond.asUnit(),
                 MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PLATINUM)
-            ).discountPolicyIds("DCU0000006"),
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCU0000006"))),
             // 단품 & 플래티넘, 프라임플러스, 맥스 요금제
             and(
                 ContractTypeDcCond.asUnit(),
                 MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PRIME_PLUS, MAX)
-            ).discountPolicyIds("DCU0000007"),
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCU0000007"))),
             // 프라임, 스페셜 요금제
             and(
                 ContractTypeDcCond.asUnit(),
                 MobilePhonePricePlanDcCond.with(customerServiceProxy).in(PRIME, SPECIAL)
-            ).discountPolicyIds("DCU0000008")
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCU0000008")))
         );
   }
   
   @Bean
-  public ProductFactory gamepassUltimateProductFactory(ContractRepository contractRepository) {
+  public ProductFactory gamepassUltimateProductFactory(ContractRepository contractRepository,
+                                                       DiscountPolicyRepository discountPolicyRepository) {
     return new ProductFactory("NMO0000005")
         .availableDiscountConditions(
             // 옵션
-            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000002"),
+            ContractTypeDcCond.asOption()
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCO0000002"))),
             // 단품 & 최초가입
             and(
                 ContractTypeDcCond.asUnit(),
                 FirstSubscriptionDcCond.with(contractRepository)
-            ).discountPolicyIds("DCU0000001")
+            ).discountPolicies(discountPolicyRepository.findAllById(List.of("DCU0000001")))
         );
   }
   
   
   @Bean
-  public ProductFactory googleOneMiniProductFactory() {
+  public ProductFactory googleOneMiniProductFactory(DiscountPolicyRepository discountPolicyRepository) {
     return new ProductFactory("NMO0000006")
         .availableDiscountConditions(
-            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001")
+            ContractTypeDcCond.asOption()
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCO0000001")))
         );
   }
   
   @Bean
-  public ProductFactory yanoljaProductFactory() {
+  public ProductFactory yanoljaProductFactory(DiscountPolicyRepository discountPolicyRepository) {
     return new ProductFactory("NMO0000010")
         .availableDiscountConditions(
-            ContractTypeDcCond.asOption().discountPolicyIds("DCO0000001")
+            ContractTypeDcCond.asOption()
+                .discountPolicies(discountPolicyRepository.findAllById(List.of("DCO0000004")))
         );
   }
   
   @Bean
   public ProductFactoryMap productFactoryMap(ContractRepository contractRepository,
-                                      CustomerServiceProxy customerServiceProxy,
-                                      ProductRepository productRepository,
-                                      ProductRelationRepository productRelationRepository) {
+                                             CustomerServiceProxy customerServiceProxy,
+                                             ProductRepository productRepository,
+                                             DiscountPolicyRepository discountPolicyRepository,
+                                             ProductRelationRepository productRelationRepository) {
     ProductFactoryMap productFactoryMap = new ProductFactoryMap();
+
+    // cache화
+    discountPolicyRepository.findAll();
+
     // package
-    productFactoryMap.put(uzooPassAllProductFactory(contractRepository, customerServiceProxy, productRepository, productRelationRepository));
-    productFactoryMap.put(uzooPassLifeProductFactory(contractRepository, customerServiceProxy, productRepository, productRelationRepository));
-    productFactoryMap.put(uzooPassMiniProductFactory(contractRepository, productRelationRepository));
-    productFactoryMap.put(uzooPassSlimProductFactory(contractRepository));
+    productFactoryMap.put(uzooPassAllProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository));
+    productFactoryMap.put(uzooPassLifeProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository));
+    productFactoryMap.put(uzooPassMiniProductFactory(contractRepository, discountPolicyRepository, productRelationRepository));
+    productFactoryMap.put(uzooPassSlimProductFactory(contractRepository, discountPolicyRepository));
     
     // 기본혜택
-    productFactoryMap.put(googleOneAllProductFactory());
-    productFactoryMap.put(amazonFreeDeliveryProductFactory());
+    productFactoryMap.put(googleOneAllProductFactory(discountPolicyRepository));
+    productFactoryMap.put(amazonFreeDeliveryProductFactory(discountPolicyRepository));
     productFactoryMap.put(sevenElevenProductFactory());
     productFactoryMap.put(twosomePlaceProductFactory());
     
     // 옵션 or 단품
-    productFactoryMap.put(baeminProductFactory(contractRepository));
-    productFactoryMap.put(goobneProductFactory());
-    productFactoryMap.put(floAndDataProductFactory(contractRepository, customerServiceProxy));
-    productFactoryMap.put(floAndDataPlusProductFactory(contractRepository, customerServiceProxy));
-    productFactoryMap.put(gamepassUltimateProductFactory(contractRepository));
-    productFactoryMap.put(googleOneMiniProductFactory());
-    productFactoryMap.put(yanoljaProductFactory());
+    productFactoryMap.put(baeminProductFactory(contractRepository, discountPolicyRepository));
+    productFactoryMap.put(goobneProductFactory(discountPolicyRepository));
+    productFactoryMap.put(floAndDataProductFactory(contractRepository, customerServiceProxy, discountPolicyRepository));
+    productFactoryMap.put(floAndDataPlusProductFactory(contractRepository, customerServiceProxy, discountPolicyRepository));
+    productFactoryMap.put(gamepassUltimateProductFactory(contractRepository, discountPolicyRepository));
+    productFactoryMap.put(googleOneMiniProductFactory(discountPolicyRepository));
+    productFactoryMap.put(yanoljaProductFactory(discountPolicyRepository));
     
     return productFactoryMap;
   }

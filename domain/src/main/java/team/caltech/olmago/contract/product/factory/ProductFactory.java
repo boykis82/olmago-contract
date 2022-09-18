@@ -90,7 +90,7 @@ public class ProductFactory {
     
     contract.validateAvailableProductType(product);
     
-    List<DiscountSubscription> dcSubs = subscribeDiscounts(satisfiedDiscountPolicyIds(contract), subRcvDtm);
+    List<DiscountSubscription> dcSubs = subscribeDiscounts(satisfiedDiscountPolicies(contract), subRcvDtm);
     
     return new ProductSubscription(
         contract,
@@ -99,19 +99,25 @@ public class ProductFactory {
     ).discountSubscriptions(dcSubs);
   }
 
-  private List<String> satisfiedDiscountPolicyIds(Contract contract) {
+  private List<DiscountPolicy> satisfiedDiscountPolicies(Contract contract) {
     return availableDiscountConditions.stream()
-        .filter(discountCondition -> discountCondition.satisfied(contract))
-        .map(DiscountCondition::discountPolicyIds)
+        .filter(dcCond -> dcCond.satisfied(contract))
+        .map(DiscountCondition::discountPoliciess)
         .flatMap(List::stream)
         .collect(Collectors.toList());
   }
-  
+
+  public List<DiscountPolicy> satisfiedDiscountPolicies(Contract contract, DiscountType discountType) {
+    return satisfiedDiscountPolicies(contract).stream()
+        .filter(dp -> dp.getDcType().equals(discountType))
+        .collect(Collectors.toList());
+  }
+
   private List<DiscountSubscription> subscribeDiscounts(
-      List<String> discountPolicyIds,
+      List<DiscountPolicy> discountPolicies,
       LocalDateTime subRcvDtm
   ) {
-    return discountPolicyRepository.findAllById(discountPolicyIds).stream()
+    return discountPolicies.stream()
         .map(discountPolicy -> subscribeDiscount(discountPolicy, subRcvDtm))
         .collect(Collectors.toList());
   }

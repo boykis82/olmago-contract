@@ -80,7 +80,7 @@ public class Contract {
   }
   
   public ContractSubscriptionReceived receiveSubscription() {
-    return new ContractSubscriptionReceived(id, lastOrderId, lifeCycle.getSubscriptionReceivedDateTime());
+    return new ContractSubscriptionReceived(id, lastOrderId, feeProductCode, lifeCycle.getSubscriptionReceivedDateTime());
   }
   
   public ContractSubscriptionReceiptCanceled cancelSubscriptionReceipt(LocalDateTime cnclSubRcvDtm) {
@@ -268,24 +268,19 @@ public class Contract {
   }
   
   public void receiveCouponDiscount(DiscountPolicy discountPolicy, String couponId, LocalDateTime couponReservedDateTime) {
-    productSubscriptions.stream()
-        .filter(ps -> ps.getProductCode().equals(feeProductCode))
-        .findFirst()
-        .orElseThrow(InvalidArgumentException::new)
+    getFeeProductSubscription()
         .receiveCouponDiscount(discountPolicy, couponId, couponReservedDateTime);
   }
-  
-  public List<String> getAllProductCodes() {
-    return productSubscriptions.stream()
-        .map(ProductSubscription::getProductCode)
-        .collect(Collectors.toList());
+
+  public DiscountChanged changeMobilePhoneLinkedDiscount(List<DiscountPolicy> satisfiedMblPhoneLinkedDiscountPolicies, LocalDateTime changeDateTime) {
+    getFeeProductSubscription().changeMobilePhoneLinkedDiscount(satisfiedMblPhoneLinkedDiscountPolicies, changeDateTime);
+    return new DiscountChanged(id, changeDateTime);
   }
-  
-  public List<String> getAllDiscountCodes() {
+
+  private ProductSubscription getFeeProductSubscription() {
     return productSubscriptions.stream()
-        .map(ProductSubscription::getDiscountSubscriptions)
-        .flatMap(List::stream)
-        .map(ds -> ds.getDiscountPolicy().getDcPolicyCode())
-        .collect(Collectors.toList());
+        .filter(ps -> ps.getProductCode().equals(feeProductCode))
+        .findFirst()
+        .orElseThrow(InvalidArgumentException::new);
   }
 }

@@ -1,12 +1,13 @@
 package team.caltech.olmago.contract.discount.condition;
 
 import team.caltech.olmago.contract.contract.Contract;
+import team.caltech.olmago.contract.plm.DiscountPolicy;
 
 import java.util.Arrays;
 import java.util.List;
 
 public abstract class DiscountCondition {
-  List<String> discountPolicyIds;
+  List<DiscountPolicy> discountPolicies;
   
   public abstract boolean satisfied(Contract contract);
   
@@ -30,12 +31,12 @@ public abstract class DiscountCondition {
     return new NegatedDiscountCondition(dc);
   }
   
-  public List<String> discountPolicyIds() {
-    return discountPolicyIds;
+  public List<DiscountPolicy> discountPoliciess() {
+    return discountPolicies;
   }
 
-  public DiscountCondition discountPolicyIds(String ...discountPolicyIds) {
-    this.discountPolicyIds = Arrays.asList(discountPolicyIds);
+  public DiscountCondition discountPolicies(List<DiscountPolicy> discountPolicies) {
+    this.discountPolicies = discountPolicies;
     return this;
   }
 }

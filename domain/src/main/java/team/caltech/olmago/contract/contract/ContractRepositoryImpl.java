@@ -72,4 +72,16 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
         )
         .fetch();
   }
+
+  @Override
+  public List<Contract> findByCustomerId(long customerId) {
+    return jpaQueryFactory
+        .select(contract)
+        .where(
+            contract.customerId.eq(customerId)
+                .and(contract.lifeCycle.terminationCompletedDateTime.isNotNull())
+                .and(contract.lifeCycle.terminationReceivedDateTime.isNotNull())
+        )
+        .fetch();
+  }
 }
