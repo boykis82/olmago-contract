@@ -2,13 +2,16 @@ package team.caltech.olmago.contract.contract.event;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import net.bytebuddy.asm.Advice;
 
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
-public class ContractChangeCanceled extends Event {
-  private final long contractId;
+public class ContractChangeCanceled extends ContractEventBase {
   private final long orderId;
-  private final LocalDateTime subscriptionCompletedDateTime;
+  
+  public ContractChangeCanceled(long contractId, LocalDateTime eventOccurDtm, long orderId) {
+    super(contractId, eventOccurDtm);
+    this.orderId = orderId;
+  }
 }

@@ -6,9 +6,11 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
-public class ContractTerminationReceived extends Event {
-  private final long contractId;
+public class ContractTerminationReceived extends ContractEventBase {
   private final long orderId;
-  private final LocalDateTime terminationReceivedDateTime;
+  
+  public ContractTerminationReceived(long contractId, LocalDateTime eventOccurDtm, long orderId) {
+    super(contractId, eventOccurDtm);
+    this.orderId = orderId;
+  }
 }
