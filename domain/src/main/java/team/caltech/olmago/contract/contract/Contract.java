@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @NoArgsConstructor
@@ -80,7 +81,7 @@ public class Contract {
   }
   
   public ContractSubscriptionReceived receiveSubscription() {
-    return new ContractSubscriptionReceived(id, lastOrderId, feeProductCode, lifeCycle.getSubscriptionReceivedDateTime());
+    return new ContractSubscriptionReceived(id, lifeCycle.getSubscriptionReceivedDateTime(), lastOrderId, feeProductCode);
   }
   
   public ContractSubscriptionReceiptCanceled cancelSubscriptionReceipt(LocalDateTime cnclSubRcvDtm) {
@@ -88,7 +89,7 @@ public class Contract {
     productSubscriptions.stream()
         .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
         .forEach(ps -> ps.cancelSubscriptionReceipt(cnclSubRcvDtm));
-    return new ContractSubscriptionReceiptCanceled(id, lastOrderId, cnclSubRcvDtm);
+    return new ContractSubscriptionReceiptCanceled(id, cnclSubRcvDtm, lastOrderId);
   }
   
   public ContractSubscriptionCompleted completeSubscription(LocalDateTime subCmplDtm) {
@@ -108,7 +109,7 @@ public class Contract {
         .filter(ps -> ps.getLifeCycle().isSubscriptionCompleted())
         .forEach(ps -> ps.receiveTermination(termRcvDtm));
     
-    return new ContractTerminationReceived(id, orderId, termRcvDtm);
+    return new ContractTerminationReceived(id, termRcvDtm, orderId);
   }
   
   public ContractTerminationReceiptCanceled cancelTerminationReceipt(Long orderId, LocalDateTime cnclTermRcvDtm) {
@@ -117,7 +118,7 @@ public class Contract {
         .filter(ps -> ps.getLifeCycle().isTerminationReceived())
         .forEach(ps -> ps.cancelTerminationReceipt(cnclTermRcvDtm));
   
-    return new ContractTerminationReceiptCanceled(id, orderId, cnclTermRcvDtm);
+    return new ContractTerminationReceiptCanceled(id, cnclTermRcvDtm, orderId);
   }
   
   public ContractTerminationCompleted completeTermination(LocalDateTime termCmplDtm) {
@@ -129,22 +130,32 @@ public class Contract {
     return new ContractTerminationCompleted(id, termCmplDtm);
   }
   
-  public void completeRegularPayment(LocalDateTime regPayCmplDtm) {
+  public RegularPaymentCompleted completeRegularPayment(LocalDateTime regPayCmplDtm) {
     this.lastRegularPaymentCompletedDateTime = regPayCmplDtm;
     billCycle = billCycle.next();
+  
+    // 코드 중복 제거를 위해 stream 미리 빼놓기
+    Stream<ProductSubscription> subProductsStream = productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isSubscriptionReceived());
+    Stream<ProductSubscription> termProductsStream = productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isTerminationReceived());
+    
+    // event
+    RegularPaymentCompleted event = new RegularPaymentCompleted(
+        id, regPayCmplDtm,
+        subProductsStream.map(ProductSubscription::getProductCode).collect(Collectors.toList()),
+        termProductsStream.map(ProductSubscription::getProductCode).collect(Collectors.toList())
+    );
     
     // 해지접수 -> 해지완료
-    productSubscriptions.stream()
-        .filter(ps -> ps.getLifeCycle().isTerminationReceived())
-        .forEach(ps -> ps.completeTermination(regPayCmplDtm));
+    termProductsStream.forEach(ps -> ps.completeTermination(regPayCmplDtm));
     
     // 가입접수 -> 가입완료
-    productSubscriptions.stream()
-        .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
-        .forEach(ps -> ps.completeSubscription(regPayCmplDtm));
+    subProductsStream.forEach(ps -> ps.completeSubscription(regPayCmplDtm));
   
     // 요금제코드 현행화
     setFeeProductCode();
+    return event;
   }
   
   private void setFeeProductCode() {
@@ -172,7 +183,7 @@ public class Contract {
     this.feeProductCode = feeProductCode;
     this.lastOrderId = orderId;
     
-    return new ContractChanged(id, orderId, changeDateTime);
+    return new ContractChanged(id, changeDateTime, orderId);
   }
   
   public ContractChangeCanceled cancelContractChange(long orderId, LocalDateTime cnclChangeDateTime) {
@@ -195,7 +206,7 @@ public class Contract {
       backToOption(changeDtm);
     }
   
-    return new ContractChangeCanceled(id, lastOrderId, cnclChangeDateTime);
+    return new ContractChangeCanceled(id, cnclChangeDateTime, lastOrderId);
   }
   
   private LocalDateTime getChangeDtm() {
@@ -235,7 +246,7 @@ public class Contract {
     this.contractType = ContractType.UNIT;
     this.unitContractConvertedDateTime = unitContractConvertedDateTime;
   
-    return new ContractChanged(id, orderId, unitContractConvertedDateTime);
+    return new ContractChanged(id, unitContractConvertedDateTime, orderId);
   }
   
   /*
@@ -267,9 +278,10 @@ public class Contract {
     }
   }
   
-  public void receiveCouponDiscount(DiscountPolicy discountPolicy, String couponId, LocalDateTime couponReservedDateTime) {
+  public DiscountChanged receiveCouponDiscount(DiscountPolicy discountPolicy, String couponId, LocalDateTime couponReservedDateTime) {
     getFeeProductSubscription()
         .receiveCouponDiscount(discountPolicy, couponId, couponReservedDateTime);
+    return new DiscountChanged(id, couponReservedDateTime);
   }
 
   public DiscountChanged changeMobilePhoneLinkedDiscount(List<DiscountPolicy> satisfiedMblPhoneLinkedDiscountPolicies, LocalDateTime changeDateTime) {

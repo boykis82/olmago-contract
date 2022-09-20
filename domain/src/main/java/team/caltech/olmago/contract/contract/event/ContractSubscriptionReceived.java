@@ -1,16 +1,18 @@
 package team.caltech.olmago.contract.contract.event;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
-public class ContractSubscriptionReceived extends Event {
-  private final long contractId;
+public class ContractSubscriptionReceived extends ContractEventBase {
   private final long orderId;
   private final String feeProductCode;
-  private final LocalDateTime subscriptionReceivedDateTime;
+  
+  public ContractSubscriptionReceived(long contractId, LocalDateTime eventOccurDtm, long orderId, String feeProductCode) {
+    super(contractId, eventOccurDtm);
+    this.orderId = orderId;
+    this.feeProductCode = feeProductCode;
+  }
 }

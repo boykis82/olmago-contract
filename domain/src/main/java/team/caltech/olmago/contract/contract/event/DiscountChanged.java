@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
-public class DiscountChanged extends Event {
-  private final long contractId;
-  private final LocalDateTime dcChangedDateTime;
+public class DiscountChanged extends ContractEventBase {
+  public DiscountChanged(long contractId, LocalDateTime eventOccurDtm) {
+    super(contractId, eventOccurDtm);
+  }
 }

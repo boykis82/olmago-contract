@@ -6,13 +6,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class AssociatedCompanyServiceProxyImpl implements  AssociatedCompanyServiceProxy {
-  public Mono<Void> subscribe(long contractId, List<String> productCodes, LocalDateTime subDtm) {
-    // todo
-    return Mono.just(1).then();
-  }
-  
-  public Mono<Void> terminate(long contractId, List<String> productCodes, LocalDateTime termDtm) {
-    // todo
-    return Mono.just(1).then();
+  // todo : 조회 전용으로 변경하자
+  public Mono<String> getAuthentications(long contractId) {
+    return Mono.just("abc");
   }
 }

@@ -1,0 +1,43 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.10'
+    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'java'
+}
+
+group = 'team.caltech'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
+
+dependencies {
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'io.projectreactor:reactor-core'
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+    //implementation('mysql:mysql-connector-java')
+    testImplementation('com.h2database:h2')
+    testImplementation('io.projectreactor:reactor-test')
+    testImplementation 'org.testng:testng:7.1.0'
+
+    // lombok
+    compileOnly("org.projectlombok:lombok")
+    testCompileOnly 'org.projectlombok:lombok'
+    annotationProcessor("org.projectlombok:lombok")
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

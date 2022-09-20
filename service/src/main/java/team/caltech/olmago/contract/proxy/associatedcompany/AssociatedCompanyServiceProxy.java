@@ -6,6 +6,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AssociatedCompanyServiceProxy {
-  Mono<Void> subscribe(long contractId, List<String> productCodes, LocalDateTime subDtm);
-  Mono<Void> terminate(long contractId, List<String> productCodes, LocalDateTime termDtm);
+  // todo : 조회 전용으로 변경하자
+  Mono<String> getAuthentications(long contractId);
 }
