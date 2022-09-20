@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.messagebus;
+package team.caltech.olmago.contract;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
