@@ -1,0 +1,33 @@
+logging:
+  level:
+    root: INFO
+    team.caltech: INFO
+    com:
+      querydsl:
+        sql: INFO
+    org:
+      hibernate:
+        SQL: INFO
+        type: INFO
+
+spring:
+  jpa:
+    show_sql: true
+    format_sql: true
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:~/test
+    username: usr
+    password: pwd

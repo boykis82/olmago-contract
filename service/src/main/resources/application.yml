@@ -32,6 +32,12 @@ spring:
     username: usr
     password: pwd
 
+
+spring.rabbitmq:
+  addresses: localhost
+  username: user
+  password: bitnami
+
 spring.cloud.function:
   definition: functionRouter
   routing-expression: headers['type']
@@ -46,10 +52,14 @@ spring.cloud.stream:
         required-groups: auditGroup
 
     functionRouter-in-0:
-      destination: billing-event-topic,coupon-event-topic,customer-event-topic
+      destination: order-command-topic,billing-event-topic,coupon-event-topic,customer-event-topic,product-auth-topic
       group: mygroup
       consumer:
         maxAttempts: 3
         backOffInitialInterval: 500
         backOffMaxInterval: 1000
         backOffMultiplier: 2.0
+
+spring.cloud.stream.rabbit.bindings.functionRouter-in-0.consumer:
+  autoBindDlq: true
+  republishToDlq: true

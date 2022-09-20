@@ -1,13 +1,15 @@
-package team.caltech.olmago.contract;
+package team.caltech.olmago.contract.event;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Getter
 @Entity
 public class DomainEventEnvelope {
   private final static ObjectMapper objectMapper = new ObjectMapper();
@@ -35,6 +37,9 @@ public class DomainEventEnvelope {
   private LocalDateTime publishedAt;
   
   @Column(nullable = false)
+  private boolean published;
+  
+  @Column(nullable = false)
   private String eventType;
   
   @Column(nullable = false)
@@ -54,6 +59,11 @@ public class DomainEventEnvelope {
     dee.createdAt = LocalDateTime.now();
     dee.eventType = eventType;
     dee.payload = objectMapper.writeValueAsString(payload);
+    dee.published = false;
     return dee;
+  }
+  
+  public void publish(LocalDateTime dtm) {
+    publishedAt = dtm;
   }
 }
