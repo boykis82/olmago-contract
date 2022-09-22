@@ -1,9 +1,8 @@
 package team.caltech.olmago.contract.discount.condition;
 
 import team.caltech.olmago.contract.contract.Contract;
-import team.caltech.olmago.contract.plm.DiscountPolicy;
+import team.caltech.olmago.contract.plm.discount.DiscountPolicy;
 
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class DiscountCondition {

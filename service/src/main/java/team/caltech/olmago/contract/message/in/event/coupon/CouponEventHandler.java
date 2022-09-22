@@ -17,7 +17,7 @@ public class CouponEventHandler {
   private final ContractService contractService;
   
   @Transactional
-  public void couponUseReserved(Message<CouponUseReservedEvent> msg, CouponUseReservedEvent event) {
+  public void couponUseReserved(Message<?> msg, CouponUseReservedEvent event) {
     if (messageInBoxProcessor.notExistedMessage(msg)) {
       messageInBoxProcessor.saveInBoxMessage(msg);
       contractService.receiveCouponDiscount(ReceiveCouponDiscountDto.of(event));
@@ -25,7 +25,7 @@ public class CouponEventHandler {
   }
   
   @Transactional
-  public void couponUseReservationReleased(Message<CouponUseReleasedEvent> msg, CouponUseReleasedEvent event) {
+  public void couponUseReservationReleased(Message<?> msg, CouponUseReleasedEvent event) {
     if (messageInBoxProcessor.notExistedMessage(msg)) {
       messageInBoxProcessor.saveInBoxMessage(msg);
       contractService.releaseCouponDiscount(ReleaseCouponDiscountDto.of(event));

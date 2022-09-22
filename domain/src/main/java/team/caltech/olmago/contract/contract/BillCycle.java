@@ -3,7 +3,7 @@ package team.caltech.olmago.contract.contract;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team.caltech.olmago.contract.plm.BillPeriod;
+import team.caltech.olmago.contract.plm.product.BillPeriod;
 
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;

@@ -1,9 +1,9 @@
 package team.caltech.olmago.contract.contract;
 
 import team.caltech.olmago.contract.discount.DiscountSubscription;
-import team.caltech.olmago.contract.plm.DiscountPolicy;
+import team.caltech.olmago.contract.plm.discount.DiscountPolicy;
 import team.caltech.olmago.contract.plm.PlmFixtures;
-import team.caltech.olmago.contract.plm.Product;
+import team.caltech.olmago.contract.plm.product.Product;
 import team.caltech.olmago.contract.product.ProductSubscription;
 
 import java.time.LocalDateTime;

@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.contract.ContractRepository;
 import team.caltech.olmago.contract.discount.condition.DiscountCondition;
-import team.caltech.olmago.contract.plm.DiscountType;
+import team.caltech.olmago.contract.plm.discount.DiscountType;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j

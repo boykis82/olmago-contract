@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.plm;
+package team.caltech.olmago.contract.plm.discount;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;

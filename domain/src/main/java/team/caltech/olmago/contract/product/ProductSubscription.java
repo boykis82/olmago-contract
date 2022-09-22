@@ -7,8 +7,8 @@ import team.caltech.olmago.contract.common.LifeCycle;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.discount.DiscountSubscription;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
-import team.caltech.olmago.contract.plm.DiscountPolicy;
-import team.caltech.olmago.contract.plm.Product;
+import team.caltech.olmago.contract.plm.discount.DiscountPolicy;
+import team.caltech.olmago.contract.plm.product.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

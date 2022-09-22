@@ -1,14 +1,18 @@
 package team.caltech.olmago.contract.plm;
 
+import team.caltech.olmago.contract.plm.discount.DiscountPolicy;
+import team.caltech.olmago.contract.plm.discount.DiscountType;
+import team.caltech.olmago.contract.plm.product.Product;
+
 import java.util.List;
 
-import static team.caltech.olmago.contract.plm.AvailableProductType.*;
-import static team.caltech.olmago.contract.plm.AvailableProductType.OPTION;
-import static team.caltech.olmago.contract.plm.BillPeriod.MONTHLY;
-import static team.caltech.olmago.contract.plm.DiscountPeriodType.*;
-import static team.caltech.olmago.contract.plm.DiscountStartDateType.*;
-import static team.caltech.olmago.contract.plm.DiscountType.*;
-import static team.caltech.olmago.contract.plm.DiscountUnit.*;
+import static team.caltech.olmago.contract.plm.product.AvailableProductType.*;
+import static team.caltech.olmago.contract.plm.product.AvailableProductType.OPTION;
+import static team.caltech.olmago.contract.plm.product.BillPeriod.MONTHLY;
+import static team.caltech.olmago.contract.plm.discount.DiscountPeriodType.*;
+import static team.caltech.olmago.contract.plm.discount.DiscountStartDateType.*;
+import static team.caltech.olmago.contract.plm.discount.DiscountType.*;
+import static team.caltech.olmago.contract.plm.discount.DiscountUnit.*;
 
 public class PlmFixtures {
   public static List<DiscountPolicy> setupDiscountPolicies() {

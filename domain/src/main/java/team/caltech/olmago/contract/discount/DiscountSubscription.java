@@ -4,15 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team.caltech.olmago.contract.common.LifeCycle;
-import team.caltech.olmago.contract.plm.DiscountPeriodType;
-import team.caltech.olmago.contract.plm.DiscountPolicy;
-import team.caltech.olmago.contract.plm.DiscountType;
+import team.caltech.olmago.contract.plm.discount.DiscountPeriodType;
+import team.caltech.olmago.contract.plm.discount.DiscountPolicy;
+import team.caltech.olmago.contract.plm.discount.DiscountType;
 import team.caltech.olmago.contract.product.ProductSubscription;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @NoArgsConstructor
 @Getter

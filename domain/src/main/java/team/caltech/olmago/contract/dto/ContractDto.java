@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team.caltech.olmago.contract.contract.*;
 import team.caltech.olmago.contract.discount.DiscountSubscription;
-import team.caltech.olmago.contract.plm.*;
+import team.caltech.olmago.contract.plm.discount.DiscountUnit;
 import team.caltech.olmago.contract.product.ProductSubscription;
 
 import java.time.LocalDate;

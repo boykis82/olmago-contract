@@ -3,7 +3,7 @@ package team.caltech.olmago.contract.contract;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import team.caltech.olmago.contract.plm.DiscountType;
+import team.caltech.olmago.contract.plm.discount.DiscountType;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,9 +11,9 @@ import java.util.Optional;
 import static team.caltech.olmago.contract.contract.QContract.contract;
 import static team.caltech.olmago.contract.contract.uzoopackage.QUzooPackage.uzooPackage;
 import static team.caltech.olmago.contract.discount.QDiscountSubscription.discountSubscription;
-import static team.caltech.olmago.contract.plm.QDiscountPolicy.discountPolicy;
-import static team.caltech.olmago.contract.plm.QProduct.product;
 import static team.caltech.olmago.contract.product.QProductSubscription.*;
+import static team.caltech.olmago.contract.plm.discount.QDiscountPolicy.discountPolicy;
+import static team.caltech.olmago.contract.plm.product.QProduct.product;
 
 @RequiredArgsConstructor
 public class ContractRepositoryImpl implements ContractRepositoryCustom {

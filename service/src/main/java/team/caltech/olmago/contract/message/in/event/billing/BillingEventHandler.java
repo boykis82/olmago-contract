@@ -19,7 +19,7 @@ public class BillingEventHandler {
   private final ContractService contractService;
   
   @Transactional
-  public void paymentCompleted(Message<PaymentCompletedEvent> msg, PaymentCompletedEvent event) {
+  public void paymentCompleted(Message<?> msg, PaymentCompletedEvent event) {
     if (!messageInBoxProcessor.notExistedMessage(msg)) {
       return;
     }
@@ -37,7 +37,7 @@ public class BillingEventHandler {
   }
   
   @Transactional
-  public void refundCompleted(Message<RefundCompletedEvent> msg, RefundCompletedEvent event) {
+  public void refundCompleted(Message<?> msg, RefundCompletedEvent event) {
     if (!messageInBoxProcessor.notExistedMessage(msg)) {
       return;
     }

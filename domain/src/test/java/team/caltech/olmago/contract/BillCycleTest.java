@@ -2,7 +2,7 @@ package team.caltech.olmago.contract;
 
 import org.junit.Test;
 import team.caltech.olmago.contract.contract.BillCycle;
-import team.caltech.olmago.contract.plm.BillPeriod;
+import team.caltech.olmago.contract.plm.product.BillPeriod;
 
 import java.time.LocalDate;
 

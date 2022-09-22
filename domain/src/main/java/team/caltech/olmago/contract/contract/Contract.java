@@ -7,10 +7,10 @@ import lombok.Setter;
 import team.caltech.olmago.contract.common.LifeCycle;
 import team.caltech.olmago.contract.contract.event.*;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
-import team.caltech.olmago.contract.plm.AvailableProductType;
-import team.caltech.olmago.contract.plm.BillPeriod;
-import team.caltech.olmago.contract.plm.DiscountPolicy;
-import team.caltech.olmago.contract.plm.Product;
+import team.caltech.olmago.contract.plm.product.AvailableProductType;
+import team.caltech.olmago.contract.plm.product.BillPeriod;
+import team.caltech.olmago.contract.plm.discount.DiscountPolicy;
+import team.caltech.olmago.contract.plm.product.Product;
 import team.caltech.olmago.contract.product.ProductSubscription;
 
 import javax.persistence.*;

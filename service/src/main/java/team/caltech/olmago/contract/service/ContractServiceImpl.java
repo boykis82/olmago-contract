@@ -12,8 +12,8 @@ import team.caltech.olmago.contract.dto.*;
 import team.caltech.olmago.contract.message.MessageEnvelope;
 import team.caltech.olmago.contract.message.MessageEnvelopeRepository;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
-import team.caltech.olmago.contract.plm.DiscountPolicy;
-import team.caltech.olmago.contract.plm.DiscountPolicyRepository;
+import team.caltech.olmago.contract.plm.discount.DiscountPolicy;
+import team.caltech.olmago.contract.plm.discount.DiscountPolicyRepository;
 import team.caltech.olmago.contract.product.ProductSubscription;
 import team.caltech.olmago.contract.product.factory.ProductFactory;
 import team.caltech.olmago.contract.product.factory.ProductFactoryMap;
@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static team.caltech.olmago.contract.plm.DiscountType.MOBILE_PHONE_PRICE_PLAN_LINKED;
+import static team.caltech.olmago.contract.plm.discount.DiscountType.MOBILE_PHONE_PRICE_PLAN_LINKED;
 
 @RequiredArgsConstructor
 @Service

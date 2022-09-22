@@ -1,11 +1,10 @@
-package team.caltech.olmago.contract.plm;
+package team.caltech.olmago.contract.plm.discount;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor

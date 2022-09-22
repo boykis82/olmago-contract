@@ -16,7 +16,10 @@ public class LinkedMobilePhoneDto {
   private MobilePhonePricePlan mobilePhonePricePlan;
   private String dcTargetUzooPassProductCode;
   
-  public boolean matchMobilePhonePricePlanAndUzooPassProductCode(MobilePhonePricePlan mobilePhonePricePlan, String uzooPassProductCode) {
+  public boolean matchMobilePhonePricePlanAndUzooPassProductCode(
+      MobilePhonePricePlan mobilePhonePricePlan,
+      String uzooPassProductCode
+  ) {
     return this.mobilePhonePricePlan.equals(mobilePhonePricePlan) &&
         this.dcTargetUzooPassProductCode.equals(uzooPassProductCode);
   }

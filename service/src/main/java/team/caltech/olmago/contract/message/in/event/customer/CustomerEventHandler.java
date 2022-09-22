@@ -16,7 +16,7 @@ public class CustomerEventHandler {
   private final ContractService contractService;
   
   @Transactional
-  public void mobilePhoneServiceLinked(Message<MobilePhoneServiceLinkedEvent> message, MobilePhoneServiceLinkedEvent event) {
+  public void mobilePhoneServiceLinked(Message<?> message, MobilePhoneServiceLinkedEvent event) {
     if (messageInBoxProcessor.notExistedMessage(message)) {
       messageInBoxProcessor.saveInBoxMessage(message);
       contractService.changeMobilePhoneRelatedDiscount(ChangeMobilePhoneRelatedDiscountDto.of(event));
@@ -24,7 +24,7 @@ public class CustomerEventHandler {
   }
   
   @Transactional
-  public void mobilePhoneServiceUnlinked(Message<MobilePhoneServiceUnlinkedEvent> message, MobilePhoneServiceUnlinkedEvent event) {
+  public void mobilePhoneServiceUnlinked(Message<?> message, MobilePhoneServiceUnlinkedEvent event) {
     if (messageInBoxProcessor.notExistedMessage(message)) {
       messageInBoxProcessor.saveInBoxMessage(message);
       contractService.changeMobilePhoneRelatedDiscount(ChangeMobilePhoneRelatedDiscountDto.of(event));
@@ -32,7 +32,7 @@ public class CustomerEventHandler {
   }
   
   @Transactional
-  public void mobilePhonePricePlanChanged(Message<MobilePhonePricePlanChangedEvent> message, MobilePhonePricePlanChangedEvent event) {
+  public void mobilePhonePricePlanChanged(Message<?> message, MobilePhonePricePlanChangedEvent event) {
     if (messageInBoxProcessor.notExistedMessage(message)) {
       messageInBoxProcessor.saveInBoxMessage(message);
       contractService.changeMobilePhoneRelatedDiscount(ChangeMobilePhoneRelatedDiscountDto.of(event));

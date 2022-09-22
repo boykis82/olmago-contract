@@ -1,12 +1,16 @@
 package team.caltech.olmago.contract.product.factory;
 
-import org.mockito.Mock;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import reactor.core.publisher.Mono;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.contract.ContractRepository;
 import team.caltech.olmago.contract.customer.CustomerServiceProxy;
 import team.caltech.olmago.contract.plm.*;
+import team.caltech.olmago.contract.plm.discount.DiscountPolicy;
+import team.caltech.olmago.contract.plm.discount.DiscountPolicyRepository;
+import team.caltech.olmago.contract.plm.discount.DiscountType;
+import team.caltech.olmago.contract.plm.product.Product;
+import team.caltech.olmago.contract.plm.product.ProductRepository;
 import team.caltech.olmago.contract.product.ProductSubscription;
 
 import java.util.Arrays;

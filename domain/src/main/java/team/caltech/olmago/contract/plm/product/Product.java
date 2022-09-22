@@ -1,8 +1,10 @@
-package team.caltech.olmago.contract.plm;
+package team.caltech.olmago.contract.plm.product;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import team.caltech.olmago.contract.plm.product.AvailableProductType;
+import team.caltech.olmago.contract.plm.product.BillPeriod;
 
 import javax.persistence.*;
 

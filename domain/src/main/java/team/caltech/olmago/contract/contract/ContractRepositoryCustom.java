@@ -1,6 +1,6 @@
 package team.caltech.olmago.contract.contract;
 
-import team.caltech.olmago.contract.plm.DiscountType;
+import team.caltech.olmago.contract.plm.discount.DiscountType;
 
 import java.util.List;
 import java.util.Optional;
