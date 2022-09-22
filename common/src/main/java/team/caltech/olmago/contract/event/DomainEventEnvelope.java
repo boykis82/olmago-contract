@@ -28,7 +28,7 @@ public class DomainEventEnvelope {
   private String aggregateId;
   
   @Column(nullable = false)
-  private String channelName;
+  private String bindingName;
   
   @Column(nullable = false)
   private LocalDateTime createdAt;
@@ -48,22 +48,28 @@ public class DomainEventEnvelope {
   @Builder
   public static DomainEventEnvelope wrap(String aggregateType,
                                          String aggregateId,
-                                         String channelName,
+                                         String bindingName,
                                          String eventType,
                                          Object payload) throws JsonProcessingException {
     DomainEventEnvelope dee = new DomainEventEnvelope();
     dee.uuid = UUID.randomUUID().toString();
     dee.aggregateType = aggregateType;
     dee.aggregateId = aggregateId;
-    dee.channelName = channelName;
+    dee.bindingName = bindingName;
     dee.createdAt = LocalDateTime.now();
-    dee.eventType = eventType;
+    // ex: ContractSubscriptionCompleted -> contractSubscriptionCompleted
+    dee.eventType = firstLetterToLowerCase(eventType);
     dee.payload = objectMapper.writeValueAsString(payload);
     dee.published = false;
     return dee;
   }
   
+  private static String firstLetterToLowerCase(String eventType) {
+    return eventType.substring(0,1).toLowerCase() + eventType.substring(1);
+  }
+  
   public void publish(LocalDateTime dtm) {
     publishedAt = dtm;
+    published = true;
   }
 }

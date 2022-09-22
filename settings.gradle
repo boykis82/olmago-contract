@@ -1,4 +1,4 @@
 include ':common'
 include ':domain'
 include ':service'
-include ':batch:message-bus'
+include ':infra:message-bus'

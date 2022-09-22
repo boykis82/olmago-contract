@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team.caltech.olmago.contract.event.in.coupon.CouponUseReservedEvent;
+import team.caltech.olmago.contract.event.in.coupon.CouponUseReleasedEvent;
 
 import java.time.LocalDateTime;
 
@@ -12,18 +12,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Builder
-public class ReceiveCouponDiscountDto {
+public class ReleaseCouponDiscountDto {
   private long contractId;
   private String couponId;
   private String couponPolicyCode;
-  private LocalDateTime couponUseReservedDateTime;
-  
-  public static ReceiveCouponDiscountDto of(CouponUseReservedEvent event) {
-    return ReceiveCouponDiscountDto.builder()
+  private LocalDateTime couponUseReleasedDateTime;
+
+  public static ReleaseCouponDiscountDto of(CouponUseReleasedEvent event) {
+    return ReleaseCouponDiscountDto.builder()
         .contractId(event.getContractId())
         .couponId(event.getCouponId())
         .couponPolicyCode(event.getCouponPolicyCode())
-        .couponUseReservedDateTime(event.getCouponUseReservedDateTime())
+        .couponUseReleasedDateTime(event.getCouponUseReleasedDateTime())
         .build();
   }
 }

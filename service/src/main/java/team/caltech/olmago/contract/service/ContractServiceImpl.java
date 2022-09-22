@@ -3,14 +3,14 @@ package team.caltech.olmago.contract.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.core.scheduler.Scheduler;
-import team.caltech.olmago.contract.event.DomainEventEnvelope;
-import team.caltech.olmago.contract.event.DomainEventEnvelopeRepository;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.contract.ContractRepository;
 import team.caltech.olmago.contract.contract.ContractType;
-import team.caltech.olmago.contract.contract.event.*;
+import team.caltech.olmago.contract.contract.event.ContractEventBase;
+import team.caltech.olmago.contract.contract.event.DiscountChanged;
 import team.caltech.olmago.contract.dto.*;
+import team.caltech.olmago.contract.event.DomainEventEnvelope;
+import team.caltech.olmago.contract.event.DomainEventEnvelopeRepository;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.DiscountPolicy;
 import team.caltech.olmago.contract.plm.DiscountPolicyRepository;
@@ -37,12 +37,10 @@ public class ContractServiceImpl implements ContractService {
   
   private final PackageService packageService;
 
-  private final Scheduler otherServiceCommScheduler;
-  
   private final DomainEventEnvelopeRepository domainEventEnvelopeRepository;
   
   public static final String CONTRACT_AGGREGATE_TYPE = "CONTRACT";
-  public static final String CONTRACT_EVENT_CHANNEL = "contract-event";
+  public static final String CONTRACT_EVENT_BINDING = "contract-event-0";
   
   @Override
   @Transactional
@@ -345,8 +343,13 @@ public class ContractServiceImpl implements ContractService {
 
   @Override
   @Transactional
-  public ContractDto releaseCouponDiscount(ReceiveCouponDiscountDto dto) {
-    return null;
+  public ContractDto releaseCouponDiscount(ReleaseCouponDiscountDto dto) {
+    DiscountPolicy discountPolicy = discountPolicyRepository.findByCouponPolicyCode(dto.getCouponPolicyCode()).orElseThrow(InvalidArgumentException::new);
+    Contract contract = contractRepository.findById(dto.getContractId()).orElseThrow(InvalidArgumentException::new);
+    domainEventEnvelopeRepository.save(
+        wrapEvent(contract.releaseCouponDiscount(discountPolicy, dto.getCouponId(), dto.getCouponUseReleasedDateTime()))
+    );
+    return ContractDto.of(contract);
   }
 
   @Override
@@ -373,7 +376,7 @@ public class ContractServiceImpl implements ContractService {
       return DomainEventEnvelope.wrap(
           CONTRACT_AGGREGATE_TYPE,
           String.valueOf(e.getContractId()),
-          CONTRACT_EVENT_CHANNEL,
+          CONTRACT_EVENT_BINDING,
           e.getClass().getSimpleName(),
           e
       );

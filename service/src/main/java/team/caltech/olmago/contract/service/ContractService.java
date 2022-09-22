@@ -28,7 +28,7 @@ public interface ContractService {
   // 쿠폰할인접수
   ContractDto receiveCouponDiscount(ReceiveCouponDiscountDto dto);
   // 쿠폰할인접수취소
-  ContractDto releaseCouponDiscount(ReceiveCouponDiscountDto dto);
+  ContractDto releaseCouponDiscount(ReleaseCouponDiscountDto dto);
 
   // 이동전화연결/해제 또는 요금제 변경 시
   List<ContractDto> changeMobilePhoneRelatedDiscount(ChangeMobilePhoneRelatedDiscountDto dto);

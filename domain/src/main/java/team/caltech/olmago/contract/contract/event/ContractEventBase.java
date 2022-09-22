@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@Getter
 @RequiredArgsConstructor
+@Getter
 public class ContractEventBase {
   protected final long contractId;
   protected final LocalDateTime eventOccurDtm;

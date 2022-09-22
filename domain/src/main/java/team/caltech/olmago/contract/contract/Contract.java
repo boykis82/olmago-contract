@@ -279,9 +279,13 @@ public class Contract {
   }
   
   public DiscountChanged receiveCouponDiscount(DiscountPolicy discountPolicy, String couponId, LocalDateTime couponReservedDateTime) {
-    getFeeProductSubscription()
-        .receiveCouponDiscount(discountPolicy, couponId, couponReservedDateTime);
+    getFeeProductSubscription().receiveCouponDiscount(discountPolicy, couponId, couponReservedDateTime);
     return new DiscountChanged(id, couponReservedDateTime);
+  }
+  
+  public ContractEventBase releaseCouponDiscount(DiscountPolicy discountPolicy, String couponId, LocalDateTime couponUseReleasedDateTime) {
+    getFeeProductSubscription().releaseCouponDiscount(discountPolicy, couponId, couponUseReleasedDateTime);
+    return new DiscountChanged(id, couponUseReleasedDateTime);
   }
 
   public DiscountChanged changeMobilePhoneLinkedDiscount(List<DiscountPolicy> satisfiedMblPhoneLinkedDiscountPolicies, LocalDateTime changeDateTime) {
@@ -295,4 +299,5 @@ public class Contract {
         .findFirst()
         .orElseThrow(InvalidArgumentException::new);
   }
+
 }

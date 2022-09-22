@@ -3,17 +3,16 @@ package team.caltech.olmago.contract.product;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.common.LifeCycle;
+import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.discount.DiscountSubscription;
+import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.DiscountPolicy;
-import team.caltech.olmago.contract.plm.DiscountType;
 import team.caltech.olmago.contract.plm.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,9 +38,9 @@ public class ProductSubscription {
   @JoinColumn(name = "contract_id")
   private Contract contract;
   
-  private LocalDateTime associateCompanyAuthDtm;
-  
-  private String associateSystemId;
+  // 제휴사 인증 관련된 건 별도 서비스로 빼자.
+  //private LocalDateTime associateCompanyAuthDtm;
+  //private String associateSystemId;
   
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productSubscription")
   private List<DiscountSubscription> discountSubscriptions = new ArrayList<>();
@@ -54,12 +53,7 @@ public class ProductSubscription {
     this.product = product;
     lifeCycle = new LifeCycle(subscriptionReceivedDateTime);
   }
-  
-  public ProductSubscription discountSubscriptions(DiscountSubscription ...discountSubscriptions) {
-    this.discountSubscriptions = Arrays.asList(discountSubscriptions);
-    return this;
-  }
-  
+
   public ProductSubscription discountSubscriptions(List<DiscountSubscription> discountSubscriptions) {
     this.discountSubscriptions = discountSubscriptions;
     return this;
@@ -67,49 +61,45 @@ public class ProductSubscription {
   
   public void cancelSubscriptionReceipt(LocalDateTime cancelSubscriptionReceiptDateTime) {
     lifeCycle.cancelSubscriptionReceipt(cancelSubscriptionReceiptDateTime);
-    discountSubscriptions
-        .stream().filter(ds -> ds.getLifeCycle().isSubscriptionReceived())
+    discountSubscriptions.stream()
+        .filter(ds -> ds.getLifeCycle().isSubscriptionReceived())
         .forEach(ds -> ds.cancelSubscriptionReceipt(cancelSubscriptionReceiptDateTime));
   }
   
   public void completeSubscription(LocalDateTime subscriptionCompletedDateTime) {
     lifeCycle.completeSubscription(subscriptionCompletedDateTime);
-    discountSubscriptions
-        .stream().filter(ds -> ds.getLifeCycle().isSubscriptionReceived())
+    discountSubscriptions.stream()
+        .filter(ds -> ds.getLifeCycle().isSubscriptionReceived())
         .forEach(ds -> ds.completeSubscription(subscriptionCompletedDateTime));
   }
   
   public void receiveTermination(LocalDateTime terminationReceivedDateTime) {
     lifeCycle.receiveTermination(terminationReceivedDateTime);
-    discountSubscriptions
-        .stream().filter(ds -> ds.getLifeCycle().isSubscriptionCompleted())
+    discountSubscriptions.stream()
+        .filter(ds -> ds.getLifeCycle().isSubscriptionCompleted())
         .forEach(ds -> ds.receiveTermination(terminationReceivedDateTime));
   }
   
   public void cancelTerminationReceipt(LocalDateTime cancelTerminationReceiptDateTime) {
     lifeCycle.cancelTerminationReceipt(cancelTerminationReceiptDateTime);
-    discountSubscriptions
-        .stream().filter(ds -> ds.getLifeCycle().isTerminationReceived())
+    discountSubscriptions.stream()
+        .filter(ds -> ds.getLifeCycle().isTerminationReceived())
         .forEach(ds -> ds.cancelTerminationReceipt(cancelTerminationReceiptDateTime));
   }
   
   public void completeTermination(LocalDateTime terminationCompletedDateTime) {
     lifeCycle.completeTermination(terminationCompletedDateTime);
-    discountSubscriptions
-        .stream().filter(ds -> ds.getLifeCycle().isTerminationReceived())
+    discountSubscriptions.stream()
+        .filter(ds -> ds.getLifeCycle().isTerminationReceived())
         .forEach(ds -> ds.completeTermination(terminationCompletedDateTime));
   }
 
   public String getProductCode() {
     return product.getProductCode();
   }
-  
-  public void authenticate(String associateSystemId, LocalDateTime authenticatedDateTime) {
-    this.associateCompanyAuthDtm = authenticatedDateTime;
-    this.associateSystemId = associateSystemId;
-  }
-  
+
   public void receiveCouponDiscount(DiscountPolicy discountPolicy, String couponId, LocalDateTime couponReservedDateTime) {
+    // 쿠폰할인 생성해서 discountSubscriptions에 add
     discountSubscriptions.add(
         DiscountSubscription.builder()
             .discountPolicy(discountPolicy)
@@ -119,7 +109,16 @@ public class ProductSubscription {
             .build()
     );
   }
-
+  
+  public void releaseCouponDiscount(DiscountPolicy discountPolicy, String couponId, LocalDateTime couponUseReleasedDateTime) {
+    // 쿠폰할인 중 가입예약 중인거 찾아서 가입취소
+    discountSubscriptions.stream()
+        .filter(ds -> ds.getDiscountPolicy().equals(discountPolicy) && ds.getLifeCycle().isSubscriptionReceived())
+        .findAny()
+        .orElseThrow(InvalidArgumentException::new)
+        .cancelSubscriptionReceipt(couponUseReleasedDateTime);
+  }
+  
   public void changeMobilePhoneLinkedDiscount(List<DiscountPolicy> satisfiedMblPhoneLinkedDiscountPolicies, LocalDateTime changeDateTime) {
     terminateNotSatisfiedMobilePhoneLinkedDiscount(changeDateTime);
     subscribeSatisfiedMobilePhoneLinkedDiscount(satisfiedMblPhoneLinkedDiscountPolicies, changeDateTime);
@@ -132,14 +131,18 @@ public class ProductSubscription {
   private void subscribeSatisfiedMobilePhoneLinkedDiscount(List<DiscountPolicy> satisfiedMblPhoneLinkedDiscountPolicies, LocalDateTime changeDateTime) {
     List<DiscountSubscription> newSubDcs =
         satisfiedMblPhoneLinkedDiscountPolicies.stream()
-            .map(dp -> DiscountSubscription.builder()
-                .discountPolicy(dp)
-                .productSubscription(this)
-                .subRcvDtm(changeDateTime)
-                .build())
+            .map(dp -> subscribeDiscount(dp, changeDateTime))
             .collect(Collectors.toList());
     newSubDcs.forEach(ds -> ds.completeSubscription(changeDateTime));
     discountSubscriptions.addAll(newSubDcs);
   }
-
+  
+  private DiscountSubscription subscribeDiscount(DiscountPolicy discountPolicy, LocalDateTime subRcvDtm) {
+    return DiscountSubscription.builder()
+        .discountPolicy(discountPolicy)
+        .productSubscription(this)
+        .subRcvDtm(subRcvDtm)
+        .build();
+  }
+  
 }
