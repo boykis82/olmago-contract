@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.event.in.common;
+package team.caltech.olmago.contract.message.in.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,37 +10,37 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Component
-public class EventInBoxProcessor {
+public class MessageInBoxProcessor {
   private final static String HEADER_EVENT_TYPE = "type";
   private final static String HEADER_UUID = "uuid";
   
-  private final EventInBoxRepository eventInBoxRepository;
+  private final MessageInBoxRepository messageInBoxRepository;
   private final ObjectMapper objectMapper;
   
-  public boolean notExistedEvent(Message<?> message) {
-    return eventInBoxRepository.findById(getUUID(message)).isPresent();
+  public boolean notExistedMessage(Message<?> message) {
+    return messageInBoxRepository.findById(getUUID(message)).isPresent();
   }
   
-  public void saveInBoxEvent(Message<?> message) {
-    EventInBox eventInBox;
+  public void saveInBoxMessage(Message<?> message) {
+    MessageInBox messageInBox;
     try {
-      eventInBox = new EventInBox(
+      messageInBox = new MessageInBox(
           getUUID(message),
           LocalDateTime.now(),
-          getEventType(message),
+          getMessageType(message),
           objectMapper.writeValueAsString(message.getPayload())
       );
     } catch (JsonProcessingException e) {
       throw new RuntimeException(e);
     }
-    eventInBoxRepository.save(eventInBox);
+    messageInBoxRepository.save(messageInBox);
   }
   
   private String getUUID(Message<?> message) {
     return (String)message.getHeaders().get(HEADER_UUID);
   }
   
-  private String getEventType(Message<?> message) {
+  private String getMessageType(Message<?> message) {
     return (String)message.getHeaders().get(HEADER_EVENT_TYPE);
   }
   

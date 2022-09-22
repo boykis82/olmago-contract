@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.event.in.customer;
+package team.caltech.olmago.contract.message.in.event.customer;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 @Getter
-public class MobilePhoneServiceUnlinkedEvent {
+public class MobilePhonePricePlanChangedEvent {
   private final long customerId;
-  private final LocalDateTime unlinkedDtm;
+  private final LocalDateTime changeDtm;
   private final long mobilePhoneSvcMgmtNum;
   private final String mobilePhoneNumber;
   private final MobilePhonePricePlan mobilePhonePricePlan;

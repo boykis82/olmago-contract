@@ -4,9 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import team.caltech.olmago.contract.customer.MobilePhonePricePlan;
-import team.caltech.olmago.contract.event.in.customer.MobilePhonePricePlanChangedEvent;
-import team.caltech.olmago.contract.event.in.customer.MobilePhoneServiceLinkedEvent;
-import team.caltech.olmago.contract.event.in.customer.MobilePhoneServiceUnlinkedEvent;
+import team.caltech.olmago.contract.message.in.event.customer.MobilePhonePricePlanChangedEvent;
+import team.caltech.olmago.contract.message.in.event.customer.MobilePhoneServiceLinkedEvent;
+import team.caltech.olmago.contract.message.in.event.customer.MobilePhoneServiceUnlinkedEvent;
 
 import java.time.LocalDateTime;
 

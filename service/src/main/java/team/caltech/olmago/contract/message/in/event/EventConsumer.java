@@ -1,16 +1,16 @@
-package team.caltech.olmago.contract.event.in;
+package team.caltech.olmago.contract.message.in.event;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
-import team.caltech.olmago.contract.event.in.coupon.CouponEventHandler;
-import team.caltech.olmago.contract.event.in.coupon.CouponUseReleasedEvent;
-import team.caltech.olmago.contract.event.in.coupon.CouponUseReservedEvent;
-import team.caltech.olmago.contract.event.in.customer.CustomerEventHandler;
-import team.caltech.olmago.contract.event.in.customer.MobilePhonePricePlanChangedEvent;
-import team.caltech.olmago.contract.event.in.customer.MobilePhoneServiceLinkedEvent;
-import team.caltech.olmago.contract.event.in.customer.MobilePhoneServiceUnlinkedEvent;
+import team.caltech.olmago.contract.message.in.event.coupon.CouponEventHandler;
+import team.caltech.olmago.contract.message.in.event.coupon.CouponUseReleasedEvent;
+import team.caltech.olmago.contract.message.in.event.coupon.CouponUseReservedEvent;
+import team.caltech.olmago.contract.message.in.event.customer.CustomerEventHandler;
+import team.caltech.olmago.contract.message.in.event.customer.MobilePhonePricePlanChangedEvent;
+import team.caltech.olmago.contract.message.in.event.customer.MobilePhoneServiceLinkedEvent;
+import team.caltech.olmago.contract.message.in.event.customer.MobilePhoneServiceUnlinkedEvent;
 
 import java.util.function.Consumer;
 

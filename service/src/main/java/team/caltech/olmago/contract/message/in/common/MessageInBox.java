@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.event.in.common;
+package team.caltech.olmago.contract.message.in.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-public class EventInBox {
+public class MessageInBox {
   @Id
   private String key;
   

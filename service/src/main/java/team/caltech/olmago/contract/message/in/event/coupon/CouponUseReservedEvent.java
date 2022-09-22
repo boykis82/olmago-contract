@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.event.in.coupon;
+package team.caltech.olmago.contract.message.in.event.coupon;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

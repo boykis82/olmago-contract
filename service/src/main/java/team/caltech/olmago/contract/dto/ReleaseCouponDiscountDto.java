@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import team.caltech.olmago.contract.event.in.coupon.CouponUseReleasedEvent;
+import team.caltech.olmago.contract.message.in.event.coupon.CouponUseReleasedEvent;
 
 import java.time.LocalDateTime;
 
