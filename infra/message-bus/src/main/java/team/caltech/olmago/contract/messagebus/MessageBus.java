@@ -7,12 +7,11 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import team.caltech.olmago.contract.event.DomainEventEnvelope;
-import team.caltech.olmago.contract.event.DomainEventEnvelopeRepository;
+import team.caltech.olmago.contract.message.MessageEnvelope;
+import team.caltech.olmago.contract.message.MessageEnvelopeRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -21,17 +20,16 @@ public class MessageBus {
   public static final String HEADER_EVENT_TYPE = "type";
   public static final String HEADER_UUID = "uuid";
   
-  private final DomainEventEnvelopeRepository domainEventEnvelopeRepository;
+  private final MessageEnvelopeRepository messageEnvelopeRepository;
   private final StreamBridge streamBridge;
   
   @Scheduled(fixedDelay = 2000)
   public void sendMessages() {
-    List<DomainEventEnvelope> domainEventEnvelopes = domainEventEnvelopeRepository.findByPublished(false);
-    domainEventEnvelopes.forEach(this::sendMessage);
+    messageEnvelopeRepository.findByPublished(false).forEach(this::sendMessage);
   }
   
   @Transactional
-  private void sendMessage(DomainEventEnvelope dee) {
+  private void sendMessage(MessageEnvelope dee) {
     Message<String> message = MessageBuilder.withPayload(dee.getPayload())
         .setHeader(HEADER_EVENT_TYPE, dee.getEventType())
         .setHeader(HEADER_UUID, dee.getUuid())

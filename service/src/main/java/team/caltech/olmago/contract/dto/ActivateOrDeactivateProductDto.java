@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Builder
-public class CompleteRegularPaymentDto {
+public class ActivateOrDeactivateProductDto {
   private long contractId;
   private LocalDateTime regularPaymentCompletedDateTime;
 }

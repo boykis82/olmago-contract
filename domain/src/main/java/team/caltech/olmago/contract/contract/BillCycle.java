@@ -47,4 +47,12 @@ public class BillCycle {
         .monthsPassed(monthsPassed + billPeriod.getMonths())
         .build();
   }
+  
+  public BillCycle prev() {
+    return BillCycle.builder()
+        .theFirstBillStartDate(theFirstBillStartDate)
+        .billPeriod(billPeriod)
+        .monthsPassed(monthsPassed - billPeriod.getMonths())
+        .build();
+  }
 }

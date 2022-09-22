@@ -10,5 +10,7 @@ public interface ContractRepositoryCustom {
   Long countActiveContractByCustomerAndFeeProductCode(long customerId, String feeProductCode);
   Optional<Contract> findOptionContractByPackageContract(Contract pkgContract);
   List<Contract> findByCustomerAndOrderId(long customerId, long orderId);
-  List<Contract> findByCustomerId(long customerId);
+  List<Contract> findByCustomerId(long customerId, boolean includeTerminatedContract);
+  List<Contract> findByContractId(long contractId, boolean withPackageOrOption);
+  Optional<Contract> findWithProductsAndDiscountsById(long contractId);
 }

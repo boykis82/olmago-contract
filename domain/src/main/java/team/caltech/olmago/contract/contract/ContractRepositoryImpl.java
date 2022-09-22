@@ -1,5 +1,6 @@
 package team.caltech.olmago.contract.contract;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import team.caltech.olmago.contract.plm.DiscountType;
@@ -11,6 +12,7 @@ import static team.caltech.olmago.contract.contract.QContract.contract;
 import static team.caltech.olmago.contract.contract.uzoopackage.QUzooPackage.uzooPackage;
 import static team.caltech.olmago.contract.discount.QDiscountSubscription.discountSubscription;
 import static team.caltech.olmago.contract.plm.QDiscountPolicy.discountPolicy;
+import static team.caltech.olmago.contract.plm.QProduct.product;
 import static team.caltech.olmago.contract.product.QProductSubscription.*;
 
 @RequiredArgsConstructor
@@ -35,6 +37,24 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   }
   
   @Override
+  public Optional<Contract> findWithProductsAndDiscountsById(long contractId) {
+    return Optional.ofNullable(
+        jpaQueryFactory
+            .select(contract)
+            .from(contract)
+            .join(contract.productSubscriptions, productSubscription).fetchJoin()
+            .join(productSubscription.product, product).fetchJoin()
+            .join(productSubscription.discountSubscriptions, discountSubscription).fetchJoin()
+            .join(discountSubscription.discountPolicy, discountPolicy).fetchJoin()
+            .where(
+                contract.id.eq(contractId)
+            )
+            .distinct()
+            .fetchOne()
+    );
+  }
+  
+  @Override
   public Long countActiveContractByCustomerAndFeeProductCode(long customerId, String feeProductCode) {
     return jpaQueryFactory
         .select(contract.count())
@@ -42,7 +62,7 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
         .where(
             contract.customerId.eq(customerId)
                 .and(contract.feeProductCode.eq(feeProductCode))
-                .and(contract.lifeCycle.terminationCompletedDateTime.isNotNull())
+                .and(contract.lifeCycle.terminationCompletedDateTime.isNull())
         )
         .fetchOne();
   }
@@ -55,8 +75,8 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
             .from(uzooPackage)
             .where(
                 uzooPackage.packageContract.eq(pkgContract)
-                    .and(uzooPackage.lifeCycle.terminationCompletedDateTime.isNotNull())
-                    .and(uzooPackage.lifeCycle.terminationReceivedDateTime.isNotNull())
+                    .and(uzooPackage.lifeCycle.terminationCompletedDateTime.isNull())
+                    .and(uzooPackage.lifeCycle.terminationReceivedDateTime.isNull())
             )
             .fetchOne()
     );
@@ -74,14 +94,41 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   }
 
   @Override
-  public List<Contract> findByCustomerId(long customerId) {
+  public List<Contract> findByCustomerId(long customerId, boolean includeTerminatedContract) {
     return jpaQueryFactory
         .select(contract)
         .where(
             contract.customerId.eq(customerId)
-                .and(contract.lifeCycle.terminationCompletedDateTime.isNotNull())
-                .and(contract.lifeCycle.terminationReceivedDateTime.isNotNull())
+                .and(includeTerminatedContractExpr(includeTerminatedContract))
         )
         .fetch();
   }
+  
+  private BooleanExpression includeTerminatedContractExpr(boolean includeTerminatedContract) {
+    return includeTerminatedContract ? null : contract.lifeCycle.terminationCompleted.isNull();
+  }
+  
+  @Override
+  public List<Contract> findByContractId(long contractId, boolean withPackageOrOption) {
+    if (withPackageOrOption) {
+      return jpaQueryFactory
+          .select(contract)
+          .where(contract.id.eq(contractId))
+          .fetch();
+    }
+    else {
+      return jpaQueryFactory.select(contract)
+          .from(uzooPackage)
+          .join(uzooPackage.packageContract, contract)
+          .join(uzooPackage.optionContract, contract)
+          .where(packageOrOptionContract(contractId))
+          .distinct()
+          .fetch();
+    }
+  }
+  
+  private BooleanExpression packageOrOptionContract(long contractId) {
+    return uzooPackage.packageContract.id.eq(contractId).or(uzooPackage.optionContract.id.eq(contractId));
+  }
+  
 }

@@ -66,8 +66,6 @@ public class ContractDto {
     private LocalDateTime terminationReceivedDateTime;
     private LocalDateTime cancelTerminationReceiptDateTime;
     private LocalDateTime terminationCompletedDateTime;
-    private LocalDateTime associateCompanyAuthDtm;
-    private String associateSystemId;
     private List<DiscountSubscriptionDto> discountSubscriptions;
     
     static ProductSubscriptionDto of(ProductSubscription ps) {
@@ -81,8 +79,6 @@ public class ContractDto {
       dto.terminationReceivedDateTime = ps.getLifeCycle().getTerminationReceivedDateTime();
       dto.cancelTerminationReceiptDateTime = ps.getLifeCycle().getCancelTerminationReceiptDateTime();
       dto.terminationCompletedDateTime = ps.getLifeCycle().getTerminationCompletedDateTime();
-      dto.associateCompanyAuthDtm = ps.getAssociateCompanyAuthDtm();
-      dto.associateSystemId = ps.getAssociateSystemId();
       dto.discountSubscriptions = ps.getDiscountSubscriptions().stream()
           .map(DiscountSubscriptionDto::of)
           .collect(Collectors.toList());
@@ -119,7 +115,7 @@ public class ContractDto {
     dto.terminationCompletedDateTime = contract.getLifeCycle().getTerminationCompletedDateTime();
     dto.currentBillStartDate = contract.getBillCycle().getCurrentBillStartDate();
     dto.currentBillEndDate = contract.getBillCycle().getCurrentBillEndDate();
-    dto.lastRegularPaymentCompletedDateTime = contract.getLastRegularPaymentCompletedDateTime();
+    dto.lastRegularPaymentCompletedDateTime = contract.getLastPaymentDtm();
     dto.feeProductCode = contract.getFeeProductCode();
     dto.packageId = contract.getPackageId();
     dto.productSubscriptions = contract.getProductSubscriptions().stream()

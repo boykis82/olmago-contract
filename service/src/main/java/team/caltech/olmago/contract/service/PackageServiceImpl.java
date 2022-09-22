@@ -58,4 +58,10 @@ public class PackageServiceImpl implements PackageService {
     receiveTermination(pkgContract, bfOptContract, changeDateTime);
     createPackage(pkgContract, afOptContract, changeDateTime);
   }
+  
+  @Override
+  public void cancelPackageSubscriptionReceipt(Contract contract, LocalDateTime subscriptionCanceledDateTime) {
+    uzooPackageRepository.findSubscriptionReceivedPackage(contract)
+        .ifPresent(p -> p.cancelSubscriptionReceipt(subscriptionCanceledDateTime));
+  }
 }

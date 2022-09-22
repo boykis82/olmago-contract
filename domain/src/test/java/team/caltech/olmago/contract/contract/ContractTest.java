@@ -60,7 +60,7 @@ public class ContractTest {
     assertThat(contract.getLifeCycle().isSubscriptionReceived()).isTrue();
     assertThat(contract.getLifeCycle().getSubscriptionReceivedDateTime()).isEqualTo(subRcvDtm);
     assertThat(contract.getBillCycle()).isNull();
-    assertThat(contract.getLastRegularPaymentCompletedDateTime()).isNull();
+    assertThat(contract.getLastPaymentDtm()).isNull();
     assertThat(contract.getUnitContractConvertedDateTime()).isNull();
     
     assertThat(areAllProductSubscriptions(contract, ps -> ps.getLifeCycle().getSubscriptionReceivedDateTime().equals(subRcvDtm))).isTrue();
@@ -164,7 +164,7 @@ public class ContractTest {
     contract.completeSubscription(subCmplDtm);
 
     // when - 첫 정기결제 완료
-    contract.completeRegularPayment(LocalDateTime.of(2022,10,1,13,0,3));
+    contract.activateOrDeactivateProducts(LocalDateTime.of(2022,10,1,13,0,3));
 
     // then
     assertThat(contract.getBillCycle().getTheFirstBillStartDate()).isEqualTo(LocalDate.of(2022,9,1));
@@ -173,7 +173,7 @@ public class ContractTest {
     assertThat(contract.getBillCycle().getMonthsPassed()).isEqualTo(1);
 
     // when - 두번쨰 정기결제 완료
-    contract.completeRegularPayment(LocalDateTime.of(2022,11,1,13,1,13));
+    contract.activateOrDeactivateProducts(LocalDateTime.of(2022,11,1,13,1,13));
 
     // then
     assertThat(contract.getBillCycle().getTheFirstBillStartDate()).isEqualTo(LocalDate.of(2022,9,1));

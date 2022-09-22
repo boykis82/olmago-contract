@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.event;
+package team.caltech.olmago.contract.message;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,7 +11,8 @@ import java.util.UUID;
 
 @Getter
 @Entity
-public class DomainEventEnvelope {
+@Table(indexes = @Index(name = "message_envelope_n1", columnList = "publihsed, id"))
+public class MessageEnvelope {
   private final static ObjectMapper objectMapper = new ObjectMapper();
   
   @Id
@@ -46,12 +47,12 @@ public class DomainEventEnvelope {
   private String payload;
   
   @Builder
-  public static DomainEventEnvelope wrap(String aggregateType,
-                                         String aggregateId,
-                                         String bindingName,
-                                         String eventType,
-                                         Object payload) throws JsonProcessingException {
-    DomainEventEnvelope dee = new DomainEventEnvelope();
+  public static MessageEnvelope wrap(String aggregateType,
+                                     String aggregateId,
+                                     String bindingName,
+                                     String eventType,
+                                     Object payload) throws JsonProcessingException {
+    MessageEnvelope dee = new MessageEnvelope();
     dee.uuid = UUID.randomUUID().toString();
     dee.aggregateType = aggregateType;
     dee.aggregateId = aggregateId;

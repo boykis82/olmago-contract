@@ -11,4 +11,5 @@ public interface PackageService {
   void cancelTerminationReceipt(Contract pkgContract, Contract optContract, LocalDateTime cancelTerminationReceipt);
   void completePackageTermination(Contract contract, LocalDateTime terminationCompletedDateTime);
   void changePackageComposition(Contract pkgContract, Contract bfOptContract, Contract afOptContract, LocalDateTime changeDateTime);
+  void cancelPackageSubscriptionReceipt(Contract contract, LocalDateTime subscriptionCanceledDateTime);
 }

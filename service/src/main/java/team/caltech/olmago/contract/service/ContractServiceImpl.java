@@ -9,8 +9,8 @@ import team.caltech.olmago.contract.contract.ContractType;
 import team.caltech.olmago.contract.contract.event.ContractEventBase;
 import team.caltech.olmago.contract.contract.event.DiscountChanged;
 import team.caltech.olmago.contract.dto.*;
-import team.caltech.olmago.contract.event.DomainEventEnvelope;
-import team.caltech.olmago.contract.event.DomainEventEnvelopeRepository;
+import team.caltech.olmago.contract.message.MessageEnvelope;
+import team.caltech.olmago.contract.message.MessageEnvelopeRepository;
 import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.DiscountPolicy;
 import team.caltech.olmago.contract.plm.DiscountPolicyRepository;
@@ -37,7 +37,7 @@ public class ContractServiceImpl implements ContractService {
   
   private final PackageService packageService;
 
-  private final DomainEventEnvelopeRepository domainEventEnvelopeRepository;
+  private final MessageEnvelopeRepository messageEnvelopeRepository;
   
   public static final String CONTRACT_AGGREGATE_TYPE = "CONTRACT";
   public static final String CONTRACT_EVENT_BINDING = "contract-event-0";
@@ -55,7 +55,7 @@ public class ContractServiceImpl implements ContractService {
     contracts.addAll(receiveOptionContractSubscription(dto));
   
     //-- 이벤트 보관
-    domainEventEnvelopeRepository.saveAll(
+    messageEnvelopeRepository.saveAll(
         contracts.stream().map(c -> wrapEvent(c.receiveSubscription())).collect(Collectors.toList())
     );
     return contracts.stream().map(ContractDto::of).collect(Collectors.toList());
@@ -113,7 +113,7 @@ public class ContractServiceImpl implements ContractService {
       packageService.completePackageSubscription(contract, dto.getSubscriptionCompletedDateTime());
     }
     // 이벤트 보관
-    domainEventEnvelopeRepository.save(
+    messageEnvelopeRepository.save(
         wrapEvent(contract.completeSubscription(dto.getSubscriptionCompletedDateTime()))
     );
     return ContractDto.of(contract);
@@ -121,12 +121,34 @@ public class ContractServiceImpl implements ContractService {
   
   @Override
   @Transactional
-  public ContractDto completeRegularPayment(CompleteRegularPaymentDto dto) {
+  public ContractDto cancelContractSubscriptionReceipt(CancelContractSubscriptionDto dto) {
+    Contract contract = contractRepository.findById(dto.getContractId()).orElseThrow(InvalidArgumentException::new);
+    if (contract.getContractType() != ContractType.UNIT) {
+      packageService.cancelPackageSubscriptionReceipt(contract, dto.getSubscriptionCanceledDateTime());
+    }
+    // 이벤트 보관
+    messageEnvelopeRepository.save(
+        wrapEvent(contract.cancelSubscriptionReceipt(dto.getSubscriptionCanceledDateTime()))
+    );
+    return ContractDto.of(contract);
+  }
+  
+  @Override
+  @Transactional
+  public ContractDto activateOrDeactivateProducts(ActivateOrDeactivateProductDto dto) {
     Contract contract = contractRepository.findById(dto.getContractId()).orElseThrow(InvalidArgumentException::new);
     // 이벤트 보관
-    domainEventEnvelopeRepository.save(
-        wrapEvent(contract.completeRegularPayment(dto.getRegularPaymentCompletedDateTime()))
+    messageEnvelopeRepository.save(
+        wrapEvent(contract.activateOrDeactivateProducts(dto.getRegularPaymentCompletedDateTime()))
     );
+    return ContractDto.of(contract);
+  }
+  
+  @Override
+  @Transactional
+  public ContractDto holdActivation(HoldActivationDto dto) {
+    Contract contract = contractRepository.findById(dto.getContractId()).orElseThrow(InvalidArgumentException::new);
+    contract.holdProductActivations(dto.getRegularPaymentCanceledDateTime());
     return ContractDto.of(contract);
   }
   
@@ -145,7 +167,7 @@ public class ContractServiceImpl implements ContractService {
     contracts.addAll(contractRepository.findAllById(dto.getUnitContractIds()));
   
     // 이벤트 보관
-    domainEventEnvelopeRepository.saveAll(
+    messageEnvelopeRepository.saveAll(
         contracts.stream()
             .map(c -> wrapEvent(c.receiveTermination(dto.getOrderId(), dto.getTerminationReceivedDateTime())))
             .collect(Collectors.toList())
@@ -168,7 +190,7 @@ public class ContractServiceImpl implements ContractService {
     contracts.addAll(contractRepository.findAllById(dto.getUnitContractIds()));
     
     // 이벤트 보관
-    domainEventEnvelopeRepository.saveAll(
+    messageEnvelopeRepository.saveAll(
         contracts.stream()
             .map(c -> wrapEvent(c.cancelTerminationReceipt(dto.getOrderId(), dto.getCancelTerminationReceiptDateTime())))
             .collect(Collectors.toList())
@@ -184,7 +206,7 @@ public class ContractServiceImpl implements ContractService {
       packageService.completePackageTermination(contract, dto.getTerminationCompletedDateTime());
     }
     // 이벤트 보관
-    domainEventEnvelopeRepository.save(
+    messageEnvelopeRepository.save(
         wrapEvent(contract.completeTermination(dto.getTerminationCompletedDateTime()))
     );
     return ContractDto.of(contract);
@@ -245,7 +267,7 @@ public class ContractServiceImpl implements ContractService {
         = afPkgProdFactory.receiveSubscription(pkgContract, dto.getChangeReceivedDateTime(), bfPkgProdFactory.getBasicBenefitProductCodes());
   
     // 이벤트 보관
-    domainEventEnvelopeRepository.save(
+    messageEnvelopeRepository.save(
         wrapEvent(pkgContract.changeContract(dto.getOrderId(), dto.getAfterPackageProductCode(), termProdCodes, newBasicBenefitProdSubs, dto.getChangeReceivedDateTime()))
     );
     return pkgContract;
@@ -298,7 +320,7 @@ public class ContractServiceImpl implements ContractService {
     packageService.changePackageComposition(pkgContract, bfOptContract, afOptContract, dto.getChangeReceivedDateTime());
   
     // 이벤트 보관
-    domainEventEnvelopeRepository.saveAll(
+    messageEnvelopeRepository.saveAll(
         events.stream().map(this::wrapEvent).collect(Collectors.toList())
     );
     return List.of(bfOptContract, afOptContract);
@@ -322,7 +344,7 @@ public class ContractServiceImpl implements ContractService {
   @Transactional
   public List<ContractDto> cancelContractChangeReceipt(CancelContractChangeDto dto) {
     List<Contract> contracts = contractRepository.findByCustomerAndOrderId(dto.getCustomerId(), dto.getOrderId());
-    domainEventEnvelopeRepository.saveAll(
+    messageEnvelopeRepository.saveAll(
         contracts.stream()
             .map(c -> wrapEvent(c.cancelContractChange(dto.getOrderId(), dto.getCanceledChangeReceiptDateTime())))
             .collect(Collectors.toList())
@@ -335,7 +357,7 @@ public class ContractServiceImpl implements ContractService {
   public ContractDto receiveCouponDiscount(ReceiveCouponDiscountDto dto) {
     DiscountPolicy discountPolicy = discountPolicyRepository.findByCouponPolicyCode(dto.getCouponPolicyCode()).orElseThrow(InvalidArgumentException::new);
     Contract contract = contractRepository.findById(dto.getContractId()).orElseThrow(InvalidArgumentException::new);
-    domainEventEnvelopeRepository.save(
+    messageEnvelopeRepository.save(
         wrapEvent(contract.receiveCouponDiscount(discountPolicy, dto.getCouponId(), dto.getCouponUseReservedDateTime()))
     );
     return ContractDto.of(contract);
@@ -346,7 +368,7 @@ public class ContractServiceImpl implements ContractService {
   public ContractDto releaseCouponDiscount(ReleaseCouponDiscountDto dto) {
     DiscountPolicy discountPolicy = discountPolicyRepository.findByCouponPolicyCode(dto.getCouponPolicyCode()).orElseThrow(InvalidArgumentException::new);
     Contract contract = contractRepository.findById(dto.getContractId()).orElseThrow(InvalidArgumentException::new);
-    domainEventEnvelopeRepository.save(
+    messageEnvelopeRepository.save(
         wrapEvent(contract.releaseCouponDiscount(discountPolicy, dto.getCouponId(), dto.getCouponUseReleasedDateTime()))
     );
     return ContractDto.of(contract);
@@ -355,8 +377,8 @@ public class ContractServiceImpl implements ContractService {
   @Override
   @Transactional
   public List<ContractDto> changeMobilePhoneRelatedDiscount(ChangeMobilePhoneRelatedDiscountDto dto) {
-    List<Contract> contracts = contractRepository.findByCustomerId(dto.getCustomerId());
-    domainEventEnvelopeRepository.saveAll(
+    List<Contract> contracts = contractRepository.findByCustomerId(dto.getCustomerId(), false);
+    messageEnvelopeRepository.saveAll(
         contracts.stream()
             .map(c -> wrapEvent(changeMobilePhoneRelatedDiscount(c, dto.getChangeDateTime())))
             .collect(Collectors.toList())
@@ -371,9 +393,9 @@ public class ContractServiceImpl implements ContractService {
     return contract.changeMobilePhoneLinkedDiscount(satisfiedMblPhoneLinkedDiscountPolicies, changeDateTime);
   }
   
-  private DomainEventEnvelope wrapEvent(ContractEventBase e) {
+  private MessageEnvelope wrapEvent(ContractEventBase e) {
     try {
-      return DomainEventEnvelope.wrap(
+      return MessageEnvelope.wrap(
           CONTRACT_AGGREGATE_TYPE,
           String.valueOf(e.getContractId()),
           CONTRACT_EVENT_BINDING,
@@ -385,4 +407,17 @@ public class ContractServiceImpl implements ContractService {
     }
   }
   
+  public List<ContractDto> findByCustomerId(long customerId, boolean includeTerminatedContract) {
+    return contractRepository.findByCustomerId(customerId, includeTerminatedContract)
+        .stream()
+        .map(ContractDto::of)
+        .collect(Collectors.toList());
+  }
+
+  public List<ContractDto> findByContractId(long contractId, boolean withPackageOrOption) {
+    return contractRepository.findByContractId(contractId, withPackageOrOption)
+        .stream()
+        .map(ContractDto::of)
+        .collect(Collectors.toList());
+  }
 }

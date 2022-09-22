@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Getter
 @NoArgsConstructor
@@ -48,7 +47,8 @@ public class Contract {
   @Embedded
   private BillCycle billCycle;
   
-  private LocalDateTime lastRegularPaymentCompletedDateTime;
+  private LocalDateTime lastPaymentDtm;
+  private LocalDateTime beforeLastPaymentDtm;
 
   private LocalDateTime unitContractConvertedDateTime;
 
@@ -89,6 +89,8 @@ public class Contract {
     productSubscriptions.stream()
         .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
         .forEach(ps -> ps.cancelSubscriptionReceipt(cnclSubRcvDtm));
+    billCycle = null;
+    lastPaymentDtm = null;
     return new ContractSubscriptionReceiptCanceled(id, cnclSubRcvDtm, lastOrderId);
   }
   
@@ -98,7 +100,7 @@ public class Contract {
         .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
         .forEach(ps -> ps.completeSubscription(subCmplDtm));
     billCycle = BillCycle.of(subCmplDtm.toLocalDate(), BillPeriod.MONTHLY);
-  
+    lastPaymentDtm = subCmplDtm;
     return new ContractSubscriptionCompleted(id, subCmplDtm);
   }
   
@@ -130,32 +132,43 @@ public class Contract {
     return new ContractTerminationCompleted(id, termCmplDtm);
   }
   
-  public RegularPaymentCompleted completeRegularPayment(LocalDateTime regPayCmplDtm) {
-    this.lastRegularPaymentCompletedDateTime = regPayCmplDtm;
+  public ProductsActivatedOrDeactivated activateOrDeactivateProducts(LocalDateTime regPayCmplDtm) {
+    beforeLastPaymentDtm = lastPaymentDtm;
+    lastPaymentDtm = regPayCmplDtm;
     billCycle = billCycle.next();
-  
-    // 코드 중복 제거를 위해 stream 미리 빼놓기
-    Stream<ProductSubscription> subProductsStream = productSubscriptions.stream()
-        .filter(ps -> ps.getLifeCycle().isSubscriptionReceived());
-    Stream<ProductSubscription> termProductsStream = productSubscriptions.stream()
-        .filter(ps -> ps.getLifeCycle().isTerminationReceived());
-    
-    // event
-    RegularPaymentCompleted event = new RegularPaymentCompleted(
-        id, regPayCmplDtm,
-        subProductsStream.map(ProductSubscription::getProductCode).collect(Collectors.toList()),
-        termProductsStream.map(ProductSubscription::getProductCode).collect(Collectors.toList())
-    );
-    
-    // 해지접수 -> 해지완료
-    termProductsStream.forEach(ps -> ps.completeTermination(regPayCmplDtm));
     
     // 가입접수 -> 가입완료
-    subProductsStream.forEach(ps -> ps.completeSubscription(regPayCmplDtm));
-  
+    productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isTerminationReceived())
+        .forEach(ps -> ps.completeTermination(regPayCmplDtm));
+    // 해지접수 -> 해지완료
+    productSubscriptions.stream()
+        .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
+        .forEach(ps -> ps.completeSubscription(regPayCmplDtm));
+
     // 요금제코드 현행화
     setFeeProductCode();
-    return event;
+    
+    // 이벤트
+    return new ProductsActivatedOrDeactivated(
+        id,
+        regPayCmplDtm,
+        // 가입완료
+        productSubscriptions.stream()
+            .filter(ps -> ps.getLifeCycle().isSubscriptionCompleted())
+            .map(ProductSubscription::getProductCode).collect(Collectors.toList()),
+        // 해지완료
+        productSubscriptions.stream()
+            .filter(ps -> ps.getLifeCycle().isTerminationCompleted())
+            .map(ProductSubscription::getProductCode).collect(Collectors.toList())
+    );
+  }
+  
+  // 배치로 해지하므로 별도의 이벤트 발행없음
+  public void holdProductActivations(LocalDateTime regPayCnclDtm) {
+    billCycle = billCycle.prev();
+    lastPaymentDtm = beforeLastPaymentDtm;
+    beforeLastPaymentDtm = null;
   }
   
   private void setFeeProductCode() {

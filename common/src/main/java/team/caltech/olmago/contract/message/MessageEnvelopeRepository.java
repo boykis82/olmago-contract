@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.event;
+package team.caltech.olmago.contract.message;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -8,9 +8,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DomainEventEnvelopeRepository extends JpaRepository<DomainEventEnvelope, Long> {
+public interface MessageEnvelopeRepository extends JpaRepository<MessageEnvelope, Long> {
   @Query(
       "SELECT dee FROM DomainEventEnvelope dee WHERE published = :published ORDER BY id"
   )
-  List<DomainEventEnvelope> findByPublished(@Param("published") boolean published);
+  List<MessageEnvelope> findByPublished(@Param("published") boolean published);
 }
