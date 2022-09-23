@@ -17,7 +17,6 @@ import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicyRepository
 import team.caltech.olmago.contract.domain.product.ProductSubscription;
 import team.caltech.olmago.contract.domain.product.factory.ProductFactory;
 import team.caltech.olmago.contract.domain.product.factory.ProductFactoryMap;
-import team.caltech.olmago.contract.service.ContractService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.service;
+package team.caltech.olmago.contract.service.service;
 
 import team.caltech.olmago.contract.service.dto.*;
 

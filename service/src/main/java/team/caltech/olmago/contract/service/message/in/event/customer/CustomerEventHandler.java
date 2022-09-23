@@ -5,7 +5,7 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import team.caltech.olmago.contract.service.dto.ChangeMobilePhoneRelatedDiscountDto;
 import team.caltech.olmago.contract.service.message.in.common.MessageInBoxProcessor;
-import team.caltech.olmago.contract.service.ContractService;
+import team.caltech.olmago.contract.service.service.ContractService;
 
 import javax.transaction.Transactional;
 

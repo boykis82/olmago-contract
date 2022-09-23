@@ -8,7 +8,7 @@ import team.caltech.olmago.contract.service.dto.ActivateOrDeactivateProductDto;
 import team.caltech.olmago.contract.service.dto.CompleteContractSubscriptionDto;
 import team.caltech.olmago.contract.service.dto.HoldActivationDto;
 import team.caltech.olmago.contract.service.message.in.common.MessageInBoxProcessor;
-import team.caltech.olmago.contract.service.ContractService;
+import team.caltech.olmago.contract.service.service.ContractService;
 
 import javax.transaction.Transactional;
 

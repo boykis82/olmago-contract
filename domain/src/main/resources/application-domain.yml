@@ -1,7 +1,7 @@
 logging:
   level:
     root: INFO
-    team.caltech: INFO
+    team.caltech.olmago.contract.domain: INFO
     com:
       querydsl:
         sql: INFO

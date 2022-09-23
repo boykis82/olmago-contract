@@ -12,12 +12,12 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 @Configuration
-public class AppConfig {
+public class ContractServiceConfig {
   private final Integer threadPoolSize;
   private final Integer taskQueueSize;
 
   @Autowired
-  public AppConfig(
+  public ContractServiceConfig(
       @Value("${app.threadPoolSize:2}") Integer threadPoolSize,
       @Value("${app.taskQueueSize:2}") Integer taskQueueSize
   ) {
@@ -29,13 +29,4 @@ public class AppConfig {
   public Scheduler otherServiceCommScheduler() {
     return Schedulers.newBoundedElastic(threadPoolSize, taskQueueSize, "other-service-comm-pool");
   }
-  
-  @PersistenceContext
-  private EntityManager em;
-  
-  @Bean
-  public JPAQueryFactory jpaQueryFactory() {
-    return new JPAQueryFactory(em);
-  }
-  
 }
