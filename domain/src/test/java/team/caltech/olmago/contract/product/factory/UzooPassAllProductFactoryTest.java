@@ -4,9 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.test.context.junit4.SpringRunner;
 import team.caltech.olmago.contract.contract.Contract;
 import team.caltech.olmago.contract.contract.ContractType;
@@ -21,8 +19,6 @@ import static team.caltech.olmago.contract.contract.ContractFixtures.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
-  @Autowired
-  @Lazy
   ProductFactory uzooPassAllProductFactory;
   
   static final String uzooPassAllProductCode = "NMP0000001";
@@ -67,6 +63,8 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
     mockFindOptionContractByPackageContract(allContract, optContract);
     // 기본혜택할인
     mockBasicBenefitDc();
+  
+    uzooPassAllProductFactory = AllProductsFactory.uzooPassAllProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository);
     
     // when
     List<ProductSubscription> prodSubs = uzooPassAllProductFactory.receiveSubscription(allContract, subRcvDtm);
@@ -101,6 +99,8 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
     mockBasicBenefitDc();
     // 최초가입할인
     mockFindAllDiscountPolicy(firstSubDcCode);
+  
+    uzooPassAllProductFactory = AllProductsFactory.uzooPassAllProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository);
 
     // when
     List<ProductSubscription> prodSubs = uzooPassAllProductFactory.receiveSubscription(allContract, subRcvDtm);
@@ -135,6 +135,8 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
     mockBasicBenefitDc();
     // 최초가입할인
     mockFindAllDiscountPolicy(firstSubDcCode);
+  
+    uzooPassAllProductFactory = AllProductsFactory.uzooPassAllProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository);
 
     // when
     List<ProductSubscription> prodSubs = uzooPassAllProductFactory.receiveSubscription(allContract, subRcvDtm);

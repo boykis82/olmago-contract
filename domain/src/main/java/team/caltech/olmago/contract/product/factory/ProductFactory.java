@@ -1,12 +1,12 @@
 package team.caltech.olmago.contract.product.factory;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
-import org.springframework.beans.factory.annotation.Autowired;
 import team.caltech.olmago.contract.contract.Contract;
-import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.discount.DiscountSubscription;
 import team.caltech.olmago.contract.discount.condition.DiscountCondition;
+import team.caltech.olmago.contract.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.plm.discount.DiscountPolicy;
 import team.caltech.olmago.contract.plm.discount.DiscountPolicyRepository;
 import team.caltech.olmago.contract.plm.discount.DiscountType;
@@ -24,22 +24,16 @@ import java.util.stream.Stream;
 
 @Accessors(fluent = true, chain = false)
 @Getter
+@RequiredArgsConstructor
 public class ProductFactory {
   private final String productCode;
 
-  @Autowired
-  private DiscountPolicyRepository discountPolicyRepository;
-  
-  @Autowired
-  private ProductRepository productRepository;
+  private final ProductRepository productRepository;
+  private final DiscountPolicyRepository discountPolicyRepository;
   
   private List<DiscountCondition> availableDiscountConditions = new ArrayList<>();
   private List<ProductFactory> basicBenefitProductFactories = new ArrayList<>();
   private List<String> availableOptionProducts = new ArrayList<>();
-  
-  public ProductFactory(String productCode) {
-    this.productCode = productCode;
-  }
   
   public ProductFactory availableDiscountConditions(DiscountCondition ...availableDiscountConditions) {
     this.availableDiscountConditions = Arrays.asList(availableDiscountConditions);
@@ -94,7 +88,8 @@ public class ProductFactory {
     
     contract.validateAvailableProductType(product);
     
-    List<DiscountSubscription> dcSubs = subscribeDiscounts(satisfiedDiscountPolicies(contract), subRcvDtm);
+    List<DiscountPolicy> satisfiedDCPolicies = satisfiedDiscountPolicies(contract);
+    List<DiscountSubscription> dcSubs = subscribeDiscounts(satisfiedDCPolicies, subRcvDtm);
     
     return new ProductSubscription(
         contract,
