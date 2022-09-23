@@ -13,7 +13,7 @@ import team.caltech.olmago.contract.domain.product.factory.ProductFactoryMap;
 import team.caltech.olmago.contract.domain.product.factory.ProductRelationRepository;
 
 @Configuration
-@Lazy
+//@Lazy
 public class ProductFactoryConfiguration {
   @Bean
   public ProductFactory uzooPassAllProductFactory(ContractRepository contractRepository,

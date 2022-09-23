@@ -12,6 +12,7 @@ import team.caltech.olmago.contract.domain.contract.Contract;
 import team.caltech.olmago.contract.domain.contract.ContractFixtures;
 import team.caltech.olmago.contract.domain.contract.ContractType;
 import team.caltech.olmago.contract.domain.product.ProductSubscription;
+import team.caltech.olmago.contract.domain.product.factory.AllProductsFactory;
 import team.caltech.olmago.contract.domain.product.factory.ProductFactory;
 
 import java.time.LocalDateTime;
@@ -22,8 +23,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BaeminProductFactoryTest extends ProductFactoryTestBase {
-  @Autowired
-  @Lazy
   ProductFactory baeminProductFactory;
 
   static final String baeminProductCode = "NMO0000001";
@@ -53,6 +52,7 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   
     // 최초가입
     mockFirstSubscription(baeminOptContract);
+    baeminProductFactory = AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository);
     
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminOptContract, subRcvDtm);
@@ -78,6 +78,7 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   
     // 최초가입
     mockFirstSubscription(baeminUnitContract);
+    baeminProductFactory = AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository);
 
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminUnitContract, subRcvDtm);
@@ -103,6 +104,7 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   
     // 최초가입아님
     mockNotFirstSubscription(baeminUnitContract);
+    baeminProductFactory = AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository);
   
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminUnitContract, subRcvDtm);

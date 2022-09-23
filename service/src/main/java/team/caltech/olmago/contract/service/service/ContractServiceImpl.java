@@ -60,7 +60,7 @@ public class ContractServiceImpl implements ContractService {
   }
   
   private boolean isPackageSubscribing(ReceiveContractSubscriptionDto dto) {
-    return !(dto.getPkgProdCd().isEmpty() || !dto.getOptProdCd().isEmpty());
+    return dto.getPkgProdCd() != null && !dto.getPkgProdCd().isEmpty() && dto.getOptProdCd() != null && !dto.getPkgProdCd().isEmpty();
   }
   
   private List<Contract> receivePackageContractSubscription(ReceiveContractSubscriptionDto dto) {
