@@ -1,6 +1,6 @@
 package team.caltech.olmago.contract.service;
 
-import team.caltech.olmago.contract.dto.*;
+import team.caltech.olmago.contract.service.dto.*;
 
 import java.util.List;
 

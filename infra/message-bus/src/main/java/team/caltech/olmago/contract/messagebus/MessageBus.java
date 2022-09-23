@@ -7,8 +7,8 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import team.caltech.olmago.contract.message.MessageEnvelope;
-import team.caltech.olmago.contract.message.MessageEnvelopeRepository;
+import team.caltech.olmago.contract.common.message.MessageEnvelope;
+import team.caltech.olmago.contract.common.message.MessageEnvelopeRepository;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;

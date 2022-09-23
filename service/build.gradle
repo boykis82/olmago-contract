@@ -12,6 +12,7 @@ ext {
     mapstructVersion = "1.5.2.Final"
     okhttpVersion = "4.10.0"
     springCloudVersion = "2021.0.3"
+    queryDslVersion = "5.0.0"
 }
 
 repositories {
@@ -27,6 +28,7 @@ dependencies {
 	implementation 'junit:junit:4.13.2'
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation('com.h2database:h2')
 	testImplementation('io.projectreactor:reactor-test')
 
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')
@@ -42,6 +44,10 @@ dependencies {
 	// mock web server
 	testImplementation("com.squareup.okhttp3:mockwebserver:${okhttpVersion}")
 	testImplementation("com.squareup.okhttp3:okhttp:${okhttpVersion}")
+
+    // QueryDSL
+    implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
+    implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 }
 
 dependencyManagement {

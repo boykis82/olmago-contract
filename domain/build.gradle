@@ -35,7 +35,6 @@ dependencies {
     //implementation('mysql:mysql-connector-java')
     testImplementation('com.h2database:h2')
     testImplementation('io.projectreactor:reactor-test')
-    testImplementation 'org.testng:testng:7.1.0'
 
     // lombok
     compileOnly("org.projectlombok:lombok")
