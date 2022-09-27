@@ -143,7 +143,9 @@ public class ContractServiceImpl implements ContractService {
   @Transactional
   public ContractDto holdActivation(HoldActivationDto dto) {
     Contract contract = contractRepository.findById(dto.getContractId()).orElseThrow(InvalidArgumentException::new);
-    contract.holdProductActivations(dto.getRegularPaymentCanceledDateTime());
+    messageStore.saveMessage(
+        wrapEvent(contract.holdProductActivations(dto.getRegularPaymentCanceledDateTime()))
+    );
     return ContractDto.of(contract);
   }
   
@@ -405,8 +407,8 @@ public class ContractServiceImpl implements ContractService {
         .collect(Collectors.toList());
   }
 
-  public List<ContractDto> findByContractId(long contractId, boolean withPackageOrOption) {
-    return contractRepository.findByContractId(contractId, withPackageOrOption)
+  public List<ContractDto> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductSubsription, boolean includeDiscountSubscription) {
+    return contractRepository.findByContractId(contractId, withPackageOrOption, includeProductSubsription, includeDiscountSubscription)
         .stream()
         .map(ContractDto::of)
         .collect(Collectors.toList());

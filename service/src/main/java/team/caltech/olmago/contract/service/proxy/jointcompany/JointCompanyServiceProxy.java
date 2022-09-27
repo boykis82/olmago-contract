@@ -7,3 +7,4 @@ public interface JointCompanyServiceProxy {
   // todo : 조회 전용으로 변경하자
   Mono<JointCompanyAuthenticationDto> getAuthentications(long contractId);
 }
+

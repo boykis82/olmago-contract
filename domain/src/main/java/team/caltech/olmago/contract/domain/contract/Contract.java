@@ -17,7 +17,6 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -150,25 +149,15 @@ public class Contract {
     setFeeProductCode();
     
     // 이벤트
-    return new ProductsActivatedOrDeactivated(
-        id,
-        regPayCmplDtm,
-        // 가입완료
-        productSubscriptions.stream()
-            .filter(ps -> ps.getLifeCycle().isSubscriptionCompleted())
-            .map(ProductSubscription::getProductCode).collect(Collectors.toList()),
-        // 해지완료
-        productSubscriptions.stream()
-            .filter(ps -> ps.getLifeCycle().isTerminationCompleted())
-            .map(ProductSubscription::getProductCode).collect(Collectors.toList())
-    );
+    return new ProductsActivatedOrDeactivated(id, regPayCmplDtm);
   }
   
-  // 배치로 해지하므로 별도의 이벤트 발행없음
-  public void holdProductActivations(LocalDateTime regPayCnclDtm) {
+  public ProductActivationHeld holdProductActivations(LocalDateTime regPayCnclDtm) {
     billCycle = billCycle.prev();
     lastPaymentDtm = beforeLastPaymentDtm;
     beforeLastPaymentDtm = null;
+    
+    return new ProductActivationHeld(id, regPayCnclDtm);
   }
   
   private void setFeeProductCode() {

@@ -47,5 +47,5 @@ public interface ContractService {
   // 고객ID로 조회. 해지서비스포함여부
   List<ContractDto> findByCustomerId(long customerId, boolean includeTerminatedContract);
   // 계약ID로 조회. 패키지나 옵션일 경우 짝꿍도 같이 조회할지 여부
-  List<ContractDto> findByContractId(long contractId, boolean withPackageOrOption);
+  List<ContractDto> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductSubscription, boolean includeDiscountSubscription);
 }

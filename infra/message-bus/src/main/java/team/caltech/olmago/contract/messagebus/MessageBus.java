@@ -35,8 +35,11 @@ public class MessageBus {
         .setHeader(HEADER_UUID, dee.getUuid())
         .build();
     
-    streamBridge.send(dee.getBindingName(), message);
-  
-    dee.publish(LocalDateTime.now());
+    if (streamBridge.send(dee.getBindingName(), message)) {
+      dee.publish(LocalDateTime.now());
+    }
+    else {
+      throw new RuntimeException();
+    }
   }
 }

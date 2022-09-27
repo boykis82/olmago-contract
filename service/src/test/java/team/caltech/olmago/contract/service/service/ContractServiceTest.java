@@ -54,7 +54,6 @@ public class ContractServiceTest {
   
   @After
   public void teardown() {
-    contrac
   }
   
   @Test

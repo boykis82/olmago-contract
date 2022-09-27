@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-public class ProductsActivatedOrDeactivated extends ContractEventBase {
-
-  public ProductsActivatedOrDeactivated(long contractId, LocalDateTime eventOccurDtm) {
+public class ProductActivationHeld extends ContractEventBase {
+  
+  public ProductActivationHeld(long contractId, LocalDateTime eventOccurDtm) {
     super(contractId, eventOccurDtm);
   }
 }

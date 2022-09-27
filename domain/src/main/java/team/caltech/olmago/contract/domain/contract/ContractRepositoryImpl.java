@@ -1,8 +1,10 @@
 package team.caltech.olmago.contract.domain.contract;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountType;
 
 import java.util.List;
@@ -39,18 +41,7 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   @Override
   public Optional<Contract> findWithProductsAndDiscountsById(long contractId) {
     return Optional.ofNullable(
-        jpaQueryFactory
-            .select(contract)
-            .from(contract)
-            .join(contract.productSubscriptions, productSubscription).fetchJoin()
-            .join(productSubscription.product, product).fetchJoin()
-            .join(productSubscription.discountSubscriptions, discountSubscription).fetchJoin()
-            .join(discountSubscription.discountPolicy, discountPolicy).fetchJoin()
-            .where(
-                contract.id.eq(contractId)
-            )
-            .distinct()
-            .fetchOne()
+        findByContractId(contractId, false,true, true).get(0)
     );
   }
   
@@ -109,21 +100,30 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   }
   
   @Override
-  public List<Contract> findByContractId(long contractId, boolean withPackageOrOption) {
+  public List<Contract> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductSubscription, boolean includeDiscountSubscription) {
+    JPAQuery<Contract> query = jpaQueryFactory.select(contract);
     if (withPackageOrOption) {
-      return jpaQueryFactory
-          .select(contract)
-          .where(contract.id.eq(contractId))
-          .fetch();
-    }
-    else {
-      return jpaQueryFactory.select(contract)
+      query = query
           .from(uzooPackage)
           .join(uzooPackage.packageContract, contract)
-          .join(uzooPackage.optionContract, contract)
-          .where(packageOrOptionContract(contractId))
-          .distinct()
-          .fetch();
+          .join(uzooPackage.optionContract, contract);
+  
+      if (includeProductSubscription) {
+        query = appendProductJoin(query);
+        if (includeDiscountSubscription) {
+          query = appendDiscountJoin(query);
+        }
+      }
+      return query.where(packageOrOptionContract(contractId)).distinct().fetch();
+    }
+    else {
+      if (includeProductSubscription) {
+        query = appendProductJoin(query);
+        if (includeDiscountSubscription) {
+          query = appendDiscountJoin(query);
+        }
+      }
+      return query.where(contract.id.eq(contractId)).distinct().fetch();
     }
   }
   
@@ -131,4 +131,15 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
     return uzooPackage.packageContract.id.eq(contractId).or(uzooPackage.optionContract.id.eq(contractId));
   }
   
+  private JPAQuery<Contract> appendProductJoin(JPAQuery<Contract> query) {
+    return query
+        .join(contract.productSubscriptions, productSubscription).fetchJoin()
+        .join(productSubscription.product, product).fetchJoin();
+  }
+  
+  private JPAQuery<Contract> appendDiscountJoin(JPAQuery<Contract> query) {
+    return query
+        .join(productSubscription.discountSubscriptions, discountSubscription).fetchJoin()
+        .join(discountSubscription.discountPolicy, discountPolicy).fetchJoin();
+  }
 }
