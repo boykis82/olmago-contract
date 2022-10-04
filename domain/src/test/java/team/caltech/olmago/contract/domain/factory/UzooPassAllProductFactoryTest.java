@@ -54,8 +54,8 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
   @Test
   public void 이동전화연계없이_배민과_비최초가입이면_상품가입3건_기본혜택할인2건생성된다() {
     // given
-    Contract allContract = ContractFixtures.createUzoopassAllContract(subRcvDtm);
-    Contract optContract = ContractFixtures.createBaeminContract(subRcvDtm, ContractType.OPTION);
+    Contract allContract = uzooPassAllContract(subRcvDtm);
+    Contract optContract = baeminContract(subRcvDtm, ContractType.OPTION);
 
     // 비최초가입
     mockNotFirstSubscription(allContract);
@@ -88,8 +88,8 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
   @Test
   public void 이동전화연계없이_배민과_최초가입하면_상품가입3건_최초가입할인1건_기본혜택할인2건생성된다() {
     // given
-    Contract allContract = ContractFixtures.createUzoopassAllContract(subRcvDtm);
-    Contract optContract = ContractFixtures.createBaeminContract(subRcvDtm, ContractType.OPTION);
+    Contract allContract = uzooPassAllContract(subRcvDtm);
+    Contract optContract = baeminContract(subRcvDtm, ContractType.OPTION);
     
     // 최초가입
     mockFirstSubscription(allContract);
@@ -124,7 +124,7 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
   @Test
   public void 이동전화연계없이_야놀자와_최초가입하면_상품가입3건_최초가입할인0건_기본혜택할인2건생성된다() {
     // given
-    Contract allContract = ContractFixtures.createUzoopassAllContract(subRcvDtm);
+    Contract allContract = uzooPassAllContract(subRcvDtm);
     Contract optContract = ContractFixtures.createYanoljaContract(subRcvDtm, ContractType.OPTION);
 
     // 최초가입
@@ -160,5 +160,25 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
   // 기본혜택할인
   private void mockBasicBenefitDc() {
     mockFindAllDiscountPolicy(basicBenefitDcCode);
+  }
+  
+  private Contract uzooPassAllContract(LocalDateTime subRcvDtm) {
+    return Contract.builder()
+        .customerId(1L)
+        .orderId(2L)
+        .contractType(ContractType.PACKAGE)
+        .feeProductCode("NMP0000001")
+        .subRcvDtm(subRcvDtm)
+        .build();
+  }
+  
+  private Contract baeminContract(LocalDateTime subRcvDtm, ContractType contractType) {
+    return Contract.builder()
+        .customerId(1L)
+        .orderId(2L)
+        .contractType(contractType)
+        .feeProductCode("NMO0000001")
+        .subRcvDtm(subRcvDtm)
+        .build();
   }
 }

@@ -20,11 +20,11 @@ public class UzooPackage {
   private long id;
   
   @ManyToOne
-  @JoinColumn(name = "package_contract_id")
+  @JoinColumn(name = "pkg_cntrct_id")
   private Contract packageContract;
   
   @ManyToOne
-  @JoinColumn(name = "option_contract_id")
+  @JoinColumn(name = "opt_cntrct_id")
   private Contract optionContract;
 
   @Embedded

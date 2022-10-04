@@ -3,6 +3,7 @@ package team.caltech.olmago.contract.domain.common;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 
@@ -10,11 +11,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Embeddable
 public class LifeCycle {
+  @Column(name = "sub_rcv_dtm")
   private LocalDateTime subscriptionReceivedDateTime;
+  @Column(name = "sub_rcv_cncl_dtm")
   private LocalDateTime cancelSubscriptionReceiptDateTime;
+  @Column(name = "sub_cmpl_dtm")
   private LocalDateTime subscriptionCompletedDateTime;
+  @Column(name = "term_rcv_dtm")
   private LocalDateTime terminationReceivedDateTime;
+  @Column(name = "term_rcv_cncl_dtm")
   private LocalDateTime cancelTerminationReceiptDateTime;
+  @Column(name = "term_cmpl_dtm")
   private LocalDateTime terminationCompletedDateTime;
   
   public LifeCycle(LocalDateTime subscriptionReceivedDateTime) {

@@ -9,33 +9,35 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "discount_policy")
+@Table(name = "dc_plcy")
 public class DiscountPolicy {
   @Id
+  @Column(name = "dc_plcy_cd", length = 10, nullable = false)
   private String dcPolicyCode;
   
-  @Column(nullable = false)
+  @Column(name = "dc_plcy_nm", length = 80, nullable = false)
   private String dcPolicyName;
   
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @Column(name = "dc_unit", length = 10, nullable = false)
   private DiscountUnit dcUnit;
   
-  @Column(nullable = false)
+  @Column(name = "dc_amt_or_rate", nullable = false)
   private int dcAmountOrRate;
   
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @Column(name = "dc_typ", length = 40, nullable = false)
   private DiscountType dcType;
   
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @Column(name = "dc_sta_dt_typ", length = 20, nullable = false)
   private DiscountStartDateType dcStartDateType;
   
   @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
+  @Column(name = "dc_prd_typ", length = 20, nullable = false)
   private DiscountPeriodType dcPeriodType;
   
+  @Column(name = "copn_plcy_cd", length = 40)
   private String couponPolicyCode;
   
   @Builder

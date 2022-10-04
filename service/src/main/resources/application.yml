@@ -1,6 +1,19 @@
 spring:
   profiles:
     include: domain
+  datasource:
+    url: jdbc:mysql://localhost:3306/olmago_contract
+    username: olmago
+    password: olmago
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    #schema: classpath*:db/mysql/schema.sql
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
 
 spring.rabbitmq:
   addresses: localhost
@@ -32,3 +45,15 @@ spring.cloud.stream:
 spring.cloud.stream.rabbit.bindings.functionRouter-in-0.consumer:
   autoBindDlq: true
   republishToDlq: true
+
+logging:
+  level:
+    root: INFO
+    team.caltech.olmago.contract.domain: INFO
+    com:
+      querydsl:
+        sql: INFO
+    org:
+      hibernate:
+        SQL: DEBUG
+        type: TRACE

@@ -32,13 +32,14 @@ public class Contract {
   @Version
   private int version;
   
-  @Column(nullable = false)
+  @Column(name = "cust_id", nullable = false)
   private long customerId;
   
-  @Column(nullable = false)
+  @Column(name = "last_ord_id")
   private Long lastOrderId;
   
   @Enumerated(EnumType.STRING)
+  @Column(name = "cntrct_typ", length = 20, nullable = false)
   private ContractType contractType;
 
   @Embedded
@@ -48,18 +49,23 @@ public class Contract {
   @Embedded
   private BillCycle billCycle;
   
+  @Column(name = "last_pay_dtm")
   private LocalDateTime lastPaymentDtm;
+  
+  @Column(name = "bf_last_pay_dtm")
   private LocalDateTime beforeLastPaymentDtm;
-
+  
+  @Column(name = "unit_cnvt_dtm")
   private LocalDateTime unitContractConvertedDateTime;
 
-  @Column(nullable = false)
+  @Column(name = "fee_prod_cd", length = 10, nullable = false)
   private String feeProductCode;
   
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "contract")
   private final List<ProductSubscription> productSubscriptions = new ArrayList<>();
   
   @Setter
+  @Column(name = "pkg_id")
   private Long packageId;
   
   @Builder

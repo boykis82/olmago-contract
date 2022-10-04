@@ -9,22 +9,27 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
+@Table(name = "prod")
 public class Product {
   @Id
-  @Column(length = 10)
+  @Column(name = "prod_cd", length = 10, nullable = false)
   private String productCode;
   
-  @Column(length = 80)
+  @Column(name = "prod_mn", length = 80, nullable = false)
   private String productName;
   
   @Enumerated(EnumType.STRING)
+  @Column(name = "bill_prd", length = 20, nullable = false)
   private BillPeriod billPeriod;
   
   @Enumerated(EnumType.STRING)
+  @Column(name = "avail_prod_typ", length = 40, nullable = false)
   private AvailableProductType availableProductType;
   
+  @Column(name = "fee_vat_incl", nullable = false)
   private int feeVatIncluded;
   
+  @Column(name = "fst_sub_dc_tgt", length = 1, nullable = false)
   private boolean isTheFirstSubscriptionDcTarget;
   
   @Builder

@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team.caltech.olmago.contract.domain.plm.product.BillPeriod;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -14,12 +15,17 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Embeddable
 public class BillCycle {
+  @Column(name = "fst_bill_sta_dt")
   private LocalDate theFirstBillStartDate;
+  @Column(name = "month_passed")
   private Integer monthsPassed;
+  @Column(name = "cur_bill_sta_dt")
   private LocalDate currentBillStartDate;
+  @Column(name = "cur_bill_end_dt")
   private LocalDate currentBillEndDate;
   
   @Enumerated(EnumType.STRING)
+  @Column(name = "bill_period")
   private BillPeriod billPeriod;
   
   @Builder

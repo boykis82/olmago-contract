@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Getter
 @Entity
-@Table(indexes = @Index(name = "message_envelope_n1", columnList = "published, id"))
+@Table(name = "msg_envelope", indexes = @Index(name = "message_envelope_n1", columnList = "published, id"))
 public class MessageEnvelope {
   private final static ObjectMapper objectMapper = new ObjectMapper();
   
@@ -19,31 +19,31 @@ public class MessageEnvelope {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
-  @Column(nullable = false)
+  @Column(name = "uuid", nullable = false)
   private String uuid;
   
-  @Column(nullable = false)
+  @Column(name = "agg_typ", nullable = false)
   private String aggregateType;
   
-  @Column(nullable = false)
+  @Column(name = "agg_id", nullable = false)
   private String aggregateId;
   
-  @Column(nullable = false)
+  @Column(name = "bind_nm", nullable = false)
   private String bindingName;
   
-  @Column(nullable = false)
+  @Column(name = "created_at", nullable = false)
   private LocalDateTime createdAt;
   
-  @Column(nullable = true)
+  @Column(name = "published_at")
   private LocalDateTime publishedAt;
   
-  @Column(nullable = false)
+  @Column(name = "published", nullable = false)
   private boolean published;
   
-  @Column(nullable = false)
+  @Column(name = "event_typ", nullable = false)
   private String eventType;
   
-  @Column(nullable = false)
+  @Column(name = "payload", length = 2048, nullable = false)
   private String payload;
   
   @Builder

@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Entity
+@Table(name = "dc_sub")
 public class DiscountSubscription {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +26,7 @@ public class DiscountSubscription {
   private int version;
   
   @ManyToOne
-  @JoinColumn(name = "dc_policy_id")
+  @JoinColumn(name = "dc_plcy_id")
   private DiscountPolicy discountPolicy;
   
   @ManyToOne
@@ -35,11 +36,15 @@ public class DiscountSubscription {
   @Embedded
   private LifeCycle lifeCycle;
   
+  @Column(name = "dc_sta_dt", nullable = false)
   private LocalDate discountStartDate;
+  @Column(name = "dc_end_dt", nullable = false)
   private LocalDate discountEndDate;
+  @Column(name = "dc_rgst_dt", nullable = false)
   private LocalDate discountRegisterDate;
+  @Column(name = "dc_end_rgst_dt")
   private LocalDate discountEndRegisterDate;
-  
+  @Column(name = "copn_id", length = 100)
   private String couponId;
   
   @Builder

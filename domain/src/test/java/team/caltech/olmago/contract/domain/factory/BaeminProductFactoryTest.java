@@ -48,7 +48,7 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   @Test
   public void 배민상품팩토리로_배민옵션가입하면_상품가입1건옵션할인1건생성된다() {
     // given
-    Contract baeminOptContract = ContractFixtures.createBaeminContract(subRcvDtm, ContractType.OPTION);
+    Contract baeminOptContract = createBaeminContract(subRcvDtm, ContractType.OPTION);
   
     // 최초가입
     mockFirstSubscription(baeminOptContract);
@@ -74,7 +74,7 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   @Test
   public void 배민상품팩토리로_배민단품최초가입하면_상품가입1건최초가입할인1건생성된다() {
     // given
-    Contract baeminUnitContract = ContractFixtures.createBaeminContract(subRcvDtm, ContractType.UNIT);
+    Contract baeminUnitContract = createBaeminContract(subRcvDtm, ContractType.UNIT);
   
     // 최초가입
     mockFirstSubscription(baeminUnitContract);
@@ -100,7 +100,7 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   @Test
   public void 배민상품팩토리로_배민단품비최초가입하면_상품가입1건생성_할인미생성된다() {
     // given
-    Contract baeminUnitContract = ContractFixtures.createBaeminContract(subRcvDtm, ContractType.UNIT);
+    Contract baeminUnitContract = createBaeminContract(subRcvDtm, ContractType.UNIT);
   
     // 최초가입아님
     mockNotFirstSubscription(baeminUnitContract);
@@ -120,5 +120,15 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
     assertThat(allProductCodes).contains(baeminProductCode);
     // 할인가입 0건
     assertThat(allDiscountCodes).isEmpty();
+  }
+  
+  public static Contract createBaeminContract(LocalDateTime subRcvDtm, ContractType contractType) {
+    return Contract.builder()
+        .customerId(1L)
+        .orderId(2L)
+        .contractType(contractType)
+        .feeProductCode("NMO0000001")
+        .subRcvDtm(subRcvDtm)
+        .build();
   }
 }

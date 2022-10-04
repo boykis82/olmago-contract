@@ -1,0 +1,12 @@
+mysql_conf readonly
+
+create user 'olmago'@'localhost' identified by 'olmago' password expire never;
+grant all privileges on olmago_contract.* to 'olmago'@'localhost';
+flush privileges;
+
+create user 'olmago'@'%' identified by 'olmago' password expire never;
+grant all privileges on olmago_contract.* to 'olmago'@'%';
+flush privileges;
+
+mysql -u olmago -p
+olmago

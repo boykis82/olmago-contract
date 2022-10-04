@@ -9,6 +9,7 @@ import java.time.LocalDate;
 @Getter
 @NoArgsConstructor
 @Entity
+@Table(name = "prod_rel")
 public class ProductRelation {
   public enum ProductRelationType {
     PACKAGE_AND_BASIC_BENEFIT,
@@ -19,19 +20,19 @@ public class ProductRelation {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
-  @Column(nullable = false)
+  @Column(name = "main_prod_cd", length = 10, nullable = false)
   private String mainProductCode;
   
-  @Column(nullable = false)
   @Enumerated(EnumType.STRING)
+  @Column(name = "prod_rel_typ", length = 40, nullable = false)
   private ProductRelationType productRelationType;
   
-  @Column(nullable = false)
+  @Column(name = "sub_prod_cd", length = 10, nullable = false)
   private String subProductCode;
   
-  @Column(nullable = false)
+  @Column(name = "sta_dt", nullable = false)
   private LocalDate startDt;
   
-  @Column(nullable = false)
+  @Column(name = "end_dt", nullable = false)
   private LocalDate endDt;
 }

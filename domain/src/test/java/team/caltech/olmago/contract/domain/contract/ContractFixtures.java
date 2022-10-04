@@ -24,44 +24,59 @@ public class ContractFixtures {
   }
   
   public static Contract createUzoopassAllContract(LocalDateTime subRcvDtm) {
+    Contract c =  uzooPassAllContractBuilder(subRcvDtm).build();
+    createUzoopassProductSubscriptions(c);
+    return c;
+  }
+  
+  public static Contract.ContractBuilder uzooPassAllContractBuilder(LocalDateTime subRcvDtm) {
     return Contract.builder()
-        .id(1L)
         .customerId(1L)
         .orderId(2L)
         .contractType(ContractType.PACKAGE)
         .feeProductCode("NMP0000001")
-        .subRcvDtm(subRcvDtm)
-        .build();
+        .subRcvDtm(subRcvDtm);
+  }
+  
+  public static Contract.ContractBuilder contractBuilder(String feeProductCode, LocalDateTime subRcvDtm, ContractType contractType) {
+    return Contract.builder()
+        .customerId(1L)
+        .orderId(2L)
+        .contractType(contractType)
+        .feeProductCode(feeProductCode)
+        .subRcvDtm(subRcvDtm);
   }
 
   public static List<ProductSubscription> createUzoopassProductSubscriptions(Contract contract) {
-    return List.of(
+    List<ProductSubscription> ps = List.of(
         createProductSubscription(contract, "NMP0000001", "DCP0000001", "DCM0000001"),
         createProductSubscription(contract, "NMB0000001", "DCB0000001"),
         createProductSubscription(contract, "NMB0000002", "DCB0000001")
     );
+    contract.addProductSubscriptions(ps);
+    return ps;
   }
   
   public static Contract createBaeminContract(LocalDateTime subRcvDtm, ContractType contractType) {
-    return Contract.builder()
-        .id(1L)
-        .customerId(2L)
-        .orderId(3L)
-        .contractType(contractType)
-        .feeProductCode("NMO0000001")
-        .subRcvDtm(subRcvDtm)
-        .build();
+    String productCode = "NMO0000001";
+    Contract c = contractBuilder(productCode, subRcvDtm, contractType).build();
+    c.addProductSubscriptions(List.of(
+        contractType == ContractType.OPTION
+            ? createProductSubscription(c, productCode, "DCO0000003")
+            : createProductSubscription(c, productCode)
+    ));
+    return c;
   }
 
   public static Contract createYanoljaContract(LocalDateTime subRcvDtm, ContractType contractType) {
-    return Contract.builder()
-        .id(3L)
-        .customerId(2L)
-        .orderId(3L)
-        .contractType(contractType)
-        .feeProductCode("NMO0000010")
-        .subRcvDtm(subRcvDtm)
-        .build();
+    String productCode = "NMO0000010";
+    Contract c = contractBuilder(productCode, subRcvDtm, contractType).build();
+    c.addProductSubscriptions(List.of(
+        contractType == ContractType.OPTION
+            ? createProductSubscription(c, productCode, "DCO0000004")
+            : createProductSubscription(c, productCode)
+    ));
+    return c;
   }
 
   public static ProductSubscription createProductSubscription(Contract contract, String productCode, String ... dcCodes) {

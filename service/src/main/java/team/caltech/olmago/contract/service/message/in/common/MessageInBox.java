@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Entity
 public class MessageInBox {
   @Id
-  private String key;
+  private String id;
   
   @Column(nullable = false)
   private LocalDateTime receivedDateTime;

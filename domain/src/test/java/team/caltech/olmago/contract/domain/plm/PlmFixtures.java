@@ -1,5 +1,6 @@
 package team.caltech.olmago.contract.domain.plm;
 
+import org.springframework.stereotype.Component;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicy;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountType;
 import team.caltech.olmago.contract.domain.plm.product.Product;

@@ -15,8 +15,19 @@ spring:
     show_sql: true
     format_sql: true
     hibernate:
-      ddl-auto: none
+      ddl-auto: create
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+
+h2:
+  console:
+    enabled: true
+    path: /h2-console
+
+datasource:
+  driver-class-name: org.h2.Driver
+  url: jdbc:h2:~/test
+  username: usr
+  password: pwd

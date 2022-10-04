@@ -88,6 +88,7 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   public List<Contract> findByCustomerId(long customerId, boolean includeTerminatedContract) {
     return jpaQueryFactory
         .select(contract)
+        .from(contract)
         .where(
             contract.customerId.eq(customerId)
                 .and(includeTerminatedContractExpr(includeTerminatedContract))
@@ -96,7 +97,7 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   }
   
   private BooleanExpression includeTerminatedContractExpr(boolean includeTerminatedContract) {
-    return includeTerminatedContract ? null : contract.lifeCycle.terminationCompleted.isNull();
+    return includeTerminatedContract ? null : contract.lifeCycle.terminationCompletedDateTime.isNull();
   }
   
   @Override

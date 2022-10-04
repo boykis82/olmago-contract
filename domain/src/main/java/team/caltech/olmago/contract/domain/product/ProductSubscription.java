@@ -17,8 +17,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
-@Entity
 @Getter
+@Entity
+@Table(name = "prod_sub")
 public class ProductSubscription {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +29,7 @@ public class ProductSubscription {
   private int version;
   
   @ManyToOne
-  @JoinColumn(name = "productCode")
+  @JoinColumn(name = "prod_cd")
   private Product product;
   
   @Embedded
