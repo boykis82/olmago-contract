@@ -9,6 +9,6 @@ import java.time.LocalDateTime;
 @Getter
 public class ExpireProductAuthDto {
   private final long contractId;
-  private final long productSubscriptionId;
+  private final String productCode;
   private final LocalDateTime authExpiredDtm;
 }
