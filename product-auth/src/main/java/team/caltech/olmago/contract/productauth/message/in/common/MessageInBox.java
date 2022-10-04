@@ -15,14 +15,15 @@ import java.time.LocalDateTime;
 @Entity
 public class MessageInBox {
   @Id
+  @Column(name = "key")
   private String key;
   
-  @Column(nullable = false)
+  @Column(name = "rcv_dtm", nullable = false)
   private LocalDateTime receivedDateTime;
   
-  @Column(nullable = false)
+  @Column(name = "event_type", nullable = false)
   private String eventType;
   
-  @Column(nullable = false)
+  @Column(name = "payload", nullable = false, length = 2048)
   private String payload;
 }

@@ -26,20 +26,17 @@ public class ProductAuthServiceImpl implements ProductAuthService {
   
   @Override
   @Transactional
-  public void linkWithAssociatedCompanies(ContractDto contractDto, LocalDateTime linkDtm) {
-    // 살아있는 것만 인증요청보낸다.
-    contractDto.getProductSubscriptions().stream()
-        .filter(ContractDto.ProductSubscriptionDto::isActive)
-        .forEach(ps -> linkWithAssociatedCompany(contractDto.getContractId(), ps, linkDtm));
+  public void linkWithAssociatedCompanies(long contractId, List<String> productCodes, LocalDateTime linkDtm) {
+    productCodes.forEach(productCode -> linkWithAssociatedCompany(contractId, productCode, linkDtm));
   }
   
-  private void linkWithAssociatedCompany(long contractId, ContractDto.ProductSubscriptionDto productSubscriptionDto, LocalDateTime linkDtm) {
-    ProductAuthId id = new ProductAuthId(contractId, productSubscriptionDto.getProductSubscriptionId());
+  private void linkWithAssociatedCompany(long contractId, String productCode, LocalDateTime linkDtm) {
+    ProductAuthId id = new ProductAuthId(contractId, productCode);
     // DB에 있으면 아무것도 안하고, 없으면 새로운 record 생성(요청일시만 채워서)
     productAuthRepository.findById(id)
         .ifPresentOrElse(
             a -> {},
-            () -> saveNewAuth(id, productSubscriptionDto.getProductCode(), linkDtm)
+            () -> saveNewAuth(id, productCode, linkDtm)
         );
     // eai로 보낸다고 가정
     // eaiClient.put(msg).subscribeOn(otherServiceCommScheduler);
@@ -58,7 +55,7 @@ public class ProductAuthServiceImpl implements ProductAuthService {
   @Override
   @Transactional
   public void completeAuth(CompleteProductAuthDto dto) {
-    productAuthRepository.findById(new ProductAuthId(dto.getContractId(), dto.getProductSubscriptionId()))
+    productAuthRepository.findById(new ProductAuthId(dto.getContractId(), dto.getProductCode()))
         .orElseThrow()
         .completeAuth(dto.getAuthCompletedDtm());
   }
@@ -66,7 +63,7 @@ public class ProductAuthServiceImpl implements ProductAuthService {
   @Override
   @Transactional
   public void expireAuth(ExpireProductAuthDto dto) {
-    productAuthRepository.findById(new ProductAuthId(dto.getContractId(), dto.getProductSubscriptionId()))
+    productAuthRepository.findById(new ProductAuthId(dto.getContractId(), dto.getProductCode()))
         .orElseThrow()
         .expireAuth(dto.getAuthExpiredDtm());
   }

@@ -1,19 +1,20 @@
 package team.caltech.olmago.contract.productauth.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import java.io.Serializable;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Getter
+@EqualsAndHashCode
 @Embeddable
 public class ProductAuthId implements Serializable {
+  @Column(name = "contract_id")
   private Long contractId;
-  private Long productSubscriptionId;
-
+  @Column(name = "prod_cd")
+  private String productCode;
 }

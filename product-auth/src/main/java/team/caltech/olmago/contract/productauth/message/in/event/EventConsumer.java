@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
 import team.caltech.olmago.contract.productauth.message.in.event.contract.ContractEventHandler;
 import team.caltech.olmago.contract.productauth.message.in.event.contract.ContractSubscriptionCompleted;
-import team.caltech.olmago.contract.productauth.message.in.event.contract.ContractSubscriptionReceiptCanceled;
 import team.caltech.olmago.contract.productauth.message.in.event.contract.ProductsActivatedOrDeactivated;
 
 import java.util.function.Consumer;
@@ -19,11 +18,6 @@ public class EventConsumer {
   @Bean
   public Consumer<Message<ContractSubscriptionCompleted>> contractSubscriptionCompleted() {
     return m -> contractEventHandler.contractSubscriptionCompleted(m, m.getPayload());
-  }
-
-  @Bean
-  public Consumer<Message<ContractSubscriptionReceiptCanceled>> contractSubscriptionReceiptCanceled() {
-    return m -> contractEventHandler.contractSubscriptionReceiptCanceled(m, m.getPayload());
   }
 
   @Bean

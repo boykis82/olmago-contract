@@ -17,6 +17,8 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @Getter
 @NoArgsConstructor
@@ -100,7 +102,7 @@ public class Contract {
         .forEach(ps -> ps.completeSubscription(subCmplDtm));
     billCycle = BillCycle.of(subCmplDtm.toLocalDate(), BillPeriod.MONTHLY);
     lastPaymentDtm = subCmplDtm;
-    return new ContractSubscriptionCompleted(id, subCmplDtm);
+    return new ContractSubscriptionCompleted(id, subCmplDtm, getAllProductCodes());
   }
   
   public ContractTerminationReceived receiveTermination(Long orderId, LocalDateTime termRcvDtm) {
@@ -136,22 +138,20 @@ public class Contract {
     lastPaymentDtm = regPayCmplDtm;
     billCycle = billCycle.next();
     
-    // 가입접수 -> 가입완료
     productSubscriptions.stream()
         .filter(ps -> ps.getLifeCycle().isTerminationReceived())
         .forEach(ps -> ps.completeTermination(regPayCmplDtm));
-    // 해지접수 -> 해지완료
     productSubscriptions.stream()
         .filter(ps -> ps.getLifeCycle().isSubscriptionReceived())
         .forEach(ps -> ps.completeSubscription(regPayCmplDtm));
-
+  
     // 요금제코드 현행화
     setFeeProductCode();
     
     // 이벤트
-    return new ProductsActivatedOrDeactivated(id, regPayCmplDtm);
+    return new ProductsActivatedOrDeactivated(id, regPayCmplDtm, getSubProductCodes(), getTermProductCodes());
   }
-  
+
   public ProductActivationHeld holdProductActivations(LocalDateTime regPayCnclDtm) {
     billCycle = billCycle.prev();
     lastPaymentDtm = beforeLastPaymentDtm;
@@ -301,5 +301,24 @@ public class Contract {
         .findFirst()
         .orElseThrow(InvalidArgumentException::new);
   }
-
+  
+  private List<String> getTermProductCodes() {
+    return getAllProductCodes(ps -> ps.getLifeCycle().isTerminationCompleted());
+  }
+  
+  private List<String> getSubProductCodes() {
+    return getAllProductCodes(ps -> ps.getLifeCycle().isSubscriptionCompleted());
+  }
+  
+  private List<String> getAllProductCodes() {
+    return getAllProductCodes(ps -> true);
+  }
+  
+  private List<String> getAllProductCodes(Predicate<ProductSubscription> pred) {
+    return productSubscriptions.stream()
+        .filter(pred)
+        .map(ProductSubscription::getProductCode)
+        .collect(Collectors.toList());
+  }
+  
 }
