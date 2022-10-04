@@ -15,7 +15,7 @@ public class Product {
   @Column(name = "prod_cd", length = 10, nullable = false)
   private String productCode;
   
-  @Column(name = "prod_mn", length = 80, nullable = false)
+  @Column(name = "prod_nm", length = 80, nullable = false)
   private String productName;
   
   @Enumerated(EnumType.STRING)

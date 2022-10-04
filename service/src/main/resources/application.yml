@@ -6,7 +6,6 @@ spring:
     username: olmago
     password: olmago
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #schema: classpath*:db/mysql/schema.sql
   jpa:
     hibernate:
       ddl-auto: none

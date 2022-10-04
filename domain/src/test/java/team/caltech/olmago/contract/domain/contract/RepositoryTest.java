@@ -1,27 +1,43 @@
 package team.caltech.olmago.contract.domain.contract;
 
+import org.hibernate.annotations.Immutable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringRunner;
+import team.caltech.olmago.contract.DomainTestMain;
+import team.caltech.olmago.contract.domain.config.DomainTestConfig;
+import team.caltech.olmago.contract.domain.contract.uzoopackage.UzooPackage;
+import team.caltech.olmago.contract.domain.contract.uzoopackage.UzooPackageRepository;
 import team.caltech.olmago.contract.domain.customer.CustomerServiceProxy;
 import team.caltech.olmago.contract.domain.plm.PlmFixtures;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicyRepository;
+import team.caltech.olmago.contract.domain.plm.discount.DiscountType;
 import team.caltech.olmago.contract.domain.plm.product.ProductRepository;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@DataJpaTest
+@Import(DomainTestConfig.class)
 public class RepositoryTest {
+
   @Autowired
   ContractRepository contractRepository;
+  
+  @Autowired
+  UzooPackageRepository uzooPackageRepository;
   
   @Autowired
   ProductRepository productRepository;
@@ -35,27 +51,227 @@ public class RepositoryTest {
   
   @Before
   public void setUp() {
-    productRepository.saveAll(PlmFixtures.setupProducts());
-    discountPolicyRepository.saveAll(PlmFixtures.setupDiscountPolicies());
+  
   }
   
   @After
   public void tearDown() {
     contractRepository.deleteAll();
-    productRepository.deleteAll();
-    discountPolicyRepository.deleteAll();
   }
   
   @Test
-  public void 살아있는서비스2개있을때_고객ID와해지서비스포함으로조회하면_2개가반환된다() {
+  public void 살아있는서비스만있을때_고객ID와해지서비스포함으로조회하면_모두반환된다() {
+    // given & when
     LocalDateTime subRcvDtm = LocalDateTime.now();
-    Contract c1 = ContractFixtures.createUzoopassAllContract(subRcvDtm);
-    Contract c2 = ContractFixtures.createBaeminContract(subRcvDtm, ContractType.OPTION);
+    contractRepository.saveAll(
+      List.of(
+          ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+          ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
+          ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
+          ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
+          ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true ),
+          ContractFixtures.createBaeminContract(3L, 5L, subRcvDtm, ContractType.UNIT, true)
+      )
+    );
   
-    contractRepository.save(c1);
-    contractRepository.save(c2);
-  
-    assertThat(contractRepository.findAll()).hasSize(2);
+    // then
+    assertThat(contractRepository.findByCustomerId(1L, true)).hasSize(3);
     assertThat(contractRepository.findByCustomerId(2L, true)).hasSize(2);
+    assertThat(contractRepository.findByCustomerId(3L, true)).hasSize(1);
+  }
+  
+  @Test
+  public void 살아있는서비스와해지서비스섞여있을때_고객ID와해지서비스포함으로조회하면_모두반환된다() {
+    // given
+    LocalDateTime subRcvDtm = LocalDateTime.now();
+    contractRepository.saveAll(
+        List.of(
+            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createBaeminContract(3L, 5L, subRcvDtm, ContractType.UNIT, true)
+        )
+    );
+  
+    List<Contract> termContracts = List.of(
+      ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
+      ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
+      ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true )
+    );
+    contractRepository.saveAll(termContracts);
+    
+    // when (가입완료->해지접수->해지완료)
+    termContracts.forEach(c -> c.completeSubscription(LocalDateTime.now()));
+    termContracts.forEach(c -> c.receiveTermination(5L, LocalDateTime.now()));
+    termContracts.forEach(c -> c.completeTermination(LocalDateTime.now()));
+    
+    // then
+    assertThat(contractRepository.findByCustomerId(1L, true)).hasSize(3);
+    assertThat(contractRepository.findByCustomerId(2L, true)).hasSize(2);
+    assertThat(contractRepository.findByCustomerId(3L, true)).hasSize(1);
+  }
+  
+  @Test
+  public void 살아있는서비스와해지서비스섞여있을때_고객ID와해지서비스비포함으로조회() {
+    // given
+    LocalDateTime subRcvDtm = LocalDateTime.now();
+    contractRepository.saveAll(
+        List.of(
+            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createBaeminContract(3L, 5L, subRcvDtm, ContractType.UNIT, true)
+        )
+    );
+    
+    List<Contract> termContracts = List.of(
+        ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
+        ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
+        ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true )
+    );
+    contractRepository.saveAll(termContracts);
+    
+    // when (가입완료->해지접수->해지완료)
+    termContracts.forEach(c -> c.completeSubscription(LocalDateTime.now()));
+    termContracts.forEach(c -> c.receiveTermination(5L, LocalDateTime.now()));
+    termContracts.forEach(c -> c.completeTermination(LocalDateTime.now()));
+
+    // then
+    assertThat(contractRepository.findByCustomerId(1L, false)).hasSize(2);
+    assertThat(contractRepository.findByCustomerId(2L, false)).isEmpty();
+    assertThat(contractRepository.findByCustomerId(3L, false)).hasSize(1);
+  }
+  
+  @Test
+  public void 계약ID와주문ID로조회() {
+    // given & when
+    LocalDateTime subRcvDtm = LocalDateTime.now();
+    contractRepository.saveAll(
+        List.of(
+            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true ),
+            ContractFixtures.createBaeminContract(3L, 5L, subRcvDtm, ContractType.UNIT, true)
+        )
+    );
+  
+    assertThat(contractRepository.findByCustomerAndOrderId(1L, 2L)).hasSize(2);
+    assertThat(contractRepository.findByCustomerAndOrderId(1L, 4L)).hasSize(1);
+    assertThat(contractRepository.findByCustomerAndOrderId(1L, 3L)).isEmpty();
+  }
+  
+  @Test
+  public void 패키지계약으로_옵션계약찾으면_성공() {
+    // given & when
+    LocalDateTime subRcvDtm = LocalDateTime.now();
+    Contract pkgContract = ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true );
+    Contract optContract = ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true);
+    Contract unitContract = ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true );
+    contractRepository.saveAll(
+        List.of(
+          pkgContract, optContract, unitContract
+        )
+    );
+    
+    UzooPackage pkg = UzooPackage.builder()
+        .packageContract(pkgContract)
+        .optionContract(optContract)
+        .subscriptionReceivedDateTime(subRcvDtm)
+        .build();
+    uzooPackageRepository.save(pkg);
+    
+    // then
+    assertThat(contractRepository.findOptionContractByPackageContract(pkgContract).get()).isEqualTo(optContract);
+    assertThat(contractRepository.findOptionContractByPackageContract(optContract)).isEmpty();
+    assertThat(contractRepository.findOptionContractByPackageContract(unitContract)).isEmpty();
+  }
+  
+  @Test
+  public void 해지된계약없을때_동일명의로같은상품쓰는지체크() {
+    // given & when
+    LocalDateTime subRcvDtm = LocalDateTime.now();
+    contractRepository.saveAll(
+        List.of(
+            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true ),
+            ContractFixtures.createBaeminContract(3L, 5L, subRcvDtm, ContractType.UNIT, true)
+        )
+    );
+  
+    // then
+    assertThat(contractRepository.countActiveContractByCustomerAndFeeProductCode(1L, "NMP0000001")).isEqualTo(1);
+    assertThat(contractRepository.countActiveContractByCustomerAndFeeProductCode(1L, "NMO0000002")).isEqualTo(0);
+  }
+  
+  @Test
+  public void 해지된계약존재할때_동일명의로같은상품쓰는지체크() {
+    // given & when
+    LocalDateTime subRcvDtm = LocalDateTime.now();
+    Contract c1 = ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true );
+    Contract c2 = ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true);
+    contractRepository.saveAll(
+        List.of(
+            c1,
+            c2,
+            ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true ),
+            ContractFixtures.createBaeminContract(3L, 5L, subRcvDtm, ContractType.UNIT, true)
+        )
+    );
+  
+    List<Contract> termContracts = List.of(c1, c2);
+    termContracts.forEach(c -> c.completeSubscription(LocalDateTime.now()));
+    termContracts.forEach(c -> c.receiveTermination(5L, LocalDateTime.now()));
+    termContracts.forEach(c -> c.completeTermination(LocalDateTime.now()));
+    
+    // then
+    assertThat(contractRepository.countActiveContractByCustomerAndFeeProductCode(1L, "NMP0000001")).isEqualTo(0);
+    assertThat(contractRepository.countActiveContractByCustomerAndFeeProductCode(1L, "NMO0000001")).isEqualTo(0);
+    assertThat(contractRepository.countActiveContractByCustomerAndFeeProductCode(1L, "NMO0000002")).isEqualTo(0);
+  }
+  
+  @Test
+  public void 주어진종류의할인이_현재유효한계약에부여됐을때() {
+    // given & when
+    LocalDateTime subRcvDtm = LocalDateTime.now();
+    List<Contract> contracts = contractRepository.saveAll(
+        List.of(
+            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true ),
+            ContractFixtures.createBaeminContract(3L, 5L, subRcvDtm, ContractType.UNIT, true)
+        )
+    );
+    
+    assertThat(contractRepository.countAppliedDcTypeByCustomer(1L, DiscountType.THE_FIRST_SUBSCRIPTION)).isEqualTo(1);
+    assertThat(contractRepository.countAppliedDcTypeByCustomer(3L, DiscountType.THE_FIRST_SUBSCRIPTION)).isEqualTo(0);
+  }
+  
+  @Test
+  public void 주어진종류의할인이_예전계약에부여됐을때() {
+    // given & when
+    LocalDateTime subRcvDtm = LocalDateTime.now();
+    List<Contract> termContracts = contractRepository.saveAll(
+        List.of(
+            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
+            ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
+            ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true ),
+            ContractFixtures.createBaeminContract(3L, 5L, subRcvDtm, ContractType.UNIT, true)
+        )
+    );
+    termContracts.forEach(c -> c.completeSubscription(LocalDateTime.now()));
+    termContracts.forEach(c -> c.receiveTermination(5L, LocalDateTime.now()));
+    termContracts.forEach(c -> c.completeTermination(LocalDateTime.now()));
+    
+    assertThat(contractRepository.countAppliedDcTypeByCustomer(1L, DiscountType.THE_FIRST_SUBSCRIPTION)).isEqualTo(1);
+    assertThat(contractRepository.countAppliedDcTypeByCustomer(3L, DiscountType.THE_FIRST_SUBSCRIPTION)).isEqualTo(0);
   }
 }

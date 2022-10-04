@@ -47,3 +47,39 @@ insert into dc_plcy (dc_plcy_cd, copn_plcy_cd, dc_amt_or_rate, dc_prd_typ, dc_pl
 
 insert into dc_plcy (dc_plcy_cd, copn_plcy_cd, dc_amt_or_rate, dc_prd_typ, dc_plcy_nm, dc_sta_dt_typ, dc_typ, dc_unit)
 values ('DCS0000001',null,4900,'THREE_MONTHS','이동전화 요금제 연계(all/life) 4900원 추가할인(프라임)_프로모션(20220901~20221231)','IMMEDIATELY','MOBILE_PHONE_PRICE_PLAN_LINKED','AMOUNT');
+
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000001');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000002');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000003');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000004');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000005');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000006');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000007');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000008');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000009');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000001', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000010');
+
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000001');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000002');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000003');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000004');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000005');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000006');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000007');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000008');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000009');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000002', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000010');
+
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000001');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000002');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000003');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000004');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000005');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000006');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000007');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000008');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000009');
+insert into prod_rel (end_dt, main_prod_cd, prod_rel_typ, sta_dt, sub_prod_cd) values ('99991231', 'NMP0000003', 'PACKAGE_AND_OPTION', '19000101', 'NMO0000010');
+
+;
+

@@ -1,9 +1,11 @@
 package team.caltech.olmago.contract.domain.contract;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountType;
 
@@ -17,6 +19,7 @@ import static team.caltech.olmago.contract.domain.product.QProductSubscription.*
 import static team.caltech.olmago.contract.domain.plm.discount.QDiscountPolicy.discountPolicy;
 import static team.caltech.olmago.contract.domain.plm.product.QProduct.product;
 
+@Slf4j
 @RequiredArgsConstructor
 public class ContractRepositoryImpl implements ContractRepositoryCustom {
   private final JPAQueryFactory jpaQueryFactory;
@@ -26,15 +29,17 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
     return jpaQueryFactory
         .select(contract.count())
         .from(contract)
-        .join(contract.productSubscriptions, productSubscription).fetchJoin()
-        .join(productSubscription.discountSubscriptions, discountSubscription).fetchJoin()
-        .join(discountSubscription.discountPolicy, discountPolicy).fetchJoin()
-        .where(
-            contract.customerId.eq(customerId)
-                .and(contract.lifeCycle.subscriptionCompletedDateTime.isNotNull())
-                .and(discountPolicy.dcType.eq(dcType))
+        .where(contract.customerId.eq(customerId)
+                .and(contract.lifeCycle.subscriptionReceivedDateTime.isNotNull())
+                .and(contract.lifeCycle.cancelSubscriptionReceiptDateTime.isNull())
+                .and(JPAExpressions.selectFrom(productSubscription)
+                    .innerJoin(productSubscription.discountSubscriptions, discountSubscription)
+                    .innerJoin(discountSubscription.discountPolicy, discountPolicy)
+                    .where(productSubscription.contract.eq(contract)
+                    .and(discountPolicy.dcType.eq(dcType)))
+                    .exists()
+                )
         )
-        .distinct()
         .fetchOne();
   }
   
@@ -77,6 +82,7 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   public List<Contract> findByCustomerAndOrderId(long customerId, long orderId) {
     return jpaQueryFactory
         .select(contract)
+        .from(contract)
         .where(
           contract.customerId.eq(customerId)
               .and(contract.lastOrderId.eq(orderId))

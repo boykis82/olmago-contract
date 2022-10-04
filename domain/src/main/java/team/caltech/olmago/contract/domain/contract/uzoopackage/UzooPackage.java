@@ -17,7 +17,10 @@ import java.time.LocalDateTime;
 public class UzooPackage {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private long id;
+  private Long id;
+  
+  @Version
+  private long version;
   
   @ManyToOne
   @JoinColumn(name = "pkg_cntrct_id")

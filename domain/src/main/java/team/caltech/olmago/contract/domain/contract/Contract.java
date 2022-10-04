@@ -64,18 +64,12 @@ public class Contract {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "contract")
   private final List<ProductSubscription> productSubscriptions = new ArrayList<>();
   
-  @Setter
-  @Column(name = "pkg_id")
-  private Long packageId;
-  
   @Builder
-  public Contract(long id,
-                  long customerId,
+  public Contract(long customerId,
                   long orderId,
                   LocalDateTime subRcvDtm,
                   ContractType contractType,
                   String feeProductCode) {
-    this.id = id;
     this.customerId = customerId;
     this.lastOrderId = orderId;
     this.lifeCycle = new LifeCycle(subRcvDtm);

@@ -35,7 +35,7 @@ public class ContractTest {
     termRcvCnclDtm = LocalDateTime.of(2022,9,16,11,12,23);
     termCmplDtm = LocalDateTime.of(2022,10,1,1,0,2);
 
-    contract = ContractFixtures.createUzoopassAllContract(subRcvDtm);
+    contract = ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true);
     contract.addProductSubscriptions(ContractFixtures.createUzoopassProductSubscriptions(contract));
   }
 
