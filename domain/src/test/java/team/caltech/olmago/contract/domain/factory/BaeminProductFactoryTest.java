@@ -52,7 +52,7 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   
     // 최초가입
     mockFirstSubscription(baeminOptContract);
-    baeminProductFactory = AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository);
+    baeminProductFactory = AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository);
     
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminOptContract, subRcvDtm);
@@ -78,7 +78,7 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   
     // 최초가입
     mockFirstSubscription(baeminUnitContract);
-    baeminProductFactory = AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository);
+    baeminProductFactory = AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository);
 
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminUnitContract, subRcvDtm);
@@ -104,7 +104,7 @@ public class BaeminProductFactoryTest extends ProductFactoryTestBase {
   
     // 최초가입아님
     mockNotFirstSubscription(baeminUnitContract);
-    baeminProductFactory = AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository);
+    baeminProductFactory = AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository);
   
     // when
     List<ProductSubscription> prodSubs = baeminProductFactory.receiveSubscription(baeminUnitContract, subRcvDtm);

@@ -290,7 +290,7 @@ public class ContractRepositoryTest {
     );
     List<Contract> foundContracts = contractRepository.findByContractId(c.getId(), false, false);
     assertThat(foundContracts).hasSize(1);
-    assertThat(foundContracts.get(0).getId()).isEqualTo(1L);
+    assertThat(foundContracts.get(0).getId()).isEqualTo(c.getId());
   }
   
   @Test

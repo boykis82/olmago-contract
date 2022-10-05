@@ -42,6 +42,8 @@ public class UzooPassAllProductFactoryTest extends ProductFactoryTestBase {
     mockFindProduct(uzooPassAllProductCode);
     mockFindProduct(basicBenefitProdCode1);
     mockFindProduct(basicBenefitProdCode2);
+    mockFindProduct(yanoljaProductCode);
+    mockFindProduct(baeminProductCode);
     mockFindAvailableOptionProducts(uzooPassAllProductCode, baeminProductCode, yanoljaProductCode);
     mockFindAllProduct(baeminProductCode, yanoljaProductCode);
   }

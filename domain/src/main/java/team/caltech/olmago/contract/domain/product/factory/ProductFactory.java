@@ -14,6 +14,7 @@ import team.caltech.olmago.contract.domain.plm.product.ProductRepository;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicy;
 import team.caltech.olmago.contract.domain.product.ProductSubscription;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,6 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static team.caltech.olmago.contract.domain.product.factory.ProductRelation.ProductRelationType.PACKAGE_AND_OPTION;
 
 @Accessors(fluent = true, chain = false)
 @Getter
@@ -30,10 +33,10 @@ public class ProductFactory {
 
   private final ProductRepository productRepository;
   private final DiscountPolicyRepository discountPolicyRepository;
+  private final ProductRelationRepository productRelationRepository;
   
   private List<DiscountCondition> availableDiscountConditions = new ArrayList<>();
   private List<ProductFactory> basicBenefitProductFactories = new ArrayList<>();
-  private List<String> availableOptionProducts = new ArrayList<>();
   
   public ProductFactory availableDiscountConditions(DiscountCondition ...availableDiscountConditions) {
     this.availableDiscountConditions = Arrays.asList(availableDiscountConditions);
@@ -42,11 +45,6 @@ public class ProductFactory {
   
   public ProductFactory basicBenefitProductFactories(ProductFactory ...basicBenefitProductFactories) {
     this.basicBenefitProductFactories = Arrays.asList(basicBenefitProductFactories);
-    return this;
-  }
-
-  public ProductFactory availableOptionProducts(List<String> optionProducts) {
-    this.availableOptionProducts = optionProducts;
     return this;
   }
 
@@ -132,9 +130,10 @@ public class ProductFactory {
         .build();
   }
 
-  public boolean isAvailableOptionProduct(String optionProduct) {
-    return availableOptionProducts.stream()
-        .anyMatch(op -> op.equals(optionProduct));
+  public boolean isAvailableOptionProduct(String optionProductCode) {
+    return productRelationRepository.findByMainProductAndProductRelationType(productCode, PACKAGE_AND_OPTION, LocalDate.now())
+        .stream()
+        .anyMatch(op -> op.equals(optionProductCode));
   }
 
   public List<String> getShouldBeTerminatedProductCodes(ProductFactory afterProductFactory) {
