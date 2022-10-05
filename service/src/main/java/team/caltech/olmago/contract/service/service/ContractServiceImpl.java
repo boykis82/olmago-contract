@@ -407,8 +407,8 @@ public class ContractServiceImpl implements ContractService {
         .collect(Collectors.toList());
   }
 
-  public List<ContractDto> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductSubsription, boolean includeDiscountSubscription) {
-    return contractRepository.findByContractId(contractId, withPackageOrOption, includeProductSubsription, includeDiscountSubscription)
+  public List<ContractDto> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductAndDiscount) {
+    return contractRepository.findByContractId(contractId, withPackageOrOption, includeProductAndDiscount)
         .stream()
         .map(ContractDto::of)
         .collect(Collectors.toList());

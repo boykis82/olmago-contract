@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import team.caltech.olmago.contract.domain.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountType;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   @Override
   public Optional<Contract> findWithProductsAndDiscountsById(long contractId) {
     return Optional.ofNullable(
-        findByContractId(contractId, false,true, true).get(0)
+        findByContractId(contractId, false,true).get(0)
     );
   }
   
@@ -107,46 +108,42 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
   }
   
   @Override
-  public List<Contract> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductSubscription, boolean includeDiscountSubscription) {
-    JPAQuery<Contract> query = jpaQueryFactory.select(contract);
-    if (withPackageOrOption) {
-      query = query
-          .from(uzooPackage)
-          .join(uzooPackage.packageContract, contract)
-          .join(uzooPackage.optionContract, contract);
-  
-      if (includeProductSubscription) {
-        query = appendProductJoin(query);
-        if (includeDiscountSubscription) {
-          query = appendDiscountJoin(query);
-        }
-      }
-      return query.where(packageOrOptionContract(contractId)).distinct().fetch();
+  public List<Contract> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductAndDiscount) {
+    JPAQuery<Contract> query = jpaQueryFactory.selectFrom(contract);
+    if (includeProductAndDiscount) {
+      query = appendProductJoin(query);
     }
-    else {
-      if (includeProductSubscription) {
-        query = appendProductJoin(query);
-        if (includeDiscountSubscription) {
-          query = appendDiscountJoin(query);
-        }
-      }
+    /* 맘에 안든다..
+        입력으로 들어온 계약id가 같거나 (단품계약용)
+        패키지그룹의 옵션계약id가 같으면 패키지계약id까지 같이 조회하거나
+        패키지그룹의 패키지계약id가 같으면 옵션계약id까지 같이 조회
+     */
+    if (withPackageOrOption) {
+      return query.where(
+          contract.id.eq(contractId)
+              .or(contract.id.in(
+                      JPAExpressions
+                          .select(uzooPackage.packageContract.id)
+                          .from(uzooPackage)
+                          .where(uzooPackage.optionContract.id.eq(contractId))
+                  )
+              )
+              .or(contract.id.in(
+                      JPAExpressions
+                          .select(uzooPackage.optionContract.id)
+                          .from(uzooPackage)
+                          .where(uzooPackage.packageContract.id.eq(contractId))
+                  )
+              )
+      ).distinct().fetch();
+    } else {
       return query.where(contract.id.eq(contractId)).distinct().fetch();
     }
   }
-  
-  private BooleanExpression packageOrOptionContract(long contractId) {
-    return uzooPackage.packageContract.id.eq(contractId).or(uzooPackage.optionContract.id.eq(contractId));
-  }
-  
+
   private JPAQuery<Contract> appendProductJoin(JPAQuery<Contract> query) {
     return query
         .join(contract.productSubscriptions, productSubscription).fetchJoin()
         .join(productSubscription.product, product).fetchJoin();
-  }
-  
-  private JPAQuery<Contract> appendDiscountJoin(JPAQuery<Contract> query) {
-    return query
-        .join(productSubscription.discountSubscriptions, discountSubscription).fetchJoin()
-        .join(discountSubscription.discountPolicy, discountPolicy).fetchJoin();
   }
 }

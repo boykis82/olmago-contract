@@ -11,6 +11,6 @@ public interface ContractRepositoryCustom {
   Optional<Contract> findOptionContractByPackageContract(Contract pkgContract);
   List<Contract> findByCustomerAndOrderId(long customerId, long orderId);
   List<Contract> findByCustomerId(long customerId, boolean includeTerminatedContract);
-  List<Contract> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductSubscription, boolean includeDiscountSubscription);
+  List<Contract> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductAndDiscount);
   Optional<Contract> findWithProductsAndDiscountsById(long contractId);
 }

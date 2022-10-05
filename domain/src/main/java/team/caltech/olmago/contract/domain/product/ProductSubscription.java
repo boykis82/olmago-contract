@@ -39,10 +39,6 @@ public class ProductSubscription {
   @JoinColumn(name = "contract_id")
   private Contract contract;
   
-  // 제휴사 인증 관련된 건 별도 서비스로 빼자.
-  //private LocalDateTime associateCompanyAuthDtm;
-  //private String associateSystemId;
-  
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productSubscription")
   private List<DiscountSubscription> discountSubscriptions = new ArrayList<>();
   

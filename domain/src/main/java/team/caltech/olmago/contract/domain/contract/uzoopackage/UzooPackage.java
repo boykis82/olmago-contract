@@ -13,7 +13,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Entity
-@Table(name = "package")
+@Table(name = "package", indexes = {
+    @Index(name = "package_n1", columnList = "pkg_cntrct_id, opt_cntrct_id"),
+    @Index(name = "package_n2", columnList = "opt_cntrct_id, pkg_cntrct_id")
+})
 public class UzooPackage {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

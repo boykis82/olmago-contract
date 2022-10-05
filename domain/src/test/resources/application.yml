@@ -20,7 +20,9 @@ spring:
       hibernate:
         #show_sql: true
         format_sql: true
+        default_batch_fetch_size: 10
     defer-datasource-initialization: true   # spring 2.5부터는 이거 해줘야 data.sql 실행된다.
+
 
   h2:
     console:
