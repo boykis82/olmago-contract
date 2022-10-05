@@ -2,6 +2,7 @@ package team.caltech.olmago.contract.common.message;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -13,7 +14,11 @@ import java.util.UUID;
 @Entity
 @Table(name = "msg_envelope", indexes = @Index(name = "message_envelope_n1", columnList = "published, id"))
 public class MessageEnvelope {
-  private final static ObjectMapper objectMapper = new ObjectMapper();
+  private final static ObjectMapper objectMapper;
+  static {
+    objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+  }
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

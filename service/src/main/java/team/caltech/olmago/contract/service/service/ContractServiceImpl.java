@@ -50,8 +50,10 @@ public class ContractServiceImpl implements ContractService {
       //-- 패키지 계약 생성
       contracts.addAll(receivePackageContractSubscription(dto));
     }
-    //-- unit 계약 생성
-    contracts.addAll(receiveOptionContractSubscription(dto));
+    if (isUnitSubscribing(dto)) {
+      //-- unit 계약 생성
+      contracts.addAll(receiveOptionContractSubscription(dto));
+    }
   
     messageStore.saveMessage(
         contracts.stream().map(c -> wrapEvent(c.receiveSubscription())).collect(Collectors.toList())
@@ -61,6 +63,10 @@ public class ContractServiceImpl implements ContractService {
   
   private boolean isPackageSubscribing(ReceiveContractSubscriptionDto dto) {
     return dto.getPkgProdCd() != null && !dto.getPkgProdCd().isEmpty() && dto.getOptProdCd() != null && !dto.getPkgProdCd().isEmpty();
+  }
+  
+  private boolean isUnitSubscribing(ReceiveContractSubscriptionDto dto) {
+    return dto.getUnitProdCds() != null && dto.getUnitProdCds().size() > 0;
   }
   
   private List<Contract> receivePackageContractSubscription(ReceiveContractSubscriptionDto dto) {
@@ -96,9 +102,9 @@ public class ContractServiceImpl implements ContractService {
         .contractType(contractType)
         .feeProductCode(productCode)
         .build();
-
-    List<ProductSubscription> productSubscriptions =
-        productFactoryMap.get(productCode).receiveSubscription(contract, subRcvDtm);
+  
+    ProductFactory pf = productFactoryMap.get(productCode);
+    List<ProductSubscription> productSubscriptions = pf.receiveSubscription(contract, subRcvDtm);
     contract.addProductSubscriptions(productSubscriptions);
     return contract;
   }

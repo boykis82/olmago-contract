@@ -14,9 +14,7 @@ import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@RunWith(SpringRunner.class)
-//@DataJpaTest
-//@Import(TestConfig.class)
+
 public class ContractTest {
 
   private LocalDateTime subRcvDtm;
@@ -36,7 +34,7 @@ public class ContractTest {
     termCmplDtm = LocalDateTime.of(2022,10,1,1,0,2);
 
     contract = ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true);
-    contract.addProductSubscriptions(ContractFixtures.createUzoopassProductSubscriptions(contract));
+    contract.setId(1L);
   }
 
   @After

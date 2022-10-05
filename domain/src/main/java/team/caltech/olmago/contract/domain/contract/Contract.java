@@ -29,6 +29,8 @@ public class Contract {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
+  protected void setId(long id) { this.id = id; }
+  
   @Version
   private int version;
   
@@ -82,7 +84,12 @@ public class Contract {
   }
   
   public ContractSubscriptionReceived receiveSubscription() {
-    return new ContractSubscriptionReceived(id, lifeCycle.getSubscriptionReceivedDateTime(), lastOrderId, feeProductCode);
+    return new ContractSubscriptionReceived(id,
+        lifeCycle.getSubscriptionReceivedDateTime(),
+        lastOrderId,
+        feeProductCode,
+        this.productSubscriptions.stream().map(ProductSubscription::getProductCode).collect(Collectors.toList())
+    );
   }
   
   public ContractSubscriptionReceiptCanceled cancelSubscriptionReceipt(LocalDateTime cnclSubRcvDtm) {

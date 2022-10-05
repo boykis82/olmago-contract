@@ -20,7 +20,7 @@ public class LinkedMobilePhoneDto {
       MobilePhonePricePlan mobilePhonePricePlan,
       String uzooPassProductCode
   ) {
-    return this.mobilePhonePricePlan.equals(mobilePhonePricePlan) &&
-        this.dcTargetUzooPassProductCode.equals(uzooPassProductCode);
+    return mobilePhonePricePlan.equals(this.mobilePhonePricePlan) &&
+        uzooPassProductCode.equals(this.dcTargetUzooPassProductCode);
   }
 }

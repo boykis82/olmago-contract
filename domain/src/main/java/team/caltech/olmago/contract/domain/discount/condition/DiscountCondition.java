@@ -6,7 +6,7 @@ import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicy;
 import java.util.List;
 
 public abstract class DiscountCondition {
-  List<DiscountPolicy> discountPolicies;
+  List<String> discountPolicies;
   
   public abstract boolean satisfied(Contract contract);
   
@@ -30,11 +30,11 @@ public abstract class DiscountCondition {
     return new NegatedDiscountCondition(dc);
   }
   
-  public List<DiscountPolicy> discountPoliciess() {
+  public List<String> discountPolicies() {
     return discountPolicies;
   }
 
-  public DiscountCondition discountPolicies(List<DiscountPolicy> discountPolicies) {
+  public DiscountCondition discountPolicies(List<String> discountPolicies) {
     this.discountPolicies = discountPolicies;
     return this;
   }

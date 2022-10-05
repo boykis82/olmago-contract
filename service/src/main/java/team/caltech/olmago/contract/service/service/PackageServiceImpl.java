@@ -23,8 +23,6 @@ public class PackageServiceImpl implements PackageService {
             .subscriptionReceivedDateTime(pkgStartDateTime)
             .build()
     );
-    pkgContract.setPackageId(pkg.getId());
-    optContract.setPackageId(pkg.getId());
   }
   
   @Override

@@ -101,7 +101,8 @@ public class ProductFactory {
   private List<DiscountPolicy> satisfiedDiscountPolicies(Contract contract) {
     return availableDiscountConditions.stream()
         .filter(dcCond -> dcCond.satisfied(contract))
-        .map(DiscountCondition::discountPoliciess)
+        .map(DiscountCondition::discountPolicies)
+        .map(discountPolicyRepository::findAllById)
         .flatMap(List::stream)
         .collect(Collectors.toList());
   }

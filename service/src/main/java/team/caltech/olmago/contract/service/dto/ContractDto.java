@@ -17,9 +17,9 @@ import java.util.stream.Collectors;
 @Getter
 public class ContractDto {
   @Getter
-  static class ProductSubscriptionDto {
+  public static class ProductSubscriptionDto {
     @Getter
-    static class DiscountSubscriptionDto {
+    public static class DiscountSubscriptionDto {
       private long discountSubscriptionId;
     
       private String dcPolicyCode;
@@ -101,7 +101,6 @@ public class ContractDto {
   private LocalDateTime lastRegularPaymentCompletedDateTime;
   private String feeProductCode;
   private List<ProductSubscriptionDto> productSubscriptions;
-  private long packageId;
   
   public static ContractDto of(Contract contract) {
     ContractDto dto =  new ContractDto();
@@ -114,11 +113,12 @@ public class ContractDto {
     dto.terminationReceivedDateTime = contract.getLifeCycle().getTerminationReceivedDateTime();
     dto.cancelTerminationReceiptDateTime = contract.getLifeCycle().getCancelTerminationReceiptDateTime();
     dto.terminationCompletedDateTime = contract.getLifeCycle().getTerminationCompletedDateTime();
-    dto.currentBillStartDate = contract.getBillCycle().getCurrentBillStartDate();
-    dto.currentBillEndDate = contract.getBillCycle().getCurrentBillEndDate();
+    if (contract.getBillCycle() != null) {
+      dto.currentBillStartDate = contract.getBillCycle().getCurrentBillStartDate();
+      dto.currentBillEndDate = contract.getBillCycle().getCurrentBillEndDate();
+    }
     dto.lastRegularPaymentCompletedDateTime = contract.getLastPaymentDtm();
     dto.feeProductCode = contract.getFeeProductCode();
-    dto.packageId = contract.getPackageId();
     dto.productSubscriptions = contract.getProductSubscriptions().stream()
         .map(ProductSubscriptionDto::of)
         .collect(Collectors.toList());

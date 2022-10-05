@@ -277,9 +277,10 @@ public class ContractRepositoryTest {
   @Test
   public void 계약단위조회_계약만단건조회() {
     LocalDateTime subRcvDtm = LocalDateTime.now();
+    Contract c = ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true );
     List<Contract> termContracts = contractRepository.saveAll(
         List.of(
-            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+            c,
             ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
             ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
             ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
@@ -287,7 +288,7 @@ public class ContractRepositoryTest {
             ContractFixtures.createBaeminContract(3L, 5L, subRcvDtm, ContractType.UNIT, true)
         )
     );
-    List<Contract> foundContracts = contractRepository.findByContractId(1L, false, false);
+    List<Contract> foundContracts = contractRepository.findByContractId(c.getId(), false, false);
     assertThat(foundContracts).hasSize(1);
     assertThat(foundContracts.get(0).getId()).isEqualTo(1L);
   }
