@@ -1,21 +1,22 @@
 package team.caltech.olmago.contract.service.service;
 
 import team.caltech.olmago.contract.service.dto.*;
+import team.caltech.olmago.contract.service.message.in.command.order.*;
 
 import java.util.List;
 
 public interface ContractService {
   /* begin of Order Command (from order service) */
   // 가입접수
-  List<ContractDto> receiveContractSubscription(ReceiveContractSubscriptionDto dto);
+  List<ContractDto> receiveContractSubscription(ReceiveContractSubscriptionCmd cmd);
   // 해지접수
-  List<ContractDto> receiveContractTermination(ReceiveContractTerminationDto dto);
+  List<ContractDto> receiveContractTermination(ReceiveContractTerminationCmd cmd);
   // 해지접수취소
-  List<ContractDto> cancelContractTerminationReceipt(CancelContractTerminationDto dto);
+  List<ContractDto> cancelContractTerminationReceipt(CancelContractTerminationCmd cmd);
   // 변경접수
-  List<ContractDto> receiveContractChange(ReceiveContractChangeDto dto);
+  List<ContractDto> receiveContractChange(ReceiveContractChangeCmd cmd);
   // 변경접수취소
-  List<ContractDto> cancelContractChangeReceipt(CancelContractChangeDto dto);
+  List<ContractDto> cancelContractChangeReceipt(CancelContractChangeCmd cmd);
   /* end of Order Command */
   
   /* begin of Billing Event */

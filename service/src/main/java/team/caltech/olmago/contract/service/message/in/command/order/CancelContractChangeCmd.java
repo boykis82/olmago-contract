@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract.service.dto;
+package team.caltech.olmago.contract.service.message.in.command.order;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 @Builder
-public class CancelContractChangeDto {
+public class CancelContractChangeCmd {
   private long orderId;
   private long customerId;
   

@@ -3,7 +3,6 @@ package team.caltech.olmago.contract.service.message.in.command.order;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
-import team.caltech.olmago.contract.service.dto.*;
 import team.caltech.olmago.contract.service.message.in.common.MessageInBoxProcessor;
 import team.caltech.olmago.contract.service.service.ContractService;
 
@@ -16,42 +15,42 @@ public class OrderCommandHandler {
   private final ContractService contractService;
   
   @Transactional
-  public void receiveContractSubscription(Message<?> msg, ReceiveContractSubscriptionDto dto) {
+  public void receiveContractSubscription(Message<?> msg, ReceiveContractSubscriptionCmd cmd) {
     if (messageInBoxProcessor.notExistedMessage(msg)) {
       messageInBoxProcessor.saveInBoxMessage(msg);
-      contractService.receiveContractSubscription(dto);
+      contractService.receiveContractSubscription(cmd);
     }
   }
   
   @Transactional
-  public void receiveContractTermination(Message<?> msg, ReceiveContractTerminationDto dto) {
+  public void receiveContractTermination(Message<?> msg, ReceiveContractTerminationCmd cmd) {
     if (messageInBoxProcessor.notExistedMessage(msg)) {
       messageInBoxProcessor.saveInBoxMessage(msg);
-      contractService.receiveContractTermination(dto);
+      contractService.receiveContractTermination(cmd);
     }
   }
   
   @Transactional
-  public void cancelContractTerminationReceipt(Message<?> msg, CancelContractTerminationDto dto) {
+  public void cancelContractTerminationReceipt(Message<?> msg, CancelContractTerminationCmd cmd) {
     if (messageInBoxProcessor.notExistedMessage(msg)) {
       messageInBoxProcessor.saveInBoxMessage(msg);
-      contractService.cancelContractTerminationReceipt(dto);
+      contractService.cancelContractTerminationReceipt(cmd);
     }
   }
   
   @Transactional
-  public void receiveContractChange(Message<?> msg, ReceiveContractChangeDto dto) {
+  public void receiveContractChange(Message<?> msg, ReceiveContractChangeCmd cmd) {
     if (messageInBoxProcessor.notExistedMessage(msg)) {
       messageInBoxProcessor.saveInBoxMessage(msg);
-      contractService.receiveContractChange(dto);
+      contractService.receiveContractChange(cmd);
     }
   }
   
   @Transactional
-  public void cancelContractChangeReceipt(Message<?> msg, CancelContractChangeDto dto) {
+  public void cancelContractChangeReceipt(Message<?> msg, CancelContractChangeCmd cmd) {
     if (messageInBoxProcessor.notExistedMessage(msg)) {
       messageInBoxProcessor.saveInBoxMessage(msg);
-      contractService.cancelContractChangeReceipt(dto);
+      contractService.cancelContractChangeReceipt(cmd);
     }
   }
 }
