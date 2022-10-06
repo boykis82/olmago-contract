@@ -12,12 +12,17 @@ import java.util.UUID;
 
 @Getter
 @Entity
-@Table(name = "msg_envelope", indexes = @Index(name = "message_envelope_n1", columnList = "published, id"))
+@Table(name = "msg_envelope", indexes = @Index(name = "message_envelope_n1", columnList = "published,id"))
 public class MessageEnvelope {
   private final static ObjectMapper objectMapper;
   static {
     objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
+  }
+  
+  enum MessageType {
+    EVENT,
+    COMMAND
   }
   
   @Id
@@ -27,10 +32,15 @@ public class MessageEnvelope {
   @Column(name = "uuid", nullable = false)
   private String uuid;
   
-  @Column(name = "agg_typ", nullable = false)
+  @Column(name = "msg_typ", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private MessageType messageType;
+  
+  /* 여기서부터는 event에서만 유효 */
+  @Column(name = "agg_typ")
   private String aggregateType;
   
-  @Column(name = "agg_id", nullable = false)
+  @Column(name = "agg_id")
   private String aggregateId;
   
   @Column(name = "bind_nm", nullable = false)
@@ -45,33 +55,50 @@ public class MessageEnvelope {
   @Column(name = "published", nullable = false)
   private boolean published;
   
-  @Column(name = "event_typ", nullable = false)
-  private String eventType;
+  @Column(name = "msg_name", nullable = false)
+  private String messageName;
   
   @Column(name = "payload", length = 2048, nullable = false)
   private String payload;
   
   @Builder
-  public static MessageEnvelope wrap(String aggregateType,
-                                     String aggregateId,
-                                     String bindingName,
-                                     String eventType,
-                                     Object payload) throws JsonProcessingException {
+  public static MessageEnvelope wrapEvent(String aggregateType,
+                                          String aggregateId,
+                                          String bindingName,
+                                          String eventName,
+                                          Object payload) throws JsonProcessingException {
     MessageEnvelope dee = new MessageEnvelope();
     dee.uuid = UUID.randomUUID().toString();
+    dee.messageType = MessageType.EVENT;
     dee.aggregateType = aggregateType;
     dee.aggregateId = aggregateId;
     dee.bindingName = bindingName;
     dee.createdAt = LocalDateTime.now();
     // ex: ContractSubscriptionCompleted -> contractSubscriptionCompleted
-    dee.eventType = firstLetterToLowerCase(eventType);
+    dee.messageName = firstLetterToLowerCase(eventName);
     dee.payload = objectMapper.writeValueAsString(payload);
     dee.published = false;
     return dee;
   }
   
-  private static String firstLetterToLowerCase(String eventType) {
-    return eventType.substring(0,1).toLowerCase() + eventType.substring(1);
+  @Builder
+  public static MessageEnvelope wrapCommand(String bindingName,
+                                            String eventType,
+                                            Object payload) throws JsonProcessingException {
+    MessageEnvelope dee = new MessageEnvelope();
+    dee.uuid = UUID.randomUUID().toString();
+    dee.messageType = MessageType.COMMAND;
+    dee.bindingName = bindingName;
+    dee.createdAt = LocalDateTime.now();
+    // ex: ContractSubscriptionCompleted -> contractSubscriptionCompleted
+    dee.messageName = firstLetterToLowerCase(eventType);
+    dee.payload = objectMapper.writeValueAsString(payload);
+    dee.published = false;
+    return dee;
+  }
+  
+  private static String firstLetterToLowerCase(String msgName) {
+    return msgName.substring(0,1).toLowerCase() + msgName.substring(1);
   }
   
   public void publish(LocalDateTime dtm) {

@@ -109,7 +109,7 @@ public class Contract {
         .forEach(ps -> ps.completeSubscription(subCmplDtm));
     billCycle = BillCycle.of(subCmplDtm.toLocalDate(), BillPeriod.MONTHLY);
     lastPaymentDtm = subCmplDtm;
-    return new ContractSubscriptionCompleted(id, subCmplDtm, getAllProductCodes());
+    return new ContractSubscriptionCompleted(id, subCmplDtm, lastOrderId, getAllProductCodes());
   }
   
   public ContractTerminationReceived receiveTermination(Long orderId, LocalDateTime termRcvDtm) {
@@ -137,7 +137,7 @@ public class Contract {
         .filter(ps -> ps.getLifeCycle().isTerminationReceived())
         .forEach(ps -> ps.completeTermination(termCmplDtm));
   
-    return new ContractTerminationCompleted(id, termCmplDtm);
+    return new ContractTerminationCompleted(id, termCmplDtm, lastOrderId);
   }
   
   public ProductsActivatedOrDeactivated activateOrDeactivateProducts(LocalDateTime regPayCmplDtm) {

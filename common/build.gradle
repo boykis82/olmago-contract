@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'team.caltech'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 sourceCompatibility = '11'
 
 repositories {
@@ -18,6 +18,7 @@ bootJar {
 
 jar {
     enabled = true
+    archivesBaseName = 'team.caltech.olmago.common'
 }
 
 dependencies {

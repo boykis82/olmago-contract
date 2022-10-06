@@ -394,7 +394,7 @@ public class ContractServiceImpl implements ContractService {
   
   private MessageEnvelope wrapEvent(ContractEventBase e) {
     try {
-      return MessageEnvelope.wrap(
+      return MessageEnvelope.wrapEvent(
           CONTRACT_AGGREGATE_TYPE,
           String.valueOf(e.getContractId()),
           CONTRACT_EVENT_BINDING,

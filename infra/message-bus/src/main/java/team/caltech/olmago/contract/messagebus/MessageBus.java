@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @Slf4j
 @Service
 public class MessageBus {
-  public static final String HEADER_EVENT_TYPE = "type";
+  public static final String HEADER_MESSAGE_NAME = "type";
   public static final String HEADER_UUID = "uuid";
   
   private final MessageEnvelopeRepository messageEnvelopeRepository;
@@ -31,7 +31,7 @@ public class MessageBus {
   @Transactional
   private void sendMessage(MessageEnvelope dee) {
     Message<String> message = MessageBuilder.withPayload(dee.getPayload())
-        .setHeader(HEADER_EVENT_TYPE, dee.getEventType())
+        .setHeader(HEADER_MESSAGE_NAME, dee.getMessageName())
         .setHeader(HEADER_UUID, dee.getUuid())
         .build();
     
