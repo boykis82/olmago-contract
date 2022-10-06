@@ -70,7 +70,7 @@ public class ContractServiceImpl implements ContractService {
     Contract pkgContract = contractRepository.save(
         createContract(cmd.getCustomerId(), cmd.getOrderId(), cmd.getSubRcvDtm(), cmd.getPkgProdCd(), ContractType.PACKAGE)
     );
-    packageService.createPackage(pkgContract, optContract, cmd.getSubRcvDtm());
+    packageService.createPackage(pkgContract, optContract, cmd.getSubRcvDtm(), cmd.getOrderId());
     return List.of(optContract, pkgContract);
   }
   
@@ -155,7 +155,7 @@ public class ContractServiceImpl implements ContractService {
     if (cmd.includePackage()) {
       Contract pkgContract = contractRepository.findById(cmd.getPackageContractId()).orElseThrow(InvalidArgumentException::new);
       Contract optContract = contractRepository.findById(cmd.getOptionContractId()).orElseThrow(InvalidArgumentException::new);
-      packageService.receiveTermination(pkgContract, optContract, cmd.getTerminationReceivedDateTime());
+      packageService.receiveTermination(pkgContract, optContract, cmd.getTerminationReceivedDateTime(), cmd.getOrderId());
       
       contracts.add(pkgContract);
       contracts.add(optContract);
@@ -173,17 +173,8 @@ public class ContractServiceImpl implements ContractService {
   @Override
   @Transactional
   public List<ContractDto> cancelContractTerminationReceipt(CancelContractTerminationCmd cmd) {
-    List<Contract> contracts = new ArrayList<>();
-    if (cmd.includePackage()) {
-      Contract pkgContract = contractRepository.findById(cmd.getPackageContractId()).orElseThrow(InvalidArgumentException::new);
-      Contract optContract = contractRepository.findById(cmd.getOptionContractId()).orElseThrow(InvalidArgumentException::new);
-      packageService.cancelTerminationReceipt(pkgContract, optContract, cmd.getCancelTerminationReceiptDateTime());
-  
-      contracts.add(pkgContract);
-      contracts.add(optContract);
-    }
-    contracts.addAll(contractRepository.findAllById(cmd.getUnitContractIds()));
-  
+    List<Contract> contracts = contractRepository.findByLastOrderId(cmd.getOrderId());
+    packageService.cancelTerminationReceipt(cmd.getCancelTerminationReceiptDateTime(), cmd.getOrderId());
     messageStore.saveMessage(
         contracts.stream()
             .map(c -> wrapEvent(c.cancelTerminationReceipt(cmd.getOrderId(), cmd.getCancelTerminationReceiptDateTime())))
@@ -310,7 +301,7 @@ public class ContractServiceImpl implements ContractService {
     else {
       events.add(bfOptContract.receiveTermination(cmd.getOrderId(), cmd.getChangeReceivedDateTime()));
     }
-    packageService.changePackageComposition(pkgContract, bfOptContract, afOptContract, cmd.getChangeReceivedDateTime());
+    packageService.changePackageComposition(pkgContract, bfOptContract, afOptContract, cmd.getChangeReceivedDateTime(), cmd.getOrderId());
   
     messageStore.saveMessage(
         events.stream().map(this::wrapEvent).collect(Collectors.toList())
@@ -335,7 +326,7 @@ public class ContractServiceImpl implements ContractService {
   @Override
   @Transactional
   public List<ContractDto> cancelContractChangeReceipt(CancelContractChangeCmd cmd) {
-    List<Contract> contracts = contractRepository.findByCustomerAndOrderId(cmd.getCustomerId(), cmd.getOrderId());
+    List<Contract> contracts = contractRepository.findByLastOrderId(cmd.getOrderId());
     messageStore.saveMessage(
         contracts.stream()
             .map(c -> wrapEvent(c.cancelContractChange(cmd.getOrderId(), cmd.getCanceledChangeReceiptDateTime())))

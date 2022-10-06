@@ -90,7 +90,7 @@ public class ContractRepositoryImpl implements ContractRepositoryCustom {
         )
         .fetch();
   }
-
+  
   @Override
   public List<Contract> findByCustomerId(long customerId, boolean includeTerminatedContract) {
     return jpaQueryFactory

@@ -15,7 +15,8 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "package", indexes = {
     @Index(name = "package_n1", columnList = "pkg_cntrct_id, opt_cntrct_id"),
-    @Index(name = "package_n2", columnList = "opt_cntrct_id, pkg_cntrct_id")
+    @Index(name = "package_n2", columnList = "opt_cntrct_id, pkg_cntrct_id"),
+    @Index(name = "package_n3", columnList = "last_ord_id"),
 })
 public class UzooPackage {
   @Id
@@ -35,13 +36,18 @@ public class UzooPackage {
 
   @Embedded
   private LifeCycle lifeCycle;
+  
+  @Column(name = "last_ord_id")
+  private Long lastOrderId;
 
   @Builder
   public UzooPackage(Contract packageContract,
                      Contract optionContract,
+                     Long lastOrderId,
                      LocalDateTime subscriptionReceivedDateTime) {
     this.packageContract = packageContract;
     this.optionContract = optionContract;
+    this.lastOrderId = lastOrderId;
     this.lifeCycle = new LifeCycle(subscriptionReceivedDateTime);
   }
   
@@ -53,8 +59,9 @@ public class UzooPackage {
     lifeCycle.completeSubscription(subscriptionCompletedDateTime);
   }
 
-  public void receiveTermination(LocalDateTime terminationReceivedDateTime) {
+  public void receiveTermination(LocalDateTime terminationReceivedDateTime, long orderId) {
     lifeCycle.receiveTermination(terminationReceivedDateTime);
+    this.lastOrderId = orderId;
   }
 
   public void cancelTerminationReceipt(LocalDateTime cancelTerminationReceiptDateTime) {

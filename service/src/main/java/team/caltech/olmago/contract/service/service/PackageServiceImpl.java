@@ -15,12 +15,13 @@ public class PackageServiceImpl implements PackageService {
   private final UzooPackageRepository uzooPackageRepository;
   
   @Override
-  public void createPackage(Contract pkgContract, Contract optContract, LocalDateTime pkgStartDateTime) {
+  public void createPackage(Contract pkgContract, Contract optContract, LocalDateTime pkgStartDateTime, long orderId) {
     UzooPackage pkg = uzooPackageRepository.save(
         UzooPackage.builder()
             .packageContract(pkgContract)
             .optionContract(optContract)
             .subscriptionReceivedDateTime(pkgStartDateTime)
+            .lastOrderId(orderId)
             .build()
     );
   }
@@ -32,17 +33,19 @@ public class PackageServiceImpl implements PackageService {
   }
   
   @Override
-  public void receiveTermination(Contract pkgContract, Contract optContract, LocalDateTime terminationReceivedDateTime) {
+  public void receiveTermination(Contract pkgContract, Contract optContract, LocalDateTime terminationReceivedDateTime, long orderId) {
     uzooPackageRepository.findActivePackage(pkgContract, optContract)
         .orElseThrow(InvalidArgumentException::new)
-        .receiveTermination(terminationReceivedDateTime);
+        .receiveTermination(terminationReceivedDateTime, orderId);
   }
   
   @Override
-  public void cancelTerminationReceipt(Contract pkgContract, Contract optContract, LocalDateTime cancelTerminationReceipt) {
-    uzooPackageRepository.findTerminationReceivedPackage(pkgContract, optContract)
-        .orElseThrow(InvalidArgumentException::new)
-        .cancelTerminationReceipt(cancelTerminationReceipt);
+  public void cancelTerminationReceipt(LocalDateTime cancelTerminationReceipt, long orderId) {
+    uzooPackageRepository.findByLastOrderId(orderId)
+        .ifPresentOrElse(
+            p -> p.cancelTerminationReceipt(cancelTerminationReceipt),
+            () -> {}
+        );
   }
   
   @Override
@@ -52,9 +55,9 @@ public class PackageServiceImpl implements PackageService {
   }
   
   @Override
-  public void changePackageComposition(Contract pkgContract, Contract bfOptContract, Contract afOptContract, LocalDateTime changeDateTime) {
-    receiveTermination(pkgContract, bfOptContract, changeDateTime);
-    createPackage(pkgContract, afOptContract, changeDateTime);
+  public void changePackageComposition(Contract pkgContract, Contract bfOptContract, Contract afOptContract, LocalDateTime changeDateTime, long orderId) {
+    receiveTermination(pkgContract, bfOptContract, changeDateTime, orderId);
+    createPackage(pkgContract, afOptContract, changeDateTime, orderId);
   }
   
   @Override

@@ -13,8 +13,5 @@ import java.time.LocalDateTime;
 @Builder
 public class CancelContractChangeCmd {
   private long orderId;
-  private long customerId;
-  
   private LocalDateTime canceledChangeReceiptDateTime;
-  
 }

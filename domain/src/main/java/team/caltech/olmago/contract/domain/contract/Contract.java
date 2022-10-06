@@ -23,7 +23,12 @@ import java.util.stream.Collectors;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "contract")
+@Table(
+    name = "contract",
+    indexes = {
+        @Index(name = "contract_n1", columnList = "last_ord_id")
+    }
+)
 public class Contract {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

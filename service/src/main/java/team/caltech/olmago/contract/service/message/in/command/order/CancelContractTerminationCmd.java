@@ -15,11 +15,4 @@ import java.util.List;
 public class CancelContractTerminationCmd {
   private long orderId;
   private LocalDateTime cancelTerminationReceiptDateTime;
-  private Long packageContractId;
-  private Long optionContractId;
-  private List<Long> unitContractIds;
-  
-  public boolean includePackage() {
-    return packageContractId != null && optionContractId != null;
-  }
 }
