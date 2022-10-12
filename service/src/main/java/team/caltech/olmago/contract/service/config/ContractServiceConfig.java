@@ -22,14 +22,7 @@ public class ContractServiceConfig {
     this.threadPoolSize = threadPoolSize;
     this.taskQueueSize = taskQueueSize;
   }
-  
-  @Bean
-  public ObjectMapper mapper() {
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.registerModule(new JavaTimeModule());
-    return mapper;
-  }
-  
+
   @Bean
   public Scheduler otherServiceCommScheduler() {
     return Schedulers.newBoundedElastic(threadPoolSize, taskQueueSize, "other-service-comm-pool");

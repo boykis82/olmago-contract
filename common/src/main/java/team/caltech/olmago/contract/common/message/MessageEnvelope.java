@@ -1,8 +1,5 @@
 package team.caltech.olmago.contract.common.message;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,12 +11,6 @@ import java.util.UUID;
 @Entity
 @Table(name = "msg_envelope", indexes = @Index(name = "message_envelope_n1", columnList = "published,id"))
 public class MessageEnvelope {
-  private final static ObjectMapper objectMapper;
-  static {
-    objectMapper = new ObjectMapper();
-    objectMapper.registerModule(new JavaTimeModule());
-  }
-  
   enum MessageType {
     EVENT,
     COMMAND
@@ -32,7 +23,7 @@ public class MessageEnvelope {
   @Column(name = "uuid", nullable = false)
   private String uuid;
   
-  @Column(name = "msg_typ", nullable = false)
+  @Column(name = "msg_typ", nullable = false, length=10)
   @Enumerated(EnumType.STRING)
   private MessageType messageType;
   
@@ -66,7 +57,7 @@ public class MessageEnvelope {
                                           String aggregateId,
                                           String bindingName,
                                           String eventName,
-                                          Object payload) throws JsonProcessingException {
+                                          String payload) {
     MessageEnvelope dee = new MessageEnvelope();
     dee.uuid = UUID.randomUUID().toString();
     dee.messageType = MessageType.EVENT;
@@ -74,9 +65,8 @@ public class MessageEnvelope {
     dee.aggregateId = aggregateId;
     dee.bindingName = bindingName;
     dee.createdAt = LocalDateTime.now();
-    // ex: ContractSubscriptionCompleted -> contractSubscriptionCompleted
     dee.messageName = firstLetterToLowerCase(eventName);
-    dee.payload = objectMapper.writeValueAsString(payload);
+    dee.payload = payload;
     dee.published = false;
     return dee;
   }
@@ -84,15 +74,14 @@ public class MessageEnvelope {
   @Builder
   public static MessageEnvelope wrapCommand(String bindingName,
                                             String eventType,
-                                            Object payload) throws JsonProcessingException {
+                                            String payload) {
     MessageEnvelope dee = new MessageEnvelope();
     dee.uuid = UUID.randomUUID().toString();
     dee.messageType = MessageType.COMMAND;
     dee.bindingName = bindingName;
     dee.createdAt = LocalDateTime.now();
-    // ex: ContractSubscriptionCompleted -> contractSubscriptionCompleted
     dee.messageName = firstLetterToLowerCase(eventType);
-    dee.payload = objectMapper.writeValueAsString(payload);
+    dee.payload = payload;
     dee.published = false;
     return dee;
   }

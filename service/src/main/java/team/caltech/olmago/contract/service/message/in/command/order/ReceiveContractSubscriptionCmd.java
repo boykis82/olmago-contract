@@ -8,25 +8,39 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
-@Builder
 public class ReceiveContractSubscriptionCmd {
+  @Getter
+  @AllArgsConstructor
+  public static class Product {
+    String prodCd;
+  }
   private long customerId;
   private long orderId;
   private String pkgProdCd;
   private String optProdCd;
-  private List<String> unitProdCds = new ArrayList<>();
+  private List<Product> unitProds;
   private LocalDateTime subRcvDtm;
+  
+  @Builder
+  public ReceiveContractSubscriptionCmd(long customerId, long orderId, String pkgProdCd, String optProdCd, List<String> unitProdCds, LocalDateTime subRcvDtm) {
+    this.customerId = customerId;
+    this.orderId = orderId;
+    this.pkgProdCd = pkgProdCd;
+    this.optProdCd = optProdCd;
+    this.unitProds = unitProdCds.stream().map(Product::new).collect(Collectors.toList());
+    this.subRcvDtm = subRcvDtm;
+  }
   
   public boolean isPackageSubscribing() {
     return pkgProdCd != null && !pkgProdCd.isEmpty() && optProdCd != null && !optProdCd.isEmpty();
   }
   
   public boolean isUnitSubscribing() {
-    return unitProdCds != null && unitProdCds.size() > 0;
+    return unitProds != null && unitProds.size() > 0;
   }
   
 }

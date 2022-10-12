@@ -11,3 +11,6 @@ flush privileges;
 docker exec -it 31c42d7ab28f  bash
 mysql -u olmago -p
 olmago
+
+mysql -u root -p
+rootpwd

@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProductAuthDto {
   private long contractId;
-  private long productSubscriptionId;
   private String productCode;
   private LocalDateTime firstAuthReqDtm;
   private LocalDateTime lastAuthCompletedDtm;
@@ -21,8 +20,7 @@ public class ProductAuthDto {
   public static ProductAuthDto of(ProductAuth productAuth) {
     return new ProductAuthDto(
         productAuth.getId().getContractId(),
-        productAuth.getId().getProductSubscriptionId(),
-        productAuth.getProductCode(),
+        productAuth.getId().getProductCode(),
         productAuth.getFirstAuthReqDtm(),
         productAuth.getLastAuthCompletedDtm(),
         productAuth.getAuthExpiredDtm()

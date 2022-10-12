@@ -16,9 +16,6 @@ public class ProductAuth {
   @EmbeddedId
   ProductAuthId id;
   
-  @Column(name = "product_code", nullable = false)
-  private String productCode;
-  
   @Column(name = "first_auth_req_dtm", nullable = false)
   private LocalDateTime firstAuthReqDtm;
   
@@ -31,7 +28,6 @@ public class ProductAuth {
   @Builder
   public ProductAuth(ProductAuthId id, String productCode, LocalDateTime firstAuthReqDtm) {
     this.id = id;
-    this.productCode = productCode;
     this.firstAuthReqDtm = firstAuthReqDtm;
   }
   

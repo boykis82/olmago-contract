@@ -1,6 +1,7 @@
 package team.caltech.olmago.contract.service.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import team.caltech.olmago.contract.domain.contract.Contract;
@@ -38,6 +39,7 @@ public class ContractServiceImpl implements ContractService {
   
   private final PackageService packageService;
   private final MessageStore messageStore;
+  private final ObjectMapper objectMapper;
   
   public static final String CONTRACT_AGGREGATE_TYPE = "CONTRACT";
   public static final String CONTRACT_EVENT_BINDING = "contract-event-0";
@@ -46,7 +48,6 @@ public class ContractServiceImpl implements ContractService {
   @Transactional
   public List<ContractDto> receiveContractSubscription(ReceiveContractSubscriptionCmd cmd) {
     List<Contract> contracts = new ArrayList<>();
-    
     if (cmd.isPackageSubscribing()) {
       //-- 패키지 계약 생성
       contracts.addAll(receivePackageContractSubscription(cmd));
@@ -55,7 +56,6 @@ public class ContractServiceImpl implements ContractService {
       //-- unit 계약 생성
       contracts.addAll(receiveOptionContractSubscription(cmd));
     }
-  
     messageStore.saveMessage(
         contracts.stream().map(c -> wrapEvent(c.receiveSubscription())).collect(Collectors.toList())
     );
@@ -71,15 +71,25 @@ public class ContractServiceImpl implements ContractService {
         createContract(cmd.getCustomerId(), cmd.getOrderId(), cmd.getSubRcvDtm(), cmd.getPkgProdCd(), ContractType.PACKAGE)
     );
     packageService.createPackage(pkgContract, optContract, cmd.getSubRcvDtm(), cmd.getOrderId());
+  
+    subscribeProducts(optContract, cmd.getSubRcvDtm());
+    subscribeProducts(pkgContract, cmd.getSubRcvDtm());
+    contractRepository.save(optContract);
+    contractRepository.save(pkgContract);
+  
     return List.of(optContract, pkgContract);
   }
-  
+
   private List<Contract> receiveOptionContractSubscription(ReceiveContractSubscriptionCmd cmd) {
-    return contractRepository.saveAll(
-        cmd.getUnitProdCds().stream()
-            .map(prodCd -> createContract(cmd.getCustomerId(), cmd.getOrderId(), cmd.getSubRcvDtm(), prodCd, ContractType.UNIT))
-            .collect(Collectors.toList())
-    );
+    List<Contract> contracts = cmd.getUnitProds().stream()
+        .map(prod -> createContract(cmd.getCustomerId(), cmd.getOrderId(), cmd.getSubRcvDtm(), prod.getProdCd(), ContractType.UNIT))
+        .collect(Collectors.toList());
+    contracts.forEach(c -> {
+      subscribeProducts(c, cmd.getSubRcvDtm());
+      contractRepository.save(c);
+    });
+    
+    return contractRepository.saveAll(contracts);
   }
   
   private Contract createContract(long customerId,
@@ -88,20 +98,21 @@ public class ContractServiceImpl implements ContractService {
                                   String productCode,
                                   ContractType contractType
   ) {
-    Contract contract = Contract.builder()
+    return Contract.builder()
         .customerId(customerId)
         .orderId(orderId)
         .subRcvDtm(subRcvDtm)
         .contractType(contractType)
         .feeProductCode(productCode)
         .build();
+  }
   
-    ProductFactory pf = productFactoryMap.get(productCode);
+  private void subscribeProducts(Contract contract, LocalDateTime subRcvDtm) {
+    ProductFactory pf = productFactoryMap.get(contract.getFeeProductCode());
     List<ProductSubscription> productSubscriptions = pf.receiveSubscription(contract, subRcvDtm);
     contract.addProductSubscriptions(productSubscriptions);
-    return contract;
   }
-
+  
   @Override
   @Transactional
   public ContractDto completeContractSubscription(CompleteContractSubscriptionDto dto) {
@@ -250,11 +261,11 @@ public class ContractServiceImpl implements ContractService {
     List<String> termProdCodes = bfPkgProdFactory.getShouldBeTerminatedProductCodes(afPkgProdFactory);
     List<ProductSubscription> newBasicBenefitProdSubs
         = afPkgProdFactory.receiveSubscription(pkgContract, cmd.getChangeReceivedDateTime(), bfPkgProdFactory.getBasicBenefitProductCodes());
-  
+
     messageStore.saveMessage(
         wrapEvent(pkgContract.changeContract(cmd.getOrderId(), cmd.getAfterPackageProductCode(), termProdCodes, newBasicBenefitProdSubs, cmd.getChangeReceivedDateTime()))
     );
-    return pkgContract;
+    return contractRepository.save(pkgContract);
   }
 
   /*
@@ -290,6 +301,7 @@ public class ContractServiceImpl implements ContractService {
     
     // 이후계약 처리
     Contract afOptContract = createContract(cmd.getCustomerId(), cmd.getOrderId(), cmd.getChangeReceivedDateTime(), cmd.getAfterOptionProductCode(), ContractType.OPTION);
+    subscribeProducts(afOptContract, cmd.getChangeReceivedDateTime());
     afOptContract.setBillCycle(pkgContract.copyBillCycle());
     contractRepository.save(afOptContract);
     events.add(afOptContract.receiveSubscription());
@@ -383,7 +395,7 @@ public class ContractServiceImpl implements ContractService {
           String.valueOf(e.getContractId()),
           CONTRACT_EVENT_BINDING,
           e.getClass().getSimpleName(),
-          e
+          objectMapper.writeValueAsString(e)
       );
     } catch (JsonProcessingException ex) {
       throw new RuntimeException(ex);
