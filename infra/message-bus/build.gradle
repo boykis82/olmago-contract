@@ -25,7 +25,7 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-    implementation('org.springframework.cloud:spring-cloud-starter-stream-rabbit')
+    implementation('org.springframework.cloud:spring-cloud-starter-stream-kafka')
     testImplementation('org.springframework.cloud:spring-cloud-stream-test-support')
 
     implementation('org.springframework.boot:spring-boot-starter-data-jpa')

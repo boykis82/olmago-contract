@@ -47,7 +47,7 @@ spring.cloud.stream:
         required-groups: auditGroup
 
     functionRouter-in-0:
-      destination: order-command-topic,billing-event-topic,coupon-event-topic,customer-event-topic,product-auth-topic
+      destination: contract-command-topic,billing-event-topic,coupon-event-topic,customer-event-topic,product-auth-topic
       group: contract-group
       consumer:
         maxAttempts: 3

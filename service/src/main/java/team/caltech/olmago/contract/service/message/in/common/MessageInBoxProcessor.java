@@ -18,7 +18,7 @@ public class MessageInBoxProcessor {
   private final ObjectMapper objectMapper;
   
   public boolean notExistedMessage(Message<?> message) {
-    return messageInBoxRepository.findById(getUUID(message)).isPresent();
+    return !messageInBoxRepository.existsById(getUUID(message));
   }
   
   public void saveInBoxMessage(Message<?> message) {

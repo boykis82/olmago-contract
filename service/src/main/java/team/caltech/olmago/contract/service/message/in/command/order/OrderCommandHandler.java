@@ -23,6 +23,16 @@ public class OrderCommandHandler {
   }
   
   @Transactional
+  public void cancelContractSubscription(Message<?> msg, CancelContractSubscriptionCmd cmd) {
+    /*
+    if (messageInBoxProcessor.notExistedMessage(msg)) {
+      messageInBoxProcessor.saveInBoxMessage(msg);
+      contractService.cancelContractSubscriptionReceipt(cmd);
+    }
+     */
+  }
+  
+  @Transactional
   public void receiveContractTermination(Message<?> msg, ReceiveContractTerminationCmd cmd) {
     if (messageInBoxProcessor.notExistedMessage(msg)) {
       messageInBoxProcessor.saveInBoxMessage(msg);

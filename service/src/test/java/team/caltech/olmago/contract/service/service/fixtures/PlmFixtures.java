@@ -11,7 +11,6 @@ import static team.caltech.olmago.contract.domain.plm.discount.DiscountStartDate
 import static team.caltech.olmago.contract.domain.plm.discount.DiscountType.*;
 import static team.caltech.olmago.contract.domain.plm.discount.DiscountUnit.AMOUNT;
 import static team.caltech.olmago.contract.domain.plm.discount.DiscountUnit.RATE;
-import static team.caltech.olmago.contract.domain.plm.product.AvailableProductType.OPTION;
 import static team.caltech.olmago.contract.domain.plm.product.AvailableProductType.*;
 import static team.caltech.olmago.contract.domain.plm.product.BillPeriod.MONTHLY;
 
@@ -109,16 +108,16 @@ public class PlmFixtures {
             Product.builder().productCode("NMB0000003").productName("세븐일레븐").availableProductType(BASIC_BENEFIT).billPeriod(MONTHLY).feeVatIncluded(0).build(),
             Product.builder().productCode("NMB0000004").productName("투썸플레이스").availableProductType(BASIC_BENEFIT).billPeriod(MONTHLY).feeVatIncluded(0).build(),
     
-            Product.builder().productCode("NMO0000001").productName("배달의민족").availableProductType(OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(5000).build(),
-            Product.builder().productCode("NMO0000002").productName("굽네치킨").availableProductType(OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(5000).build(),
-            Product.builder().productCode("NMO0000003").productName("wavve and data").availableProductType(OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(9900).build(),
-            Product.builder().productCode("NMO0000004").productName("flo and data").availableProductType(OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(7900).build(),
-            Product.builder().productCode("NMO0000005").productName("게임패스 얼티밋").availableProductType(OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(11900).build(),
-            Product.builder().productCode("NMO0000006").productName("Google one(mini)").availableProductType(OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(1000).build(),
-            Product.builder().productCode("NMO0000007").productName("wavve and data plus").availableProductType(OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(12300).build(),
-            Product.builder().productCode("NMO0000008").productName("flo and data plus").availableProductType(OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(9000).build(),
-            Product.builder().productCode("NMO0000009").productName("wavve and data premium").availableProductType(OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(15900).build(),
-            Product.builder().productCode("NMO0000010").productName("야놀자").availableProductType(OPTION).billPeriod(MONTHLY).feeVatIncluded(5000).isTheFirstSubscriptionDcTarget(false).build()
+            Product.builder().productCode("NMO0000001").productName("배달의민족").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(5000).build(),
+            Product.builder().productCode("NMO0000002").productName("굽네치킨").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(5000).build(),
+            Product.builder().productCode("NMO0000003").productName("wavve and data").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(9900).build(),
+            Product.builder().productCode("NMO0000004").productName("flo and data").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(7900).build(),
+            Product.builder().productCode("NMO0000005").productName("게임패스 얼티밋").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(11900).build(),
+            Product.builder().productCode("NMO0000006").productName("Google one(mini)").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(1000).build(),
+            Product.builder().productCode("NMO0000007").productName("wavve and data plus").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(12300).build(),
+            Product.builder().productCode("NMO0000008").productName("flo and data plus").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(9000).build(),
+            Product.builder().productCode("NMO0000009").productName("wavve and data premium").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).isTheFirstSubscriptionDcTarget(true).feeVatIncluded(15900).build(),
+            Product.builder().productCode("NMO0000010").productName("야놀자").availableProductType(UNIT_AND_OPTION).billPeriod(MONTHLY).feeVatIncluded(5000).isTheFirstSubscriptionDcTarget(false).build()
     );
   }
 }

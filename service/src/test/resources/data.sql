@@ -8,16 +8,16 @@ insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,pr
 insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMB0000003','BASIC_BENEFIT','MONTHLY',0,0,'세븐일레븐');
 insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMB0000004','BASIC_BENEFIT','MONTHLY',0,0,'투썸플레이스');
 
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000001','OPTION','MONTHLY',5000,1,'배달의민족');
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000002','OPTION','MONTHLY',5000,1,'굽네치킨');
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000003','OPTION','MONTHLY',9900,1,'wavve and data');
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000004','OPTION','MONTHLY',7900,1,'flo and data');
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000005','OPTION','MONTHLY',11900,1,'게임패스 얼티밋');
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000006','OPTION','MONTHLY',1000,1,'Google one(mini)');
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000007','OPTION','MONTHLY',12300,1,'Wavve and data plus');
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000008','OPTION','MONTHLY',9000,1,'Flo and data plus');
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000009','OPTION','MONTHLY',15900,1,'Wavve and data premium');
-insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000010','OPTION','MONTHLY',5000,0,'야놀자');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000001','UNIT_AND_OPTION','MONTHLY',5000,1,'배달의민족');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000002','UNIT_AND_OPTION','MONTHLY',5000,1,'굽네치킨');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000003','UNIT_AND_OPTION','MONTHLY',9900,1,'wavve and data');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000004','UNIT_AND_OPTION','MONTHLY',7900,1,'flo and data');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000005','UNIT_AND_OPTION','MONTHLY',11900,1,'게임패스 얼티밋');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000006','UNIT_AND_OPTION','MONTHLY',1000,1,'Google one(mini)');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000007','UNIT_AND_OPTION','MONTHLY',12300,1,'Wavve and data plus');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000008','UNIT_AND_OPTION','MONTHLY',9000,1,'Flo and data plus');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000009','UNIT_AND_OPTION','MONTHLY',15900,1,'Wavve and data premium');
+insert into prod (prod_cd,avail_prod_typ,bill_prd,fee_vat_incl,fst_sub_dc_tgt,prod_nm) values ('NMO0000010','UNIT_AND_OPTION','MONTHLY',5000,0,'야놀자');
 
 insert into dc_plcy (dc_plcy_cd, copn_plcy_cd, dc_amt_or_rate, dc_prd_typ, dc_plcy_nm, dc_sta_dt_typ, dc_typ, dc_unit) values ('DCP0000001',null,8900,'ONE_MONTH','우주패스All_Life_Standard_최초가입할인','IMMEDIATELY','THE_FIRST_SUBSCRIPTION','AMOUNT');
 insert into dc_plcy (dc_plcy_cd, copn_plcy_cd, dc_amt_or_rate, dc_prd_typ, dc_plcy_nm, dc_sta_dt_typ, dc_typ, dc_unit) values ('DCP0000002',null,4800,'ONE_MONTH','우주패스Mini_최초가입할인','IMMEDIATELY','THE_FIRST_SUBSCRIPTION','AMOUNT');

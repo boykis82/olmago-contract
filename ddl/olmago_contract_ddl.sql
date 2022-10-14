@@ -110,15 +110,16 @@ create table message_in_box (
 
 create table msg_envelope (
    id bigint not null auto_increment,
-    agg_id varchar(255) not null,
-    agg_typ varchar(255) not null,
+   uuid varchar(255) not null,
+   msg_typ varchar(10) not null,
+    agg_typ varchar(255),
+    agg_id varchar(255),
     bind_nm varchar(255) not null,
     created_at datetime(6) not null,
-    event_typ varchar(255) not null,
-    payload varchar(2048) not null,
-    published boolean not null,
     published_at datetime(6),
-    uuid varchar(255) not null,
+    published boolean not null,
+    msg_name varchar(255) not null,
+    payload varchar(2048) not null,
     primary key (id)
 ) engine=InnoDB;
 
@@ -133,6 +134,7 @@ create table package (
     term_rcv_dtm datetime(6),
     opt_cntrct_id bigint,
     pkg_cntrct_id bigint,
+    last_ord_id bigint,
     version integer not null,
     primary key (id)
 ) engine=InnoDB;
