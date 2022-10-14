@@ -1,15 +1,16 @@
 package team.caltech.olmago.contract.service.message.in.event.coupon;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class CouponUseReleasedEvent {
-  private final long contractId;
-  private final String couponId;
-  private final String couponPolicyCode;
-  private final LocalDateTime couponUseReleasedDateTime;
+  private long contractId;
+  private String couponId;
+  private String couponPolicyCode;
+  private LocalDateTime couponUseReleasedDateTime;
 }

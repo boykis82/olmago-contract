@@ -1,24 +1,25 @@
 package team.caltech.olmago.contract.service.message.in.event.billing;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class RefundCompletedEvent {
-  @RequiredArgsConstructor
+  @NoArgsConstructor
   @Getter
   static class ContractRefundInfo {
-    private final long contractId;
-    private final long refundAmount;
+    private long contractId;
+    private long refundAmount;
   }
   
-  private final long paymentId;
-  private final LocalDateTime eventOccurDtm;
-  private final long refundAmount;
-  private final boolean isFirstPayment;
-  private final List<ContractRefundInfo> ContractRefundInfos;
+  private long paymentId;
+  private LocalDateTime eventOccurDtm;
+  private long refundAmount;
+  private boolean isFirstPayment;
+  private List<ContractRefundInfo> ContractRefundInfos;
 }

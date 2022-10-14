@@ -341,4 +341,11 @@ public class Contract {
         .collect(Collectors.toList());
   }
   
+  public void markProductAuthrozedDateTime(String productCode, LocalDateTime authorizedDateTime) {
+    productSubscriptions.stream()
+        .filter(ps -> ps.getProductCode().equals(productCode))
+        .findAny()
+        .orElseThrow(IllegalStateException::new)
+        .authorize(authorizedDateTime);
+  }
 }

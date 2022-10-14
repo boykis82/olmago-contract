@@ -349,6 +349,14 @@ public class ContractServiceImpl implements ContractService {
   
   @Override
   @Transactional
+  public void markProductAuthorizedDateTime(long contractId, String productCode, LocalDateTime authorizedDateTime) {
+    contractRepository.findWithProductsAndDiscountsById(contractId)
+        .orElseThrow(IllegalArgumentException::new)
+        .markProductAuthrozedDateTime(productCode, authorizedDateTime);
+  }
+  
+  @Override
+  @Transactional
   public ContractDto receiveCouponDiscount(ReceiveCouponDiscountDto dto) {
     DiscountPolicy discountPolicy = discountPolicyRepository.findByCouponPolicyCode(dto.getCouponPolicyCode()).orElseThrow(InvalidArgumentException::new);
     Contract contract = contractRepository.findById(dto.getContractId()).orElseThrow(InvalidArgumentException::new);

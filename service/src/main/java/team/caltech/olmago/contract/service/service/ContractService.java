@@ -3,6 +3,7 @@ package team.caltech.olmago.contract.service.service;
 import team.caltech.olmago.contract.service.dto.*;
 import team.caltech.olmago.contract.service.message.in.command.order.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ContractService {
@@ -18,6 +19,11 @@ public interface ContractService {
   // 변경접수취소
   List<ContractDto> cancelContractChangeReceipt(CancelContractChangeCmd cmd);
   /* end of Order Command */
+  
+  /* begin of productauth event */
+  // 가입접수
+  void markProductAuthorizedDateTime(long contractId, String productCode, LocalDateTime authorizedDateTime);
+  /* end of productauth event */
   
   /* begin of Billing Event */
   // 가입완료
@@ -49,4 +55,6 @@ public interface ContractService {
   List<ContractDto> findByCustomerId(long customerId, boolean includeTerminatedContract);
   // 계약ID로 조회. 패키지나 옵션일 경우 짝꿍도 같이 조회할지 여부
   List<ContractDto> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductAndDiscount);
+  
+  
 }

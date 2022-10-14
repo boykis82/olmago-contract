@@ -1,20 +1,21 @@
 package team.caltech.olmago.contract.service.message.in.event.customer;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import team.caltech.olmago.contract.domain.customer.MobilePhonePricePlan;
 
 import java.time.LocalDateTime;
 
-@RequiredArgsConstructor
+@NoArgsConstructor
 @Getter
 public class MobilePhonePricePlanChangedEvent {
-  private final long customerId;
-  private final LocalDateTime changeDtm;
-  private final long mobilePhoneSvcMgmtNum;
-  private final String mobilePhoneNumber;
-  private final MobilePhonePricePlan mobilePhonePricePlan;
-  private final String dcTargetUzooPassProductCode;
+  private long customerId;
+  private LocalDateTime changeDtm;
+  private long mobilePhoneSvcMgmtNum;
+  private String mobilePhoneNumber;
+  private MobilePhonePricePlan mobilePhonePricePlan;
+  private String dcTargetUzooPassProductCode;
 }
 
 

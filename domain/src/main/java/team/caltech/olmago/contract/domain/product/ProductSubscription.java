@@ -42,6 +42,9 @@ public class ProductSubscription {
   @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "productSubscription")
   private List<DiscountSubscription> discountSubscriptions = new ArrayList<>();
   
+  @Column(name = "last_auth_dtm")
+  private LocalDateTime lastAuthorizedDateTime;
+  
   @Builder
   public ProductSubscription(Contract contract,
                              Product product,
@@ -142,4 +145,7 @@ public class ProductSubscription {
         .build();
   }
   
+  public void authorize(LocalDateTime authorizedDateTime) {
+    this.lastAuthorizedDateTime = authorizedDateTime;
+  }
 }
