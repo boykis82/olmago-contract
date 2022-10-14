@@ -41,28 +41,7 @@ public class ContractTest {
   public void tearDown() {
 
   }
-  
-  @Test
-  public void 최초에_계약정보를접수하면_ID가채번되고접수일시로값이생성되어야함() {
-    // given
 
-    // when
-    contract.receiveSubscription();
-
-    // then
-    assertThat(contract.getCustomerId()).isEqualTo(1L);
-    assertThat(contract.getLastOrderId()).isEqualTo(2L);
-    assertThat(contract.getContractType()).isEqualTo(ContractType.PACKAGE);
-    assertThat(contract.getFeeProductCode()).isEqualTo("NMP0000001");
-    assertThat(contract.getLifeCycle().isSubscriptionReceived()).isTrue();
-    assertThat(contract.getLifeCycle().getSubscriptionReceivedDateTime()).isEqualTo(subRcvDtm);
-    assertThat(contract.getBillCycle()).isNull();
-    assertThat(contract.getLastPaymentDtm()).isNull();
-    assertThat(contract.getUnitContractConvertedDateTime()).isNull();
-    
-    assertThat(areAllProductSubscriptions(contract, ps -> ps.getLifeCycle().getSubscriptionReceivedDateTime().equals(subRcvDtm))).isTrue();
-    assertThat(areAllDiscountSubscriptions(contract, ds -> ds.getLifeCycle().getSubscriptionReceivedDateTime().equals(subRcvDtm))).isTrue();
-  }
 
   @Test
   public void 계약접수된상태에서_접수취소되면_클리어돼야함() {

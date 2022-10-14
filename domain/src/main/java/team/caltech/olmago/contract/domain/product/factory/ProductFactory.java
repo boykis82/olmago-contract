@@ -137,8 +137,10 @@ public class ProductFactory {
   }
 
   public List<String> getShouldBeTerminatedProductCodes(ProductFactory afterProductFactory) {
-    return getBasicBenefitProductCodes().stream()
+    List<String> shouldBeTerminatedProductCodes = getBasicBenefitProductCodes().stream()
         .filter(bfp -> afterProductFactory.getBasicBenefitProductCodes().stream().noneMatch(bfp::equals))
         .collect(Collectors.toList());
+    shouldBeTerminatedProductCodes.add(productCode);
+    return shouldBeTerminatedProductCodes;
   }
 }

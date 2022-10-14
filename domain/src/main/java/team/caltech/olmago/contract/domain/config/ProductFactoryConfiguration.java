@@ -1,5 +1,6 @@
 package team.caltech.olmago.contract.domain.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -15,155 +16,127 @@ import team.caltech.olmago.contract.domain.product.factory.ProductRelationReposi
 @Configuration
 @Lazy
 public class ProductFactoryConfiguration {
+  private final ContractRepository contractRepository;
+  private final CustomerServiceProxy customerServiceProxy;
+  private final ProductRepository productRepository;
+  private final DiscountPolicyRepository discountPolicyRepository;
+  private final ProductRelationRepository productRelationRepository;
+  
+  @Autowired
+  public ProductFactoryConfiguration(ContractRepository contractRepository,
+                                     CustomerServiceProxy customerServiceProxy,
+                                     ProductRepository productRepository,
+                                     DiscountPolicyRepository discountPolicyRepository,
+                                     ProductRelationRepository productRelationRepository) {
+    this.contractRepository = contractRepository;
+    this.customerServiceProxy = customerServiceProxy;
+    this.productRepository = productRepository;
+    this.discountPolicyRepository = discountPolicyRepository;
+    this.productRelationRepository = productRelationRepository;
+  }
+  
   @Bean
-  public ProductFactory uzooPassAllProductFactory(ContractRepository contractRepository,
-                                                  CustomerServiceProxy customerServiceProxy,
-                                                  ProductRepository productRepository,
-                                                  DiscountPolicyRepository discountPolicyRepository,
-                                                  ProductRelationRepository productRelationRepository
-  ) {
+  public ProductFactory uzooPassAllProductFactory() {
     return AllProductsFactory.uzooPassAllProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository);
   }
 
   @Bean
-  public ProductFactory uzooPassLifeProductFactory(ContractRepository contractRepository,
-                                                   CustomerServiceProxy customerServiceProxy,
-                                                   ProductRepository productRepository,
-                                                   DiscountPolicyRepository discountPolicyRepository,
-                                                   ProductRelationRepository productRelationRepository) {
+  public ProductFactory uzooPassLifeProductFactory() {
     return AllProductsFactory.uzooPassLifeProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository);
   }
  
   @Bean
-  public ProductFactory uzooPassMiniProductFactory(ContractRepository contractRepository,
-                                                   ProductRepository productRepository,
-                                                   DiscountPolicyRepository discountPolicyRepository,
-                                                   ProductRelationRepository productRelationRepository) {
+  public ProductFactory uzooPassMiniProductFactory() {
     return AllProductsFactory.uzooPassMiniProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory uzooPassSlimProductFactory(ContractRepository contractRepository,
-                                                   ProductRepository productRepository,
-                                                   DiscountPolicyRepository discountPolicyRepository,
-                                                   ProductRelationRepository productRelationRepository) {
+  public ProductFactory uzooPassSlimProductFactory() {
     return AllProductsFactory.uzooPassSlimProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory googleOneAllProductFactory(ProductRepository productRepository,
-                                                   DiscountPolicyRepository discountPolicyRepository,
-                                                   ProductRelationRepository productRelationRepository) {
+  public ProductFactory googleOneAllProductFactory() {
     return AllProductsFactory.googleOneAllProductFactory(productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   
   @Bean
-  public ProductFactory amazonFreeDeliveryProductFactory(ProductRepository productRepository,
-                                                         DiscountPolicyRepository discountPolicyRepository,
-                                                         ProductRelationRepository productRelationRepository) {
+  public ProductFactory amazonFreeDeliveryProductFactory() {
     return AllProductsFactory.amazonFreeDeliveryProductFactory(productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory sevenElevenProductFactory(ProductRepository productRepository,
-                                                  DiscountPolicyRepository discountPolicyRepository,
-                                                  ProductRelationRepository productRelationRepository) {
+  public ProductFactory sevenElevenProductFactory() {
     return AllProductsFactory.sevenElevenProductFactory(productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory twosomePlaceProductFactory(ProductRepository productRepository,
-                                                   DiscountPolicyRepository discountPolicyRepository,
-                                                   ProductRelationRepository productRelationRepository) {
+  public ProductFactory twosomePlaceProductFactory() {
     return AllProductsFactory.twosomePlaceProductFactory(productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory baeminProductFactory(ContractRepository contractRepository,
-                                             ProductRepository productRepository,
-                                             DiscountPolicyRepository discountPolicyRepository,
-                                             ProductRelationRepository productRelationRepository) {
+  public ProductFactory baeminProductFactory() {
     return AllProductsFactory.baeminProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory goobneProductFactory(ProductRepository productRepository,
-                                             DiscountPolicyRepository discountPolicyRepository,
-                                             ProductRelationRepository productRelationRepository) {
+  public ProductFactory goobneProductFactory() {
     return AllProductsFactory.goobneProductFactory(productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory floAndDataProductFactory(ContractRepository contractRepository,
-                                                 CustomerServiceProxy customerServiceProxy,
-                                                 ProductRepository productRepository,
-                                                 DiscountPolicyRepository discountPolicyRepository,
-                                                 ProductRelationRepository productRelationRepository) {
+  public ProductFactory floAndDataProductFactory() {
     return AllProductsFactory.floAndDataProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory floAndDataPlusProductFactory(ContractRepository contractRepository,
-                                                     CustomerServiceProxy customerServiceProxy,
-                                                     ProductRepository productRepository,
-                                                     DiscountPolicyRepository discountPolicyRepository,
-                                                     ProductRelationRepository productRelationRepository) {
+  public ProductFactory floAndDataPlusProductFactory() {
     return AllProductsFactory.floAndDataPlusProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory gamepassUltimateProductFactory(ContractRepository contractRepository,
-                                                       ProductRepository productRepository,
-                                                       DiscountPolicyRepository discountPolicyRepository,
-                                                       ProductRelationRepository productRelationRepository) {
+  public ProductFactory gamepassUltimateProductFactory() {
     return AllProductsFactory.gamepassUltimateProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   
   @Bean
-  public ProductFactory googleOneMiniProductFactory(ProductRepository productRepository,
-                                                    DiscountPolicyRepository discountPolicyRepository,
-                                                    ProductRelationRepository productRelationRepository) {
+  public ProductFactory googleOneMiniProductFactory() {
     return AllProductsFactory.googleOneMiniProductFactory(productRepository, discountPolicyRepository, productRelationRepository);
   }
   
   @Bean
-  public ProductFactory yanoljaProductFactory(ProductRepository productRepository,
-                                              DiscountPolicyRepository discountPolicyRepository,
-                                              ProductRelationRepository productRelationRepository) {
+  public ProductFactory yanoljaProductFactory() {
     return AllProductsFactory.yanoljaProductFactory(productRepository, discountPolicyRepository, productRelationRepository);
   }
 
   @Bean
-  public ProductFactoryMap productFactoryMap(ContractRepository contractRepository,
-                                             CustomerServiceProxy customerServiceProxy,
-                                             ProductRepository productRepository,
-                                             DiscountPolicyRepository discountPolicyRepository,
-                                             ProductRelationRepository productRelationRepository) {
+  public ProductFactoryMap productFactoryMap() {
     ProductFactoryMap productFactoryMap = new ProductFactoryMap();
 
     // package
-    productFactoryMap.put(uzooPassAllProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository));
+    productFactoryMap.put(uzooPassAllProductFactory());
     
-    productFactoryMap.put(uzooPassLifeProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(uzooPassMiniProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(uzooPassSlimProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository));
+    productFactoryMap.put(uzooPassLifeProductFactory());
+    productFactoryMap.put(uzooPassMiniProductFactory());
+    productFactoryMap.put(uzooPassSlimProductFactory());
     
     // 기본혜택
-    productFactoryMap.put(googleOneAllProductFactory(productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(amazonFreeDeliveryProductFactory(productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(sevenElevenProductFactory(productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(twosomePlaceProductFactory(productRepository, discountPolicyRepository, productRelationRepository));
+    productFactoryMap.put(googleOneAllProductFactory());
+    productFactoryMap.put(amazonFreeDeliveryProductFactory());
+    productFactoryMap.put(sevenElevenProductFactory());
+    productFactoryMap.put(twosomePlaceProductFactory());
     
     // 옵션 or 단품
-    productFactoryMap.put(baeminProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(goobneProductFactory(productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(floAndDataProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(floAndDataPlusProductFactory(contractRepository, customerServiceProxy, productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(gamepassUltimateProductFactory(contractRepository, productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(googleOneMiniProductFactory(productRepository, discountPolicyRepository, productRelationRepository));
-    productFactoryMap.put(yanoljaProductFactory(productRepository, discountPolicyRepository, productRelationRepository));
+    productFactoryMap.put(baeminProductFactory());
+    productFactoryMap.put(goobneProductFactory());
+    productFactoryMap.put(floAndDataProductFactory());
+    productFactoryMap.put(floAndDataPlusProductFactory());
+    productFactoryMap.put(gamepassUltimateProductFactory());
+    productFactoryMap.put(googleOneMiniProductFactory());
+    productFactoryMap.put(yanoljaProductFactory());
     
     return productFactoryMap;
   }
