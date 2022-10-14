@@ -3,6 +3,7 @@ package team.caltech.olmago.contract.productauth.domain;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import team.caltech.olmago.contract.productauth.domain.event.ProductAuthorizedEvent;
 
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
@@ -31,8 +32,9 @@ public class ProductAuth {
     this.firstAuthReqDtm = firstAuthReqDtm;
   }
   
-  public void completeAuth(LocalDateTime authDtm) {
+  public ProductAuthorizedEvent completeAuth(LocalDateTime authDtm) {
     lastAuthCompletedDtm = authDtm;
+    return new ProductAuthorizedEvent(id.getContractId(), id.getProductCode(), authDtm);
   }
   
   public void expireAuth(LocalDateTime expireDtm) {

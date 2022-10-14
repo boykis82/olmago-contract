@@ -1,15 +1,18 @@
 package team.caltech.olmago.contract.productauth.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import reactor.core.scheduler.Scheduler;
+import team.caltech.olmago.contract.common.message.MessageEnvelope;
 import team.caltech.olmago.contract.productauth.domain.ProductAuth;
 import team.caltech.olmago.contract.productauth.domain.ProductAuthId;
 import team.caltech.olmago.contract.productauth.domain.ProductAuthRepository;
+import team.caltech.olmago.contract.productauth.domain.event.ProductAuthBaseEvent;
 import team.caltech.olmago.contract.productauth.dto.CompleteProductAuthDto;
 import team.caltech.olmago.contract.productauth.dto.ExpireProductAuthDto;
 import team.caltech.olmago.contract.productauth.dto.ProductAuthDto;
-import team.caltech.olmago.contract.productauth.proxy.contract.ContractDto;
+import team.caltech.olmago.contract.productauth.message.out.MessagePublisher;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -22,7 +25,12 @@ public class ProductAuthServiceImpl implements ProductAuthService {
   private final ProductAuthRepository productAuthRepository;
   
   //private final EAIClient eaiClient;
-  private final Scheduler otherServiceCommScheduler;
+  
+  private final MessagePublisher messagePublisher;
+  private final ObjectMapper objectMapper;
+  
+  public static final String AGGREGATE_TYPE = "PRODUCT_AUTH";
+  public static final String EVENT_BINDING = "product-auth-event-0";
   
   @Override
   @Transactional
@@ -55,9 +63,9 @@ public class ProductAuthServiceImpl implements ProductAuthService {
   @Override
   @Transactional
   public void completeAuth(CompleteProductAuthDto dto) {
-    productAuthRepository.findById(new ProductAuthId(dto.getContractId(), dto.getProductCode()))
-        .orElseThrow()
+    ProductAuthBaseEvent event = productAuthRepository.findById(new ProductAuthId(dto.getContractId(), dto.getProductCode())).orElseThrow()
         .completeAuth(dto.getAuthCompletedDtm());
+    messagePublisher.sendMessage(wrapEvent(event));
   }
   
   @Override
@@ -73,5 +81,19 @@ public class ProductAuthServiceImpl implements ProductAuthService {
         .stream()
         .map(ProductAuthDto::of)
         .collect(Collectors.toList());
+  }
+  
+  private MessageEnvelope wrapEvent(ProductAuthBaseEvent e) {
+    try {
+      return MessageEnvelope.wrapEvent(
+          AGGREGATE_TYPE,
+          String.valueOf(e.getContractId()) + e.getProductCode(),
+          EVENT_BINDING,
+          e.getClass().getSimpleName(),
+          objectMapper.writeValueAsString(e)
+      );
+    } catch (JsonProcessingException ex) {
+      throw new RuntimeException(ex);
+    }
   }
 }

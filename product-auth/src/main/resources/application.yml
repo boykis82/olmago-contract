@@ -34,6 +34,11 @@ spring.cloud.stream:
   default.contentType: application/json
 
   bindings:
+    product-auth-event-0:
+      destination: product-auth-event-topic
+      producer:
+        required-groups: auditGroup
+
     functionRouter-in-0:
       destination: contract-event-topic
       group: product-auth-group

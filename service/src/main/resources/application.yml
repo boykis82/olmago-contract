@@ -36,13 +36,14 @@ spring.cloud.stream:
   default.contentType: application/json
 
   bindings:
-    contract-event-0:
-      destination: contract-event-topic
-      producer:
-        required-groups: auditGroup
+#     message bus로 이동
+#    contract-event-0:
+#      destination: contract-event-topic
+#      producer:
+#        required-groups: auditGroup
 
     functionRouter-in-0:
-      destination: contract-command-topic,billing-event-topic,coupon-event-topic,customer-event-topic,product-auth-topic
+      destination: contract-command-topic,billing-event-topic,coupon-event-topic,customer-event-topic,product-auth-event-topic
       group: contract-group
       consumer:
         maxAttempts: 3
