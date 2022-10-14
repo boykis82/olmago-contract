@@ -12,26 +12,26 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/olmago/api/v1/contract")
+@RequestMapping("/olmago/api/v1/contract-auths")
 public class ProductAuthController {
   private final ProductAuthService productAuthService;
   
-  @GetMapping("/{contractId}/product-subscriptions/auth")
+  @GetMapping("/{contractId}")
   public ResponseEntity<List<ProductAuthDto>> getProductAuths(@RequestParam("contractId") long contractId) {
     return ResponseEntity.ok(productAuthService.getProductAuths(contractId));
   }
   
-  @PutMapping("/{contractId}/product-subscriptions/{productSubscriptionId}/auth/complete")
-  public ResponseEntity<Void> completeAuth(@RequestParam("contractId") long contractId,
-                                           @RequestParam("productSubscriptionId") long productSubscriptionId,
+  @PutMapping("/{contractId}/{productCode}/complete")
+  public ResponseEntity<Void> completeAuth(@PathVariable("contractId") long contractId,
+                                           @PathVariable("productCode") long productCode,
                                            @RequestBody CompleteProductAuthDto dto) {
     productAuthService.completeAuth(dto);
     return ResponseEntity.ok().build();
   }
   
-  @PutMapping("/{contractId}/product-subscriptions/{productSubscriptionId}/auth/expire")
-  public ResponseEntity<Void> completeAuth(@RequestParam("contractId") long contractId,
-                                           @RequestParam("productSubscriptionId") long productSubscriptionId,
+  @PutMapping("/{contractId}/{productCode}/expire")
+  public ResponseEntity<Void> completeAuth(@PathVariable("contractId") long contractId,
+                                           @PathVariable("productCode") long productCode,
                                            @RequestBody ExpireProductAuthDto dto) {
     productAuthService.expireAuth(dto);
     return ResponseEntity.ok().build();

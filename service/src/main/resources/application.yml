@@ -18,11 +18,6 @@ spring:
         format_sql: true
         default_batch_fetch_size: 10
 
-#spring.rabbitmq:
-#  addresses: localhost
-#  username: user
-#  password: bitnami
-
 spring.cloud.function:
   definition: functionRouter
   routing-expression: headers['message-name']

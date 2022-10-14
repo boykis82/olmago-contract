@@ -93,7 +93,15 @@ public class Contract {
         lifeCycle.getSubscriptionReceivedDateTime(),
         lastOrderId,
         feeProductCode,
-        this.productSubscriptions.stream().map(ProductSubscription::getProductCode).collect(Collectors.toList())
+        this.productSubscriptions.stream()
+            .map(ps -> new ContractSubscriptionReceived.Product(
+                ps.getId(),
+                ps.getProductCode(),
+                ps.getDiscountSubscriptions().stream()
+                    .map(ds -> new ContractSubscriptionReceived.Product.Discount(ds.getId(), ds.getDiscountPolicy().getDcPolicyCode()))
+                    .collect(Collectors.toList())
+                ))
+            .collect(Collectors.toList())
     );
   }
   

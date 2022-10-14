@@ -1,16 +1,17 @@
 package team.caltech.olmago.contract.productauth.message.in.event.contract;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
 public class ProductsActivatedOrDeactivated {
-  private final long contractId;
-  private final LocalDateTime eventOccurDtm;
-  private final List<String> subProductCodes;
-  private final List<String> termProductCodes;
+  private long contractId;
+  private LocalDateTime eventOccurDtm;
+  private List<String> subProductCodes;
+  private List<String> termProductCodes;
 }

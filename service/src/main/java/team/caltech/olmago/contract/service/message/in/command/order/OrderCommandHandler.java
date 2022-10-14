@@ -21,7 +21,7 @@ public class OrderCommandHandler {
       contractService.receiveContractSubscription(cmd);
     }
   }
-  
+
   @Transactional
   public void cancelContractSubscription(Message<?> msg, CancelContractSubscriptionCmd cmd) {
     /*
