@@ -1,0 +1,33 @@
+plugins {
+    id 'org.springframework.boot' version '2.6.10'
+    id 'io.spring.dependency-management' version '1.0.12.RELEASE'
+    id 'java'
+}
+
+group = 'team.caltech'
+version = '1.0.0'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':common')
+    implementation project(':domain')
+
+    implementation 'org.springframework.boot:spring-boot-starter-batch'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.batch:spring-batch-test'
+
+    // lombok
+    compileOnly("org.projectlombok:lombok")
+    testCompileOnly 'org.projectlombok:lombok'
+    annotationProcessor("org.projectlombok:lombok")
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
