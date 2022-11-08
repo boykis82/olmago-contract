@@ -1,0 +1,3 @@
+[submodule "olmago-common"]
+	path = olmago-common
+	url = git@github.com:boykis82/olmago-common.git
