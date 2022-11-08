@@ -1,9 +1,8 @@
 rootProject.name = "olmago-contract"
-include 'common'
+include 'olmago-common'
 include 'domain'
 include 'product-auth'
 include 'service'
-include 'infra:message-bus'
 include 'batch:contract-terminator'
 
 // 멀티 모듈에서는 하위 모듈에 settings.gradle 넣으면 안된다! root에만 있어야 한다. 옛날엔 됐던거 같은데..흠

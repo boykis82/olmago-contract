@@ -23,7 +23,7 @@ public class ReleaseCouponDiscountDto {
         .contractId(event.getContractId())
         .couponId(event.getCouponId())
         .couponPolicyCode(event.getCouponPolicyCode())
-        .couponUseReleasedDateTime(event.getCouponUseReleasedDateTime())
+        .couponUseReleasedDateTime(event.getEventOccurDtm())
         .build();
   }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import team.caltech.olmago.contract.common.message.MessageEnvelope;
+import team.caltech.olmago.common.message.MessageEnvelope;
 import team.caltech.olmago.contract.productauth.domain.ProductAuth;
 import team.caltech.olmago.contract.productauth.domain.ProductAuthId;
 import team.caltech.olmago.contract.productauth.domain.ProductAuthRepository;

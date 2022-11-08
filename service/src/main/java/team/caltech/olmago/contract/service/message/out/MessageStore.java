@@ -1,6 +1,6 @@
 package team.caltech.olmago.contract.service.message.out;
 
-import team.caltech.olmago.contract.common.message.MessageEnvelope;
+import team.caltech.olmago.common.message.MessageEnvelope;
 
 import java.util.List;
 

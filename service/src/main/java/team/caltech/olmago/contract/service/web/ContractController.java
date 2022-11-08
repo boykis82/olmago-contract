@@ -3,8 +3,8 @@ package team.caltech.olmago.contract.service.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import team.caltech.olmago.contract.common.message.MessageEnvelope;
-import team.caltech.olmago.contract.common.message.MessageEnvelopeRepository;
+import team.caltech.olmago.common.message.MessageEnvelope;
+import team.caltech.olmago.common.message.MessageEnvelopeRepository;
 import team.caltech.olmago.contract.service.dto.ContractDto;
 import team.caltech.olmago.contract.service.service.ContractService;
 

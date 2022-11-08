@@ -7,8 +7,8 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
-import team.caltech.olmago.contract.common.message.MessageEnvelope;
-import team.caltech.olmago.contract.common.message.MessageEnvelopeRepository;
+import team.caltech.olmago.common.message.MessageEnvelope;
+import team.caltech.olmago.common.message.MessageEnvelopeRepository;
 import team.caltech.olmago.contract.domain.contract.ContractRepository;
 import team.caltech.olmago.contract.domain.contract.uzoopackage.UzooPackageRepository;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicy;
@@ -31,12 +31,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 public class ContractServiceTest {
-  @Autowired private ContractService contractService;
-  @Autowired private MessageEnvelopeRepository messageEnvelopeRepository;
-  @Autowired private ContractRepository contractRepository;
-  @Autowired private UzooPackageRepository uzooPackageRepository;
-  @Autowired private ProductRepository productRepository;
-  @Autowired private DiscountPolicyRepository discountPolicyRepository;
+  @Autowired
+  private ContractService contractService;
+  @Autowired
+  private MessageEnvelopeRepository messageEnvelopeRepository;
+  @Autowired
+  private ContractRepository contractRepository;
+  @Autowired
+  private UzooPackageRepository uzooPackageRepository;
+  @Autowired
+  private ProductRepository productRepository;
+  @Autowired
+  private DiscountPolicyRepository discountPolicyRepository;
   
   @Before
   public void setup() {

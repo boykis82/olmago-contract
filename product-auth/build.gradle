@@ -17,7 +17,7 @@ ext {
 }
 
 dependencies {
-    implementation project(':common')
+    implementation project(':olmago-common')
 
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'

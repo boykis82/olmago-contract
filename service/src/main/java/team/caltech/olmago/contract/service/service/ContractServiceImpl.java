@@ -10,7 +10,7 @@ import team.caltech.olmago.contract.domain.contract.ContractType;
 import team.caltech.olmago.contract.domain.contract.event.ContractEventBase;
 import team.caltech.olmago.contract.domain.contract.event.DiscountChanged;
 import team.caltech.olmago.contract.service.dto.*;
-import team.caltech.olmago.contract.common.message.MessageEnvelope;
+import team.caltech.olmago.common.message.MessageEnvelope;
 import team.caltech.olmago.contract.domain.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.service.message.in.command.order.*;
 import team.caltech.olmago.contract.service.message.out.MessageStore;

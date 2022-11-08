@@ -6,7 +6,7 @@ import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
-import team.caltech.olmago.contract.common.message.MessageEnvelope;
+import team.caltech.olmago.common.message.MessageEnvelope;
 
 import javax.transaction.Transactional;
 

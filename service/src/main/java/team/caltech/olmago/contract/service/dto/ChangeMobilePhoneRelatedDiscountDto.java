@@ -20,14 +20,14 @@ public class ChangeMobilePhoneRelatedDiscountDto {
   private final LocalDateTime changeDateTime;
   
   public static ChangeMobilePhoneRelatedDiscountDto of(MobilePhoneServiceLinkedEvent e) {
-    return new ChangeMobilePhoneRelatedDiscountDto(e.getCustomerId(), e.getMobilePhonePricePlan(), e.getDcTargetUzooPassProductCode(), e.getLinkedDtm());
+    return new ChangeMobilePhoneRelatedDiscountDto(e.getCustomerId(), e.getMobilePhonePricePlan(), e.getDcTargetUzooPassProductCode(), e.getEventOccurDtm());
   }
   
   public static ChangeMobilePhoneRelatedDiscountDto of(MobilePhoneServiceUnlinkedEvent e) {
-    return new ChangeMobilePhoneRelatedDiscountDto(e.getCustomerId(), e.getMobilePhonePricePlan(), e.getDcTargetUzooPassProductCode(), e.getUnlinkedDtm());
+    return new ChangeMobilePhoneRelatedDiscountDto(e.getCustomerId(), e.getMobilePhonePricePlan(), e.getDcTargetUzooPassProductCode(), e.getEventOccurDtm());
   }
   
   public static ChangeMobilePhoneRelatedDiscountDto of(MobilePhonePricePlanChangedEvent e) {
-    return new ChangeMobilePhoneRelatedDiscountDto(e.getCustomerId(), e.getMobilePhonePricePlan(), e.getDcTargetUzooPassProductCode(), e.getChangeDtm());
+    return new ChangeMobilePhoneRelatedDiscountDto(e.getCustomerId(), e.getMobilePhonePricePlan(), e.getDcTargetUzooPassProductCode(), e.getEventOccurDtm());
   }
 }

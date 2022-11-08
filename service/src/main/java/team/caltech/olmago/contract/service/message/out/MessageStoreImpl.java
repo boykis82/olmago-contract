@@ -2,8 +2,8 @@ package team.caltech.olmago.contract.service.message.out;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import team.caltech.olmago.contract.common.message.MessageEnvelope;
-import team.caltech.olmago.contract.common.message.MessageEnvelopeRepository;
+import team.caltech.olmago.common.message.MessageEnvelope;
+import team.caltech.olmago.common.message.MessageEnvelopeRepository;
 
 import javax.transaction.Transactional;
 import java.util.List;

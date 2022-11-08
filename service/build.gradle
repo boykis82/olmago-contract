@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    implementation project(':common')
+    implementation project(':olmago-common')
     implementation project(':domain')
 
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
