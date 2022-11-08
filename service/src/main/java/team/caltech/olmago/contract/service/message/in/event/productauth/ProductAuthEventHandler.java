@@ -18,7 +18,7 @@ public class ProductAuthEventHandler {
   public void productAuthorized(Message<?> message, ProductAuthorizedEvent event) {
     if (messageInBoxProcessor.notExistedMessage(message)) {
       messageInBoxProcessor.saveInBoxMessage(message);
-      contractService.markProductAuthorizedDateTime(event.getContractId(), event.getProductCode(), event.getAuthroziedDateTime());
+      contractService.markProductAuthorizedDateTime(event.getContractId(), event.getProductCode(), event.getEventOccurDtm());
     }
   }
   

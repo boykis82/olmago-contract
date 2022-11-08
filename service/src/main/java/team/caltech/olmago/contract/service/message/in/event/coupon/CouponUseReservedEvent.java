@@ -9,8 +9,8 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class CouponUseReservedEvent {
-  private long contractId;
   private String couponId;
+  private LocalDateTime eventOccurDtm;
+  private long contractId;
   private String couponPolicyCode;
-  private LocalDateTime couponUseReservedDateTime;
 }

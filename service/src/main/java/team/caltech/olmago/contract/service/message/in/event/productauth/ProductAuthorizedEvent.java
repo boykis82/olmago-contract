@@ -10,6 +10,6 @@ import java.time.LocalDateTime;
 @Getter
 public class ProductAuthorizedEvent {
   private long contractId;
+  private LocalDateTime eventOccurDtm;
   private String productCode;
-  private LocalDateTime authroziedDateTime;
 }

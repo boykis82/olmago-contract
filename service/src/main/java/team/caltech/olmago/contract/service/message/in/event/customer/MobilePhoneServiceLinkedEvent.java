@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Getter
 public class MobilePhoneServiceLinkedEvent {
   private long customerId;
-  private LocalDateTime linkedDtm;
+  private LocalDateTime eventOccurDtm;
   private long mobilePhoneSvcMgmtNum;
   private String mobilePhoneNumber;
   private MobilePhonePricePlan mobilePhonePricePlan;

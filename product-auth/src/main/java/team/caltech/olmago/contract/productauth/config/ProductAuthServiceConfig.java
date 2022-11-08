@@ -8,6 +8,7 @@ import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
 @Configuration
+@SuppressWarnings("unused")
 public class ProductAuthServiceConfig {
   private final Integer threadPoolSize;
   private final Integer taskQueueSize;
