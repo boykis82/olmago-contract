@@ -1,4 +1,4 @@
-package team.caltech.olmago.contract;
+package team.caltech.olmago;
 
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.boot.SpringApplication;

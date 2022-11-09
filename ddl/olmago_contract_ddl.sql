@@ -213,3 +213,5 @@ alter table prod_sub
    foreign key (prod_cd)
    references prod (prod_cd)
 ;
+
+create index message_envelope_n1 on msg_envelope (published, id);
