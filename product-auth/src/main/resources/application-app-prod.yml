@@ -1,0 +1,14 @@
+server.port: 80
+server.error.include-message: always
+
+logging:
+  level:
+    root: INFO
+    team.caltech.olmago.customer.domain: INFO
+    com:
+      querydsl:
+        sql: INFO
+    org:
+      hibernate:
+        SQL: INFO
+        type: INFO

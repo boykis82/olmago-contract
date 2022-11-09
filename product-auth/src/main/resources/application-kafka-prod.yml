@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: kafka-prod
+
+spring.kafka.bootstrap-servers: 127.0.0.1:9093
+
+spring.cloud.stream:
+  kafka:
+    binder:
+      brokers: 127.0.0.1
+      defaultBrokerPort: 9093
+      replication-factor: 1
