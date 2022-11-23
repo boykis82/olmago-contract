@@ -63,7 +63,7 @@ public class LifeCycle {
   }
   
   public void completeTermination(LocalDateTime terminationCompletedDateTime) {
-    if (!isSubscriptionCompleted()) {
+    if (!isTerminationReceived()) {
       throw new IllegalStateException();
     }
     this.terminationCompletedDateTime = terminationCompletedDateTime;
