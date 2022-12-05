@@ -12,14 +12,14 @@ public class ContractSubscriptionReceived extends ContractEventBase {
   @Getter
   @AllArgsConstructor
   public static class Product {
-    long id;
+    Long id;
     String productCode;
     List<Discount> discounts;
     
     @Getter
     @AllArgsConstructor
     public static class Discount {
-      long id;
+      Long id;
       String discountPolicyCode;
     }
   }
@@ -28,7 +28,7 @@ public class ContractSubscriptionReceived extends ContractEventBase {
   private final String feeProductCode;
   private final List<Product> products;
   
-  public ContractSubscriptionReceived(long contractId,
+  public ContractSubscriptionReceived(Long contractId,
                                       LocalDateTime eventOccurDtm,
                                       long orderId,
                                       String feeProductCode,

@@ -12,3 +12,8 @@ logging:
       hibernate:
         SQL: DEBUG
         type: DEBUG
+
+app:
+  customer-service:
+    host: localhost
+    port: 8082

@@ -23,7 +23,7 @@ public class ContractFixtures {
         .collect(Collectors.toMap(DiscountPolicy::getDcPolicyCode, d -> d));
   }
   
-  public static Contract createUzoopassAllContract(long customerId, long orderId, LocalDateTime subRcvDtm, boolean withProdSub) {
+  public static Contract createUzoopassAllContract(long customerId, long orderId, LocalDateTime subRcvDtm, boolean withProdSub, String ... additionalDiscountCodes) {
     Contract c =  Contract.builder()
         .customerId(customerId)
         .orderId(orderId)
@@ -33,14 +33,13 @@ public class ContractFixtures {
         .build();
     
     if (withProdSub)
-      createUzoopassProductSubscriptions(c);
+      createUzoopassAllProductSubscriptions(c, additionalDiscountCodes);
     return c;
   }
 
-
-  public static List<ProductSubscription> createUzoopassProductSubscriptions(Contract contract) {
+  public static List<ProductSubscription> createUzoopassAllProductSubscriptions(Contract contract, String ... additionalDiscountCodes) {
     List<ProductSubscription> ps = List.of(
-        createProductSubscription(contract, "NMP0000001", "DCP0000001", "DCM0000001"),
+        createProductSubscription(contract, "NMP0000001", additionalDiscountCodes),
         createProductSubscription(contract, "NMB0000001", "DCB0000001"),
         createProductSubscription(contract, "NMB0000002", "DCB0000001")
     );

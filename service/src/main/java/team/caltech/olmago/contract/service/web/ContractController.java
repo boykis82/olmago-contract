@@ -5,9 +5,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import team.caltech.olmago.common.message.MessageEnvelope;
 import team.caltech.olmago.common.message.MessageEnvelopeRepository;
+import team.caltech.olmago.contract.domain.contract.CalculationResult;
 import team.caltech.olmago.contract.service.dto.ContractDto;
 import team.caltech.olmago.contract.service.service.ContractService;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -27,6 +29,13 @@ public class ContractController {
                                                             @RequestParam("withPackageOrOption") boolean withPackageOrOption,
                                                             @RequestParam("includeProductAndDiscount") boolean includeProductAndDiscount) {
     return ResponseEntity.ok(contractService.findByContractId(id, withPackageOrOption, includeProductAndDiscount));
+  }
+  
+  @GetMapping("/{id}/calculate")
+  public ResponseEntity<List<CalculationResult>> calculate(@PathVariable("id") long id,
+                                                           @RequestParam("withPackageOrOption") boolean withPackageOrOption,
+                                                           @RequestParam("calculateDate") LocalDate calculateDate) {
+    return ResponseEntity.ok(contractService.calculate(id, withPackageOrOption, calculateDate));
   }
   
   @GetMapping("/messages")

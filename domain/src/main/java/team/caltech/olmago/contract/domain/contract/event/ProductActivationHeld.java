@@ -8,7 +8,7 @@ import java.util.List;
 @Getter
 public class ProductActivationHeld extends ContractEventBase {
   
-  public ProductActivationHeld(long contractId, LocalDateTime eventOccurDtm) {
+  public ProductActivationHeld(Long contractId, LocalDateTime eventOccurDtm) {
     super(contractId, eventOccurDtm);
   }
 }

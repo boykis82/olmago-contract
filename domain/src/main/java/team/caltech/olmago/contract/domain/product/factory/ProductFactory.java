@@ -81,8 +81,7 @@ public class ProductFactory {
       Contract contract,
       LocalDateTime subRcvDtm
   ) {
-    Product product = productRepository.findById(productCode)
-        .orElseThrow(InvalidArgumentException::new);
+    Product product = productRepository.findById(productCode).orElseThrow(InvalidArgumentException::new);
     
     contract.validateAvailableProductType(product);
     

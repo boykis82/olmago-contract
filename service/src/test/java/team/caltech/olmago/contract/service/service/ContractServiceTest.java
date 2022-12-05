@@ -6,11 +6,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
+import reactor.core.publisher.Mono;
 import team.caltech.olmago.common.message.MessageEnvelope;
 import team.caltech.olmago.common.message.MessageEnvelopeRepository;
 import team.caltech.olmago.contract.domain.contract.ContractRepository;
 import team.caltech.olmago.contract.domain.contract.uzoopackage.UzooPackageRepository;
+import team.caltech.olmago.contract.domain.customer.CustomerDto;
+import team.caltech.olmago.contract.domain.customer.CustomerServiceProxy;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicy;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicyRepository;
 import team.caltech.olmago.contract.domain.plm.product.Product;
@@ -27,6 +31,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -43,11 +48,22 @@ public class ContractServiceTest {
   private ProductRepository productRepository;
   @Autowired
   private DiscountPolicyRepository discountPolicyRepository;
+  @MockBean
+  private CustomerServiceProxy customerServiceProxy;
   
   @Before
   public void setup() {
     List<Product> products = productRepository.findAll();
     List<DiscountPolicy> discountPolicies = discountPolicyRepository.findAll();
+  
+    CustomerDto customerDto = CustomerDto.builder()
+        .customerId(1L)
+        .mobilePhonePricePlan("PLATINUM")
+        .dcTargetUzooPassProductCodes(Collections.emptyList())
+        .build();
+    
+    given(customerServiceProxy.findByCustomerId(1L))
+        .willReturn(Mono.just(customerDto));
   }
   
   @After

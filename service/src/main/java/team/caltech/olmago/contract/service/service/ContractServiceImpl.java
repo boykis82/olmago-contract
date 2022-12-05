@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import team.caltech.olmago.contract.domain.contract.CalculationResult;
 import team.caltech.olmago.contract.domain.contract.Contract;
 import team.caltech.olmago.contract.domain.contract.ContractRepository;
 import team.caltech.olmago.contract.domain.contract.ContractType;
@@ -21,6 +22,7 @@ import team.caltech.olmago.contract.domain.product.factory.ProductFactory;
 import team.caltech.olmago.contract.domain.product.factory.ProductFactoryMap;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -352,7 +354,7 @@ public class ContractServiceImpl implements ContractService {
   public void markProductAuthorizedDateTime(long contractId, String productCode, LocalDateTime authorizedDateTime) {
     contractRepository.findWithProductsAndDiscountsById(contractId)
         .orElseThrow(IllegalArgumentException::new)
-        .markProductAuthrozedDateTime(productCode, authorizedDateTime);
+        .markProductAuthorizedDateTime(productCode, authorizedDateTime);
   }
   
   @Override
@@ -422,5 +424,14 @@ public class ContractServiceImpl implements ContractService {
         .stream()
         .map(ContractDto::of)
         .collect(Collectors.toList());
+  }
+  
+  public List<CalculationResult> calculate(long contractId, boolean withPackageOrOption, LocalDate calculateDate) {
+    var result = new ArrayList<CalculationResult>();
+    List<Contract> contracts = contractRepository.findByContractId(contractId, withPackageOrOption, true);
+    for (Contract c : contracts) {
+      c.calculate(calculateDate).ifPresent(result::add);
+    }
+    return result;
   }
 }

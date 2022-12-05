@@ -9,7 +9,7 @@ import java.util.List;
 public class ContractSubscriptionCompleted extends ContractEventBase {
   private final List<String> productCodes;
   private final long orderId;
-  public ContractSubscriptionCompleted(long contractId, LocalDateTime eventOccurDtm, long orderId, List<String> productCodes) {
+  public ContractSubscriptionCompleted(Long contractId, LocalDateTime eventOccurDtm, long orderId, List<String> productCodes) {
     super(contractId, eventOccurDtm);
     this.orderId = orderId;
     this.productCodes = productCodes;

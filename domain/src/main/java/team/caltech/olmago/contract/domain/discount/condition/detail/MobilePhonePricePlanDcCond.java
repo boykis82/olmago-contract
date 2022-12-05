@@ -6,7 +6,7 @@ import team.caltech.olmago.contract.domain.contract.Contract;
 import team.caltech.olmago.contract.domain.discount.condition.DiscountCondition;
 import team.caltech.olmago.contract.domain.customer.CustomerServiceProxy;
 import team.caltech.olmago.contract.domain.customer.MobilePhonePricePlan;
-import team.caltech.olmago.contract.domain.customer.LinkedMobilePhoneDto;
+import team.caltech.olmago.contract.domain.customer.CustomerDto;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +30,7 @@ public class MobilePhonePricePlanDcCond extends DiscountCondition {
   
   @Override
   public boolean satisfied(Contract contract) {
-    Optional<LinkedMobilePhoneDto> linkedMobilePhoneInfo =
+    Optional<CustomerDto> linkedMobilePhoneInfo =
         customerServiceProxy.findByCustomerId(contract.getCustomerId()).blockOptional();
     
     return linkedMobilePhoneInfo.filter(

@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Getter
 public class DiscountChanged extends ContractEventBase {
-  public DiscountChanged(long contractId, LocalDateTime eventOccurDtm) {
+  public DiscountChanged(Long contractId, LocalDateTime eventOccurDtm) {
     super(contractId, eventOccurDtm);
   }
 }

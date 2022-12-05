@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class ContractChanged extends ContractEventBase {
   private final long orderId;
   
-  public ContractChanged(long contractId, LocalDateTime eventOccurDtm, long orderId) {
+  public ContractChanged(Long contractId, LocalDateTime eventOccurDtm, long orderId) {
     super(contractId, eventOccurDtm);
     this.orderId = orderId;
   }

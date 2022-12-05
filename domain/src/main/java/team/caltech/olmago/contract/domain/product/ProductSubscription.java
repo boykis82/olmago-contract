@@ -4,16 +4,18 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import team.caltech.olmago.contract.domain.common.LifeCycle;
+import team.caltech.olmago.contract.domain.contract.CalculationResult;
 import team.caltech.olmago.contract.domain.contract.Contract;
+import team.caltech.olmago.contract.domain.discount.DiscountCalculationResult;
 import team.caltech.olmago.contract.domain.discount.DiscountSubscription;
 import team.caltech.olmago.contract.domain.exception.InvalidArgumentException;
 import team.caltech.olmago.contract.domain.plm.product.Product;
 import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicy;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor
@@ -147,5 +149,41 @@ public class ProductSubscription {
   
   public void authorize(LocalDateTime authorizedDateTime) {
     this.lastAuthorizedDateTime = authorizedDateTime;
+  }
+  
+  public boolean isCalculationTarget() {
+    return (lifeCycle.isSubscriptionReceived() || lifeCycle.isSubscriptionCompleted()) && product.getFeeVatIncluded() > 0;
+  }
+  
+  public ProductCalculationResult calculate(LocalDate calculateDate) {
+    return isCalculationTarget()
+        ? new ProductCalculationResult(id, product.getProductCode(), product.getFeeVatIncluded(), calculateDiscounts(calculateDate))
+        : null;
+  }
+  
+  private List<DiscountCalculationResult> calculateDiscounts(LocalDate calculateDate) {
+    /*
+      할인우선순위로 sort하고
+      최초잔액 = 상품가격
+      할인 순서대로 계산하면서 잔액차감
+     */
+    discountSubscriptions.sort(Comparator.comparingInt(p -> p.getDiscountPolicy().getDiscountPriority()));
+    
+    long balance = product.getFeeVatIncluded();
+    List<DiscountCalculationResult> discountCalculationResults = new ArrayList<>();
+    for (var ds : discountSubscriptions) {
+      if (!ds.isDiscountTarget(calculateDate))
+        continue;
+      
+      DiscountCalculationResult dcResult = ds.calculate(calculateDate, balance);
+      if (dcResult.getDcAmountIncludeVat() != 0) {
+        balance += dcResult.getDcAmountIncludeVat();
+        discountCalculationResults.add(dcResult);
+      }
+      if (balance <= 0) {
+        break;
+      }
+    }
+    return discountCalculationResults;
   }
 }

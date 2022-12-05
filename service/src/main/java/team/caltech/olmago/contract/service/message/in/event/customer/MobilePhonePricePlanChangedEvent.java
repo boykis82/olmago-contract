@@ -14,7 +14,7 @@ public class MobilePhonePricePlanChangedEvent {
   private LocalDateTime eventOccurDtm;
   private long mobilePhoneSvcMgmtNum;
   private String mobilePhoneNumber;
-  private MobilePhonePricePlan mobilePhonePricePlan;
+  private String mobilePhonePricePlan;
   private String dcTargetUzooPassProductCode;
 }
 

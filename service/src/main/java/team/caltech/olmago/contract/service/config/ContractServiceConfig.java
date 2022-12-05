@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
+import team.caltech.olmago.contract.domain.customer.CustomerServiceProxy;
 
 @SuppressWarnings("unused")
 @Configuration
@@ -26,4 +27,5 @@ public class ContractServiceConfig {
   public Scheduler otherServiceCommScheduler() {
     return Schedulers.newBoundedElastic(threadPoolSize, taskQueueSize, "other-service-comm-pool");
   }
+
 }

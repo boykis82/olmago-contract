@@ -14,9 +14,12 @@ import team.caltech.olmago.contract.domain.plm.discount.DiscountPolicy;
 import team.caltech.olmago.contract.domain.product.ProductSubscription;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -34,7 +37,7 @@ public class Contract {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
   
-  protected void setId(long id) { this.id = id; }
+  void setId(long id) { this.id = id; }
   
   @Version
   private int version;
@@ -211,8 +214,7 @@ public class Contract {
   public ContractChangeCanceled cancelContractChange(long orderId, LocalDateTime cnclChangeDateTime) {
     LocalDateTime changeDtm = getChangeDtm();
     // pkg 상품 변경 취소 또는 option 상품 변경 취소
-    if (contractType == ContractType.PACKAGE ||
-        contractType == ContractType.OPTION) {
+    if (contractType == ContractType.PACKAGE || contractType == ContractType.OPTION) {
       // 가입예약 취소
       productSubscriptions.stream()
           .filter(ps -> ps.getLifeCycle().getSubscriptionReceivedDateTime().equals(changeDtm))
@@ -341,11 +343,26 @@ public class Contract {
         .collect(Collectors.toList());
   }
   
-  public void markProductAuthrozedDateTime(String productCode, LocalDateTime authorizedDateTime) {
+  public void markProductAuthorizedDateTime(String productCode, LocalDateTime authorizedDateTime) {
     productSubscriptions.stream()
         .filter(ps -> ps.getProductCode().equals(productCode))
         .findAny()
         .orElseThrow(IllegalStateException::new)
         .authorize(authorizedDateTime);
+  }
+  
+  public Optional<CalculationResult> calculate(LocalDate calculateDate) {
+    if (lifeCycle.isSubscriptionReceived() || lifeCycle.isSubscriptionCompleted()) {
+      return Optional.of(new CalculationResult(
+          id,
+          contractType.name(),
+          productSubscriptions.stream()
+              .filter(ProductSubscription::isCalculationTarget)
+              .map(ps -> ps.calculate(calculateDate))
+              .collect(Collectors.toList()))
+      );
+    } else {
+      return Optional.empty();
+    }
   }
 }

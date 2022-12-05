@@ -11,6 +11,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "dc_plcy")
 public class DiscountPolicy {
+  public static final int DIVIDE_BY_USE_DAYS = 30;
+  
   @Id
   @Column(name = "dc_plcy_cd", length = 10, nullable = false)
   private String dcPolicyCode;
@@ -37,8 +39,14 @@ public class DiscountPolicy {
   @Column(name = "dc_prd_typ", length = 20, nullable = false)
   private DiscountPeriodType dcPeriodType;
   
+  @Column(name = "div_use_days", length = 1, nullable = false)
+  private boolean isDivideByUseDays;
+  
   @Column(name = "copn_plcy_cd", length = 40)
   private String couponPolicyCode;
+  
+  @Column(name = "dc_prty", nullable = false)
+  private int discountPriority;
   
   @Builder
   public DiscountPolicy(String dcPolicyCode,
@@ -48,7 +56,9 @@ public class DiscountPolicy {
                         DiscountType dcType,
                         DiscountStartDateType dcStartDateType,
                         DiscountPeriodType dcPeriodType,
-                        String couponPolicyCode) {
+                        boolean isDivideByUseDays,
+                        String couponPolicyCode,
+                        int discountPriority) {
     this.dcPolicyCode = dcPolicyCode;
     this.dcPolicyName = dcPolicyName;
     this.dcUnit = dcUnit;
@@ -56,6 +66,8 @@ public class DiscountPolicy {
     this.dcType = dcType;
     this.dcStartDateType = dcStartDateType;
     this.dcPeriodType = dcPeriodType;
+    this.isDivideByUseDays = isDivideByUseDays;
     this.couponPolicyCode = couponPolicyCode;
+    this.discountPriority = discountPriority;
   }
 }

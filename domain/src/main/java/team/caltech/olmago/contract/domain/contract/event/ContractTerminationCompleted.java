@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Getter
 public class ContractTerminationCompleted extends ContractEventBase {
   private final long orderId;
-  public ContractTerminationCompleted(long contractId, LocalDateTime eventOccurDtm, long orderId) {
+  public ContractTerminationCompleted(Long contractId, LocalDateTime eventOccurDtm, long orderId) {
     super(contractId, eventOccurDtm);
     this.orderId = orderId;
   }

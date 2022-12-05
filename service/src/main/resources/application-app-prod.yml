@@ -12,3 +12,8 @@ logging:
       hibernate:
         SQL: INFO
         type: INFO
+
+app:
+  customer-service:
+    host: customer
+    port: 8080

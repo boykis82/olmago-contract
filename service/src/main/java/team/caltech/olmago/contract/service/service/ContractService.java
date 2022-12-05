@@ -1,8 +1,10 @@
 package team.caltech.olmago.contract.service.service;
 
+import team.caltech.olmago.contract.domain.contract.CalculationResult;
 import team.caltech.olmago.contract.service.dto.*;
 import team.caltech.olmago.contract.service.message.in.command.order.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -56,5 +58,6 @@ public interface ContractService {
   // 계약ID로 조회. 패키지나 옵션일 경우 짝꿍도 같이 조회할지 여부
   List<ContractDto> findByContractId(long contractId, boolean withPackageOrOption, boolean includeProductAndDiscount);
   
-  
+  /* 계산 */
+  List<CalculationResult> calculate(long contractId, boolean withPackageOrOption, LocalDate calculateDate);
 }

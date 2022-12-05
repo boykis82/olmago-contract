@@ -1,22 +1,24 @@
 package team.caltech.olmago.contract.service.proxy.customer;
 
-import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import team.caltech.olmago.contract.domain.customer.CustomerServiceProxy;
-import team.caltech.olmago.contract.domain.customer.LinkedMobilePhoneDto;
-import team.caltech.olmago.contract.domain.customer.MobilePhonePricePlan;
+import team.caltech.olmago.contract.domain.customer.CustomerDto;
 
-@Component
 public class CustomerServiceProxyImpl implements CustomerServiceProxy {
+  private final WebClient webClient;
+  
+  @Autowired
+  public CustomerServiceProxyImpl(WebClient webClient) {
+    this.webClient = webClient;
+  }
+  
   @Override
-  public Mono<LinkedMobilePhoneDto> findByCustomerId(long customerId) {
-    // todo - web연동으로 변경
-    return Mono.just(LinkedMobilePhoneDto.builder()
-        .mobilePhonePricePlan(MobilePhonePricePlan.PLATINUM)
-        .customerId(customerId)
-        .mobilePhoneNumber("01012345678")
-        .mobilePhoneSvcMgmtNum(7102112312L)
-        .build()
-    );
+  public Mono<CustomerDto> findByCustomerId(long customerId) {
+    return webClient.get()
+        .uri(uriBuilder -> uriBuilder.path("/customers/{customer-id}").build(customerId))
+        .retrieve()
+        .bodyToMono(CustomerDto.class);
   }
 }

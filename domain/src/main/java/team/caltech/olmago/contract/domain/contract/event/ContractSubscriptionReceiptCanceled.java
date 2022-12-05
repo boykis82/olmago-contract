@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 public class ContractSubscriptionReceiptCanceled extends ContractEventBase {
   private final long orderId;
   
-  public ContractSubscriptionReceiptCanceled(long contractId, LocalDateTime eventOccurDtm, long orderId) {
+  public ContractSubscriptionReceiptCanceled(Long contractId, LocalDateTime eventOccurDtm, long orderId) {
     super(contractId, eventOccurDtm);
     this.orderId = orderId;
   }

@@ -239,7 +239,7 @@ public class ContractRepositoryTest {
     LocalDateTime subRcvDtm = LocalDateTime.now();
     List<Contract> contracts = contractRepository.saveAll(
         List.of(
-            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true, "DCP0000001", "DCM0000001" ),
             ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
             ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
             ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
@@ -258,7 +258,7 @@ public class ContractRepositoryTest {
     LocalDateTime subRcvDtm = LocalDateTime.now();
     List<Contract> termContracts = contractRepository.saveAll(
         List.of(
-            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true ),
+            ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true, "DCP0000001", "DCM0000001" ),
             ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true),
             ContractFixtures.createUzoopassAllContract(2L, 3L, subRcvDtm, true ),
             ContractFixtures.createBaeminContract(2L, 3L, subRcvDtm, ContractType.OPTION, true),
@@ -345,7 +345,7 @@ public class ContractRepositoryTest {
   public void 계약단위조회_계약과상품할인모두_단건조회() {
     // given
     LocalDateTime subRcvDtm = LocalDateTime.now();
-    Contract pkgContract = ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true );
+    Contract pkgContract = ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true, "DCP0000001", "DCM0000001" );
     Contract optContract = ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true);
     Contract unitContract = ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true );
     contractRepository.saveAll(
@@ -379,7 +379,7 @@ public class ContractRepositoryTest {
   public void 계약단위조회_계약과상품할인모두_같이조회() {
     // given
     LocalDateTime subRcvDtm = LocalDateTime.now();
-    Contract pkgContract = ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true );
+    Contract pkgContract = ContractFixtures.createUzoopassAllContract(1L, 2L, subRcvDtm, true, "DCP0000001", "DCM0000001" );
     Contract optContract = ContractFixtures.createBaeminContract(1L, 2L, subRcvDtm, ContractType.OPTION, true);
     Contract unitContract = ContractFixtures.createYanoljaContract(1L, 4L, subRcvDtm, ContractType.UNIT, true );
     contractRepository.saveAll(
